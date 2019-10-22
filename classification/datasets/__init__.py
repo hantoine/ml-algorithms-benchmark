@@ -1,5 +1,6 @@
-from os import makedirs
+import os
 from os.path import isfile
+from os import makedirs
 import urllib.request
 import urllib.parse
 import pandas as pd
@@ -23,10 +24,16 @@ class DefaultCreditCardDataset(Dataset):
             cls.download()
         df = pd.read_excel(dataset_path, header=[0, 1])
         
-        y = p['Y'].values.ravel()
-        X = p[[f'X{i}' for i in range(1, 24)]].values
+        y = df['Y'].values.ravel()
+        X = df[[f'X{i}' for i in range(1, 24)]].values
 
         # First column is ID and last is label
-        cls.features_names = [col[1] for col in p.columns[1:-1]]
+        cls.feature_names = [col[1] for col in df.columns[1:-1]]
 
         return X, y
+
+# Usage example
+if __name__ == '__main__':
+    X, y = DefaultCreditCardDataset.get()
+    print(f'Features: {DefaultCreditCardDataset.feature_names}')
+
