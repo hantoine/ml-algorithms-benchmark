@@ -115,4 +115,7 @@ venv.bak/
 data/
 
 # Vim swap files
-*.py.swp
+*.py.swpi
+
+# Folder created during test
+test-workdir
