@@ -107,3 +107,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# jupyter notebook files
+*.ipynb
+
+# Data folder
+data/
