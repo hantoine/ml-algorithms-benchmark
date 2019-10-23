@@ -113,3 +113,6 @@ venv.bak/
 
 # Data folder
 data/
+
+# Vim swap files
+*.py.swp
