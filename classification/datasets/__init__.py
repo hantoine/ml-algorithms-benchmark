@@ -5,9 +5,12 @@ import urllib.request
 import urllib.parse
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from scipy.io import arff
+import numpy as np
 
 workdir = os.path.join(os.getcwd(), 'data')
 test_size = 0.25
+
 
 class Dataset:
     @classmethod
@@ -26,9 +29,11 @@ class Dataset:
         url = url.replace(' ', '%20')
         urllib.request.urlretrieve(url, os.path.join(workdir, filename))
 
+
 class DefaultCreditCardDataset(Dataset):
     filename = 'default of credit card clients.xls'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00350/default of credit card clients.xls'
+
     @classmethod
     def get(cls):
         dataset_path = os.path.join(workdir, cls.filename)
@@ -108,8 +113,50 @@ class AdultDataset(Dataset):
         X.columns = cls.feature_names
         return X, y
 
+
+class SteelPlatesFaultsDataset(Dataset):
+    urls = ['https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults.NNA',
+            'https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults27x7_var']
+    filenames = ['Faults.NNA', 'Faults27x7_var']
+
+    @classmethod
+    def get(cls):
+        dataset_path = os.path.join(workdir, cls.filenames[0])
+        if not isfile(dataset_path):
+            cls.download()
+
+        df = pd.read_csv(dataset_path, sep='\t', header=None)
+
+        with open(os.path.join(workdir, cls.filenames[1]), 'r') as f:
+            cls.feature_names = f.read().strip().split('\n')
+
+        return df
+
+
+class SeismicBumps(Dataset):
+    filename = 'seismic-bumps.arff'
+    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00266/seismic-bumps.arff'
+
+    @classmethod
+    def get(cls):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download()
+
+        data, meta = arff.loadarff(dataset_path)
+
+        df = pd.DataFrame(data)
+        df['class'] = pd.to_numeric(df['class'])
+
+        str_df = df.select_dtypes([np.object])
+        str_df = str_df.stack().str.decode('utf-8').unstack()
+        for col in str_df:
+            df[col] = str_df[col]
+
+        return df
+
+
 # Usage example
 if __name__ == '__main__':
     X, y = DefaultCreditCardDataset.get()
     print(f'Features: {DefaultCreditCardDataset.feature_names}')
-
