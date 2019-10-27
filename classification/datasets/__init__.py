@@ -100,6 +100,7 @@ class AdultDataset(Dataset):
 
         le = LabelEncoder().fit(y_train)
         y_train = le.transform(y_train)
+        y_test = y_test.str[:-1] # Additional . at the end of labels in test
         y_test = le.transform(y_test)
 
         return (X_train, y_train), (X_test, y_test)
