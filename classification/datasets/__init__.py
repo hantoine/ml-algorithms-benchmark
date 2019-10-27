@@ -5,6 +5,7 @@ import urllib.request
 import urllib.parse
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 from scipy.io import arff
 import numpy as np
 
@@ -58,7 +59,7 @@ class StatlogAustralianDataset(Dataset):
         if not isfile(dataset_path):
             cls.download()
         df = pd.read_csv(dataset_path, sep=' ', header=None)
-        
+
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
 
@@ -92,10 +93,16 @@ class AdultDataset(Dataset):
     categorical_features = ['workclass', 'education']
     desc_url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names'
     @classmethod
-    def get(cls): #TODO see how to deal with seperate tets
+    def get(cls):
         df_train, df_test = cls.get_raw()
-        df_train, df_test = cls.parse_dataset(df_train), cls.parse_dataset(df_test) 
-        return df_train, df_test
+        X_train, y_train = cls.parse_dataset(df_train)
+        X_test, y_test = cls.parse_dataset(df_test)
+
+        le = LabelEncoder().fit(y_train)
+        y_train = le.transform(y_train)
+        y_test = le.transform(y_test)
+
+        return (X_train, y_train), (X_test, y_test)
     
     @classmethod
     def get_raw(cls):
@@ -143,7 +150,7 @@ class SeismicBumps(Dataset):
         if not isfile(dataset_path):
             cls.download()
 
-        data, meta = arff.loadarff(dataset_path)
+        data, _ = arff.loadarff(dataset_path)
 
         df = pd.DataFrame(data)
         df['class'] = pd.to_numeric(df['class'])
@@ -159,4 +166,3 @@ class SeismicBumps(Dataset):
 # Usage example
 if __name__ == '__main__':
     X, y = DefaultCreditCardDataset.get()
-    print(f'Features: {DefaultCreditCardDataset.feature_names}')
