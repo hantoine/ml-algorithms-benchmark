@@ -51,3 +51,8 @@ def test_retinopathy_dataset_loading():
 def test_thoracic_surgery_dataset_loading():
     dataset = ld.ThoraricSurgery.get(workdir)
     check_dataset(dataset)
+
+
+def test_breast_cancer_dataset_loading():
+    dataset = ld.BreastCancer.get(workdir)
+    check_dataset(dataset)

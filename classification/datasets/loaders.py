@@ -231,3 +231,20 @@ class ThoraricSurgery(Dataset):
             X, y = cls.preprocess(df)
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
             return (X_train, y_train), (X_test, y_test)
+
+
+class BreastCancer(Dataset):
+    filename = 'breast-cancer-wisconsin.data'
+    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/breast-cancer-wisconsin.data'
+
+    @classmethod
+    def get(cls, workdir):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+
+        df = pd.read_csv(dataset_path, delim_whitespace=True, header=None)
+        X = df[df.columns[:-1]]
+        y = df[df.columns[-1]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return (X_train, y_train), (X_test, y_test)
