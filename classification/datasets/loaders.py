@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 from scipy.io import arff
 import numpy as np
 
-from utils.Dataset import Dataset, workdir
+from utils import Dataset, workdir
 
 test_size = 0.25
 random_state = 42
