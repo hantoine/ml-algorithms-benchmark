@@ -6,7 +6,7 @@ import pandas as pd
 from utils import check_dataset
 
 
-workdir = os.path.join('tests/regression/datasets/test-workdir')
+workdir = 'test-workdir'
 if isdir(workdir):
     rmtree(workdir)
 
