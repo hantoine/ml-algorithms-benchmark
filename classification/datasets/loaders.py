@@ -1,6 +1,5 @@
 import os
 from os.path import isfile
-import arff
 import urllib.parse
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -8,7 +7,8 @@ from sklearn.preprocessing import LabelEncoder
 from scipy.io import arff
 import numpy as np
 
-from utils.Dataset import Dataset, workdir
+from utils import Dataset, workdir
+# import pdb ; pdb.set_trace()
 
 test_size = 0.25
 random_state = 42
@@ -182,8 +182,9 @@ class YeastDataset(Dataset):
 
         return (X_train, y_train), (X_test, y_test)
 
+
 class Retinopathy(Dataset):
-    filename = 'retinopathy.data'
+    filename = 'messidor_features.arff'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00329/messidor_features.arff'
 
     cols = ['quality',
@@ -194,18 +195,19 @@ class Retinopathy(Dataset):
             'class']
 
     @classmethod
+    def preprocess_retinopathy(cls, df):
+        df.columns = cls.cols
+        df['class'] = pd.to_numeric(df['class'])
+        df.drop(columns=['quality'])
+        return df.drop(columns=['class']), df.loc[:,'class']
+
+    @classmethod
     def get(cls):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
             cls.download()
             data, _ = arff.loadarff(dataset_path)
             df = pd.DataFrame(data)
-            X, y = preprocess_retinopathy(df)
+            X, y = cls.preprocess_retinopathy(df)
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
             return (X_train, y_train), (X_test, y_test)
-
-    def preprocess_retinopathy(df):
-        df.columns = cols
-        df['class'] = pd.to_numeric(df['class'])
-        df.drop(columns=['quality'])
-        return df.drop(columns=['class']), df.loc[:,'class']

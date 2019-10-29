@@ -1,4 +1,7 @@
-import utils.Dataset as ds
+import utils
+import utils.dataset as workdir_file
+
+
 import classification.datasets.loaders as ld
 from shutil import rmtree
 import os
@@ -6,10 +9,9 @@ from os.path import isdir
 import pandas as pd
 
 
-ds.workdir = 'tests/classification/datasets/test-workdir'
-if isdir(ds.workdir):
-    rmtree(ds.workdir)
-
+if isdir(workdir_file.workdir):
+    rmtree(workdir_file.workdir)
+os.makedirs(workdir_file.workdir)
 
 def check_dataset(dataset):
     assert len(dataset) == 2
