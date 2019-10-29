@@ -4,7 +4,6 @@ import urllib.parse
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from scipy.io import arff
 import numpy as np
 
 from utils import Dataset
@@ -19,15 +18,10 @@ class DefaultCreditCardDataset(Dataset):
 
     @classmethod
     def get(cls, workdir):
-        dataset_path = os.path.join(workdir, cls.filename)
-        if not isfile(dataset_path):
-            cls.download(workdir)
-        df = pd.read_excel(dataset_path, header=[0, 1])
-
+        df = cls.get_df(workdir, cls.filename)
         y = df['Y'][df['Y'].columns[0]]
         X = df[[f'X{i}' for i in range(1, 24)]]
         X.columns = X.columns.droplevel()
-
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
         return (X_train, y_train), (X_test, y_test)
 
@@ -38,14 +32,9 @@ class StatlogAustralianDataset(Dataset):
 
     @classmethod
     def get(cls, workdir):
-        dataset_path = os.path.join(workdir, cls.filename)
-        if not isfile(dataset_path):
-            cls.download(workdir)
-        df = pd.read_csv(dataset_path, sep=' ', header=None)
-
+        df = cls.get_df(workdir, cls.filename)
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
-
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
         return (X_train, y_train), (X_test, y_test)
 
@@ -56,14 +45,9 @@ class StatlogGermanDataset(Dataset):
 
     @classmethod
     def get(cls, workdir):
-        dataset_path = os.path.join(workdir, cls.filename)
-        if not isfile(dataset_path):
-            cls.download(workdir)
-        df = pd.read_csv(dataset_path, sep=r'\s+', header=None)
-
+        df = cls.get_df(workdir, cls.filename)
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
-
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
         return (X_train, y_train), (X_test, y_test)
 
@@ -93,10 +77,7 @@ class AdultDataset(Dataset):
 
     @classmethod
     def get_raw(cls):
-        dataset_path = os.path.join(workdir, cls.filenames[0])
-        if not isfile(dataset_path):
-            cls.download(workdir)
-        df_train = pd.read_csv(dataset_path, header=None, sep=', ', engine='python')
+        df_train = cls.get_df(workdir, cls.filenames[0])
         df_test = pd.read_csv(os.path.join(workdir, cls.filenames[1]),
                               header=None, skiprows=1, sep=', ', engine='python')
         return df_train, df_test
@@ -115,23 +96,17 @@ class SteelPlatesFaultsDataset(Dataset):
 
     @classmethod
     def get(cls, workdir):
-        dataset_path = os.path.join(workdir, cls.filenames[0])
+        df = cls.get_df(workdir, cls.filenames[0])
+
+        dataset_path = os.path.join(workdir, cls.filenames[1])
         if not isfile(dataset_path):
             cls.download(workdir)
-
-        df = pd.read_csv(dataset_path, sep='\t', header=None)
-
-        with open(os.path.join(workdir, cls.filenames[1]), 'r') as f:
+        with open(dataset_path, 'r') as f:
             cls.feature_names = f.read().strip().split('\n')
-
-        print(df[df.columns[27:]])
-        print(df[df.columns[:27]])
 
         X = df[df.columns[:27]]
         y = df[df.columns[27:]]
-
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -141,13 +116,7 @@ class SeismicBumpsDataset(Dataset):
 
     @classmethod
     def get(cls, workdir):
-        dataset_path = os.path.join(workdir, cls.filename)
-        if not isfile(dataset_path):
-            cls.download(workdir)
-
-        data, _ = arff.loadarff(dataset_path)
-
-        df = pd.DataFrame(data)
+        df = cls.get_df(workdir, cls.filename)
         df['class'] = pd.to_numeric(df['class'])
 
         str_df = df.select_dtypes([np.object])
@@ -157,9 +126,7 @@ class SeismicBumpsDataset(Dataset):
 
         X = df.drop(columns=['class'])
         y = df.loc[:, 'class']
-
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -169,17 +136,10 @@ class YeastDataset(Dataset):
 
     @classmethod
     def get(cls, workdir):
-        dataset_path = os.path.join(workdir, cls.filename)
-        if not isfile(dataset_path):
-            cls.download(workdir)
-
-        df = pd.read_csv(dataset_path, delim_whitespace=True, header=None)
-
+        df = cls.get_df(workdir, cls.filename)
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
-
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -203,14 +163,10 @@ class Retinopathy(Dataset):
 
     @classmethod
     def get(cls, workdir):
-        dataset_path = os.path.join(workdir, cls.filename)
-        if not isfile(dataset_path):
-            cls.download(workdir)
-            data, _ = arff.loadarff(dataset_path)
-            df = pd.DataFrame(data)
-            X, y = cls.preprocess(df)
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-            return (X_train, y_train), (X_test, y_test)
+        df = cls.get_df(workdir, cls.filename)
+        X, y = cls.preprocess(df)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return (X_train, y_train), (X_test, y_test)
 
 
 class ThoraricSurgery(Dataset):
@@ -223,14 +179,10 @@ class ThoraricSurgery(Dataset):
 
     @classmethod
     def get(cls, workdir):
-        dataset_path = os.path.join(workdir, cls.filename)
-        if not isfile(dataset_path):
-            cls.download(workdir)
-            data, _ = arff.loadarff(dataset_path)
-            df = pd.DataFrame(data)
-            X, y = cls.preprocess(df)
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-            return (X_train, y_train), (X_test, y_test)
+        df = cls.get_df(workdir, cls.filename)
+        X, y = cls.preprocess(df)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return (X_train, y_train), (X_test, y_test)
 
 
 class BreastCancer(Dataset):
@@ -239,11 +191,7 @@ class BreastCancer(Dataset):
 
     @classmethod
     def get(cls, workdir):
-        dataset_path = os.path.join(workdir, cls.filename)
-        if not isfile(dataset_path):
-            cls.download(workdir)
-
-        df = pd.read_csv(dataset_path, delim_whitespace=True, header=None)
+        df = cls.get_df(workdir, cls.filename)
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
