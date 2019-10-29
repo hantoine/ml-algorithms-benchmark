@@ -1,0 +1,4 @@
+xlrd
+pandas
+numpy
+scikit-learn
