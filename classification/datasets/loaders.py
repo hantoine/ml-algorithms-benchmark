@@ -1,6 +1,6 @@
 import os
 from os.path import isfile
-
+import arff
 import urllib.parse
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -181,3 +181,31 @@ class YeastDataset(Dataset):
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
 
         return (X_train, y_train), (X_test, y_test)
+
+class Retinopathy(Dataset):
+    filename = 'retinopathy.data'
+    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00329/messidor_features.arff'
+
+    cols = ['quality',
+            'pre-screening_label'] + list(range(2, 16)) + [
+            'dist_betw_centers',
+            'od_diameter',
+            'AM_FM_label',
+            'class']
+
+    @classmethod
+    def get(cls):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download()
+            data, _ = arff.loadarff(dataset_path)
+            df = pd.DataFrame(data)
+            X, y = preprocess_retinopathy(df)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+            return (X_train, y_train), (X_test, y_test)
+
+    def preprocess_retinopathy(df):
+        df.columns = cols
+        df['class'] = pd.to_numeric(df['class'])
+        df.drop(columns=['quality'])
+        return df.drop(columns=['class']), df.loc[:,'class']

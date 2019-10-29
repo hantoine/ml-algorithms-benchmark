@@ -5,9 +5,11 @@ import os
 from os.path import isdir
 import pandas as pd
 
+
 ds.workdir = 'tests/classification/datasets/test-workdir'
 if isdir(ds.workdir):
     rmtree(ds.workdir)
+
 
 def check_dataset(dataset):
     assert len(dataset) == 2
@@ -20,6 +22,7 @@ def check_dataset(dataset):
     assert type(y_train) == type(y_test) == pd.core.series.Series
     assert type(x_train) == type(x_test) == pd.core.frame.DataFrame
     assert len(x_train.columns) == len(x_test.columns)
+
 
 def test_default_credit_card_dataset_loading():
     dataset = ld.DefaultCreditCardDataset.get()
@@ -39,3 +42,8 @@ def test_statlog_german_dataset_loading():
 """def test_adult_dataset_loading():
     dataset = ld.AdultDataset.get()
     check_dataset(dataset)"""
+
+
+def test_retinopathy_dataset_loading():
+    dataset = ld.Retinopathy.get()
+    check_dataset(dataset)
