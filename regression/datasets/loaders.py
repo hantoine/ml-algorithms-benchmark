@@ -13,7 +13,7 @@ import time
 from utils import Dataset, test_size, random_state
 
 
-class ParkinsonMultipleSoundRecording(Dataset):
+class ParkinsonMultipleSoundRecordingDataset(Dataset):
     filename = 'Parkinson_Multiple_Sound_Recording.rar'
     filenames = ['train_data.txt',
                  'test_data.txt']
@@ -53,7 +53,7 @@ class ParkinsonMultipleSoundRecording(Dataset):
         return (X_train, y_train), (X_test, y_test)
 
 
-class MerckMolecularActivityChallenge(Dataset):
+class MerckMolecularActivityChallengeDataset(Dataset):
     filename = 'MerckActivity.zip'
     url = 'https://www.kaggle.com/c/2975/download-all/'
 
@@ -63,11 +63,11 @@ class MerckMolecularActivityChallenge(Dataset):
         if not isfile(dataset_path):
             cls.download(workdir)
         with ZipFile(dataset_path, 'r') as zipfile:
-           zipObj.extractall(workdir)
+           zipfile.extractall(workdir)
         return
 
 
-class QsarAquaticToxicity(Dataset):
+class QsarAquaticToxicityDataset(Dataset):
     filename = 'qsar_aquatic_toxicity.csv'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00505//qsar_aquatic_toxicity.csv'
     features = ['TPSA', 'SAacc', 'H-050', 'MLOGP', 'RDCHI', 'GATS1p', 'nN', 'C-040', 'LC50']
