@@ -6,11 +6,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 import numpy as np
 
-from utils import Dataset
+from utils import Dataset, test_size, random_state
 # import pdb ; pdb.set_trace()
 
-test_size = 0.25
-random_state = 42
 
 class DefaultCreditCardDataset(Dataset):
     filename = 'default of credit card clients.xls'
@@ -147,7 +145,7 @@ class Retinopathy(Dataset):
     filename = 'messidor_features.arff'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00329/messidor_features.arff'
 
-    cols = ['quality',
+    feature_names = ['quality',
             'pre-screening_label'] + list(range(2, 16)) + [
             'dist_betw_centers',
             'od_diameter',
@@ -156,7 +154,7 @@ class Retinopathy(Dataset):
 
     @classmethod
     def preprocess(cls, df):
-        df.columns = cls.cols
+        df.columns = cls.feature_names
         df['class'] = pd.to_numeric(df['class'])
         df.drop(columns=['quality'])
         return df.drop(columns=['class']), df.loc[:,'class']

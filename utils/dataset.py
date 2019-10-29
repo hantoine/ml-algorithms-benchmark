@@ -47,3 +47,5 @@ class Dataset:
             return pd.DataFrame(data)
         elif ext == 'data':
             return pd.read_csv(dataset_path, delim_whitespace=True, header=None)
+        elif ext == 'txt':
+            return pd.read_csv(dataset_path, sep=',', header=None)
