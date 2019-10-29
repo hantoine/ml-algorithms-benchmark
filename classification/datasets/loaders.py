@@ -195,7 +195,7 @@ class Retinopathy(Dataset):
             'class']
 
     @classmethod
-    def preprocess_retinopathy(cls, df):
+    def preprocess(cls, df):
         df.columns = cls.cols
         df['class'] = pd.to_numeric(df['class'])
         df.drop(columns=['quality'])
@@ -208,6 +208,26 @@ class Retinopathy(Dataset):
             cls.download(workdir)
             data, _ = arff.loadarff(dataset_path)
             df = pd.DataFrame(data)
-            X, y = cls.preprocess_retinopathy(df)
+            X, y = cls.preprocess(df)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+            return (X_train, y_train), (X_test, y_test)
+
+
+class ThoraricSurgery(Dataset):
+    filename = 'ThoraricSurgery.arff'
+    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00277/ThoraricSurgery.arff'
+
+    @classmethod
+    def preprocess(cls, df):
+        return df.iloc[:,:-1], df.iloc[:,-1]
+
+    @classmethod
+    def get(cls, workdir):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+            data, _ = arff.loadarff(dataset_path)
+            df = pd.DataFrame(data)
+            X, y = cls.preprocess(df)
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
             return (X_train, y_train), (X_test, y_test)
