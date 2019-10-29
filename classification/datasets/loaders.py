@@ -75,7 +75,8 @@ class AdultDataset(Dataset):
     feature_names = ['age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status',
                      'occupation', 'relationship', 'race', 'sex', 'capital-gain', 'capital-loss',
                      'hours-per-week', 'native-country']
-    categorical_features = ['workclass', 'education']
+    categorical_features = ['workclass', 'education', 'marital-status', 'occupation',
+                            'relationship', 'race', 'sex', 'native-country']
     desc_url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names'
 
     @classmethod
