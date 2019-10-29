@@ -1,1 +1,1 @@
-from .dataset import Dataset, workdir
+from .dataset import Dataset

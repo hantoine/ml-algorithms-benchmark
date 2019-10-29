@@ -7,7 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 from scipy.io import arff
 import numpy as np
 
-from utils import Dataset, workdir
+from utils import Dataset
 # import pdb ; pdb.set_trace()
 
 test_size = 0.25
@@ -18,10 +18,10 @@ class DefaultCreditCardDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00350/default of credit card clients.xls'
 
     @classmethod
-    def get(cls):
+    def get(cls, workdir):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
-            cls.download()
+            cls.download(workdir)
         df = pd.read_excel(dataset_path, header=[0, 1])
 
         y = df['Y'][df['Y'].columns[0]]
@@ -37,10 +37,10 @@ class StatlogAustralianDataset(Dataset):
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/statlog/australian/australian.dat'
 
     @classmethod
-    def get(cls):
+    def get(cls, workdir):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
-            cls.download()
+            cls.download(workdir)
         df = pd.read_csv(dataset_path, sep=' ', header=None)
 
         y = df[df.columns[-1]]
@@ -55,10 +55,10 @@ class StatlogGermanDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric'
 
     @classmethod
-    def get(cls):
+    def get(cls, workdir):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
-            cls.download()
+            cls.download(workdir)
         df = pd.read_csv(dataset_path, sep=r'\s+', header=None)
 
         y = df[df.columns[-1]]
@@ -79,7 +79,7 @@ class AdultDataset(Dataset):
     desc_url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names'
 
     @classmethod
-    def get(cls):
+    def get(cls, workdir):
         df_train, df_test = cls.get_raw()
         X_train, y_train = cls.parse_dataset(df_train)
         X_test, y_test = cls.parse_dataset(df_test)
@@ -95,7 +95,7 @@ class AdultDataset(Dataset):
     def get_raw(cls):
         dataset_path = os.path.join(workdir, cls.filenames[0])
         if not isfile(dataset_path):
-            cls.download()
+            cls.download(workdir)
         df_train = pd.read_csv(dataset_path, header=None, sep=', ', engine='python')
         df_test = pd.read_csv(os.path.join(workdir, cls.filenames[1]),
                               header=None, skiprows=1, sep=', ', engine='python')
@@ -114,10 +114,10 @@ class SteelPlatesFaultsDataset(Dataset):
     filenames = ['Faults.NNA', 'Faults27x7_var']
 
     @classmethod
-    def get(cls):
+    def get(cls, workdir):
         dataset_path = os.path.join(workdir, cls.filenames[0])
         if not isfile(dataset_path):
-            cls.download()
+            cls.download(workdir)
 
         df = pd.read_csv(dataset_path, sep='\t', header=None)
 
@@ -140,10 +140,10 @@ class SeismicBumpsDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00266/seismic-bumps.arff'
 
     @classmethod
-    def get(cls):
+    def get(cls, workdir):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
-            cls.download()
+            cls.download(workdir)
 
         data, _ = arff.loadarff(dataset_path)
 
@@ -168,10 +168,10 @@ class YeastDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/yeast/yeast.data'
 
     @classmethod
-    def get(cls):
+    def get(cls, workdir):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
-            cls.download()
+            cls.download(workdir)
 
         df = pd.read_csv(dataset_path, delim_whitespace=True, header=None)
 
@@ -202,10 +202,10 @@ class Retinopathy(Dataset):
         return df.drop(columns=['class']), df.loc[:,'class']
 
     @classmethod
-    def get(cls):
+    def get(cls, workdir):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
-            cls.download()
+            cls.download(workdir)
             data, _ = arff.loadarff(dataset_path)
             df = pd.DataFrame(data)
             X, y = cls.preprocess_retinopathy(df)

@@ -1,7 +1,3 @@
-import utils
-import utils.dataset as workdir_file
-
-
 import classification.datasets.loaders as ld
 from shutil import rmtree
 import os
@@ -9,9 +5,10 @@ from os.path import isdir
 import pandas as pd
 
 
-if isdir(workdir_file.workdir):
-    rmtree(workdir_file.workdir)
-os.makedirs(workdir_file.workdir)
+workdir = os.path.join('tests/classification/datasets/test-workdir')
+if isdir(workdir):
+    rmtree(workdir)
+
 
 def check_dataset(dataset):
     assert len(dataset) == 2
@@ -27,17 +24,17 @@ def check_dataset(dataset):
 
 
 def test_default_credit_card_dataset_loading():
-    dataset = ld.DefaultCreditCardDataset.get()
+    dataset = ld.DefaultCreditCardDataset.get(workdir)
     check_dataset(dataset)
 
 
 def test_statlog_australian_dataset_loading():
-    dataset = ld.StatlogAustralianDataset.get()
+    dataset = ld.StatlogAustralianDataset.get(workdir)
     check_dataset(dataset)
 
 
 def test_statlog_german_dataset_loading():
-    dataset = ld.StatlogGermanDataset.get()
+    dataset = ld.StatlogGermanDataset.get(workdir)
     check_dataset(dataset)
 
 
@@ -47,5 +44,5 @@ def test_statlog_german_dataset_loading():
 
 
 def test_retinopathy_dataset_loading():
-    dataset = ld.Retinopathy.get()
+    dataset = ld.Retinopathy.get(workdir)
     check_dataset(dataset)
