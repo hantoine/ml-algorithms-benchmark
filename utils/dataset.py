@@ -50,4 +50,4 @@ class Dataset:
         elif ext == 'txt':
             return pd.read_csv(dataset_path, sep=',', header=None)
         elif ext == 'csv':
-            return pd.read_csv(dataset_path, sep=',', header=None)
+            return pd.read_csv(dataset_path, sep=';', header=None)

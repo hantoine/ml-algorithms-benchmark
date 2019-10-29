@@ -68,10 +68,12 @@ class MerckMolecularActivityChallenge(Dataset):
 class QsarAquaticToxicity(Dataset):
     filename = 'qsar_aquatic_toxicity.csv'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00505//qsar_aquatic_toxicity.csv'
+    features = ['TPSA', 'SAacc', 'H-050', 'MLOGP', 'RDCHI', 'GATS1p', 'nN', 'C-040', 'LC50']
 
     @classmethod
     def get(cls, workdir):
         df = cls.get_df(workdir, cls.filename)
+        df.columns = cls.features
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
