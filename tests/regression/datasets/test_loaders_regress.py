@@ -14,3 +14,8 @@ if isdir(workdir):
 def test_parkinson_multiple_sound_recording():
     dataset = ld.ParkinsonMultipleSoundRecording.get(workdir)
     check_dataset(dataset)
+
+
+def test_merck_molecular_activity_challenge():
+    dataset = ld.MerckMolecularActivityChallenge.get(workdir)
+    check_dataset(dataset)

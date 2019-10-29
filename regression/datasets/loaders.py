@@ -6,8 +6,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 import numpy as np
 import patoolib  # for rar files
+from zipfile import ZipFile
+
 
 from utils import Dataset, test_size, random_state
+
 
 class ParkinsonMultipleSoundRecording(Dataset):
     filename = 'Parkinson_Multiple_Sound_Recording.rar'
@@ -46,3 +49,17 @@ class ParkinsonMultipleSoundRecording(Dataset):
         X_train, y_train = cls.parse_dataset(train_df)
         X_test, y_test = cls.parse_dataset(test_df)
         return (X_train, y_train), (X_test, y_test)
+
+
+class MerckMolecularActivityChallenge(Dataset):
+    filename = 'MerckActivity.zip'
+    url = 'https://www.kaggle.com/c/2975/download-all/MerckActivity.zip'
+
+    @classmethod
+    def get(cls, workdir):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        with ZipFile(dataset_path, 'r') as zipfile:
+           zipObj.extractall(workdir)
+        return
