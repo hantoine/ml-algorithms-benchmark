@@ -53,7 +53,7 @@ class ParkinsonMultipleSoundRecording(Dataset):
 
 class MerckMolecularActivityChallenge(Dataset):
     filename = 'MerckActivity.zip'
-    url = 'https://www.kaggle.com/c/2975/download-all/MerckActivity.zip'
+    url = 'https://www.kaggle.com/c/2975/download-all/'
 
     @classmethod
     def get(cls, workdir):
@@ -63,3 +63,16 @@ class MerckMolecularActivityChallenge(Dataset):
         with ZipFile(dataset_path, 'r') as zipfile:
            zipObj.extractall(workdir)
         return
+
+
+class QsarAquaticToxicity(Dataset):
+    filename = 'qsar_aquatic_toxicity.csv'
+    url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00505//qsar_aquatic_toxicity.csv'
+
+    @classmethod
+    def get(cls, workdir):
+        df = cls.get_df(workdir, cls.filename)
+        y = df[df.columns[-1]]
+        X = df[df.columns[:-1]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
+        return (X_train, y_train), (X_test, y_test)
