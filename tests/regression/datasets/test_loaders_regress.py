@@ -1,4 +1,4 @@
-import regression.datasets.loaders as ld
+from regression import datasets as ds
 from shutil import rmtree
 import os
 from os.path import isdir
@@ -12,15 +12,15 @@ if isdir(workdir):
 
 
 def test_parkinson_multiple_sound_recording():
-    dataset = ld.ParkinsonMultipleSoundRecording.get(workdir)
+    dataset = ds.ParkinsonMultipleSoundRecordingDataset.get(workdir)
     check_dataset(dataset)
 
 
 """def test_merck_molecular_activity_challenge():
-    dataset = ld.MerckMolecularActivityChallenge.get(workdir)
+    dataset = ld.MerckMolecularActivityChallengeDataset.get(workdir)
     check_dataset(dataset)"""
 
 
 def test_sqar_aquatic_toxicity():
-    dataset = ld.QsarAquaticToxicity.get(workdir)
+    dataset = ds.QsarAquaticToxicityDataset.get(workdir)
     check_dataset(dataset)

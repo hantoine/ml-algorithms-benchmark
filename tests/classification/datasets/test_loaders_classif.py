@@ -1,4 +1,4 @@
-import classification.datasets.loaders as ld
+from classification import datasets as ds
 from shutil import rmtree
 import os
 from os.path import isdir
@@ -11,35 +11,35 @@ if isdir(workdir):
 
 
 def test_default_credit_card_dataset_loading():
-    dataset = ld.DefaultCreditCardDataset.get(workdir)
+    dataset = ds.DefaultCreditCardDataset.get(workdir)
     check_dataset(dataset)
 
 
 def test_statlog_australian_dataset_loading():
-    dataset = ld.StatlogAustralianDataset.get(workdir)
+    dataset = ds.StatlogAustralianDataset.get(workdir)
     check_dataset(dataset)
 
 
 def test_statlog_german_dataset_loading():
-    dataset = ld.StatlogGermanDataset.get(workdir)
+    dataset = ds.StatlogGermanDataset.get(workdir)
     check_dataset(dataset)
 
 
-"""def test_adult_dataset_loading():
-    dataset = ld.AdultDataset.get()
-    check_dataset(dataset)"""
+def test_adult_dataset_loading():
+    dataset = ds.AdultDataset.get(workdir)
+    check_dataset(dataset)
 
 
 def test_retinopathy_dataset_loading():
-    dataset = ld.Retinopathy.get(workdir)
+    dataset = ds.RetinopathyDataset.get(workdir)
     check_dataset(dataset)
 
 
 def test_thoracic_surgery_dataset_loading():
-    dataset = ld.ThoraricSurgery.get(workdir)
+    dataset = ds.ThoraricSurgeryDataset.get(workdir)
     check_dataset(dataset)
 
 
 def test_breast_cancer_dataset_loading():
-    dataset = ld.BreastCancer.get(workdir)
+    dataset = ds.BreastCancerDataset.get(workdir)
     check_dataset(dataset)

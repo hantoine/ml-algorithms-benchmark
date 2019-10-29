@@ -142,7 +142,7 @@ class YeastDataset(Dataset):
         return (X_train, y_train), (X_test, y_test)
 
 
-class Retinopathy(Dataset):
+class RetinopathyDataset(Dataset):
     filename = 'messidor_features.arff'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00329/messidor_features.arff'
 
@@ -168,7 +168,7 @@ class Retinopathy(Dataset):
         return (X_train, y_train), (X_test, y_test)
 
 
-class ThoraricSurgery(Dataset):
+class ThoraricSurgeryDataset(Dataset):
     filename = 'ThoraricSurgery.arff'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00277/ThoraricSurgery.arff'
 
@@ -184,7 +184,7 @@ class ThoraricSurgery(Dataset):
         return (X_train, y_train), (X_test, y_test)
 
 
-class BreastCancer(Dataset):
+class BreastCancerDataset(Dataset):
     filename = 'breast-cancer-wisconsin.data'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/breast-cancer-wisconsin.data'
 

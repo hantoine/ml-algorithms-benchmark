@@ -5,3 +5,6 @@ from .loaders import SeismicBumpsDataset
 from .loaders import StatlogAustralianDataset
 from .loaders import StatlogGermanDataset
 from .loaders import SteelPlatesFaultsDataset
+from .loaders import RetinopathyDataset
+from .loaders import BreastCancerDataset
+from .loaders import ThoraricSurgeryDataset
