@@ -28,6 +28,7 @@ class CategoryEncoder:
                                          remainder='passthrough')
         self.encoder.fit(X)
         return self
+
     def transform(self, X, y=None):
         if not hasattr(self, 'encoder'):
             raise ValueError('The tree ordinal encoder has not been fitted first')
@@ -36,3 +37,7 @@ class CategoryEncoder:
             return X_enc, y
         else:
             return X_enc
+
+    def fit_transform(self, X, y):
+        self.fit(X, y)
+        return self.transform(X)
