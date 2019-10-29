@@ -57,12 +57,13 @@ class AdultDataset(Dataset):
     feature_names = ['age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status',
                      'occupation', 'relationship', 'race', 'sex', 'capital-gain', 'capital-loss',
                      'hours-per-week', 'native-country']
-    categorical_features = ['workclass', 'education']
+    categorical_features = ['workclass', 'education', 'marital-status', 'occupation',
+                            'relationship', 'race', 'sex', 'native-country']
     desc_url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names'
 
     @classmethod
     def get(cls, workdir):
-        df_train, df_test = cls.get_raw()
+        df_train, df_test = cls.get_raw(workdir)
         X_train, y_train = cls.parse_dataset(df_train)
         X_test, y_test = cls.parse_dataset(df_test)
 
@@ -74,7 +75,7 @@ class AdultDataset(Dataset):
         return (X_train, y_train), (X_test, y_test)
 
     @classmethod
-    def get_raw(cls):
+    def get_raw(cls, workdir):
         df_train = cls.get_df(workdir, cls.filenames[0])
         df_test = pd.read_csv(os.path.join(workdir, cls.filenames[1]),
                               header=None, skiprows=1, sep=', ', engine='python')

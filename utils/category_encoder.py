@@ -15,7 +15,7 @@ class CategoryEncoder:
         p_pos_per_category = [(category, y[X[feature_name] == category].mean())
                         for category in X[feature_name].unique()]
         return list(map(itemgetter(0), sorted(p_pos_per_category, key=itemgetter(1))))
-    
+
     def fit(self, X, y):
         if self.method == 'onehot':
             encoder = OneHotEncoder(dtype=np.int)
@@ -28,6 +28,7 @@ class CategoryEncoder:
                                          remainder='passthrough')
         self.encoder.fit(X)
         return self
+
     def transform(self, X, y=None):
         if not hasattr(self, 'encoder'):
             raise ValueError('The tree ordinal encoder has not been fitted first')
@@ -36,3 +37,7 @@ class CategoryEncoder:
             return X_enc, y
         else:
             return X_enc
+
+    def fit_transform(self, X, y):
+        self.fit(X, y)
+        return self.transform(X)

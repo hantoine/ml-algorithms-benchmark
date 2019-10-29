@@ -119,3 +119,6 @@ data/
 
 # Folder created during test
 test-workdir
+
+# VSCode folder
+.vscode

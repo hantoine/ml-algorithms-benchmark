@@ -7,6 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 import patoolib  # for rar files
 from zipfile import ZipFile
+import time
 
 
 from utils import Dataset, test_size, random_state
@@ -41,6 +42,7 @@ class ParkinsonMultipleSoundRecording(Dataset):
         if not isfile(dataset_path):
             cls.download(workdir)
         patoolib.extract_archive(dataset_path, outdir=workdir)
+        time.sleep(2)
 
         train_df = cls.get_df(workdir, cls.filenames[0])
         test_df = cls.get_df(workdir, cls.filenames[1])
