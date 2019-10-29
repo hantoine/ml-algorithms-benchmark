@@ -1,9 +1,11 @@
-import classification.datasets as ds
+import utils.Dataset as ds
+import classification.datasets.loaders as ld
 from shutil import rmtree
+import os
 from os.path import isdir
 import pandas as pd
 
-ds.workdir = 'test-workdir'
+ds.workdir = 'tests/classification/datasets/test-workdir'
 if isdir(ds.workdir):
     rmtree(ds.workdir)
 
@@ -20,20 +22,20 @@ def check_dataset(dataset):
     assert len(x_train.columns) == len(x_test.columns)
 
 def test_default_credit_card_dataset_loading():
-    dataset = ds.DefaultCreditCardDataset.get()
+    dataset = ld.DefaultCreditCardDataset.get()
     check_dataset(dataset)
 
 
 def test_statlog_australian_dataset_loading():
-    dataset = ds.StatlogAustralianDataset.get()
+    dataset = ld.StatlogAustralianDataset.get()
     check_dataset(dataset)
 
 
 def test_statlog_german_dataset_loading():
-    dataset = ds.StatlogGermanDataset.get()
+    dataset = ld.StatlogGermanDataset.get()
     check_dataset(dataset)
 
 
-def test_adult_dataset_loading():
-    dataset = ds.AdultDataset.get()
-    check_dataset(dataset)
+"""def test_adult_dataset_loading():
+    dataset = ld.AdultDataset.get()
+    check_dataset(dataset)"""
