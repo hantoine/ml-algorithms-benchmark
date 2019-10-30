@@ -9,9 +9,8 @@ import patoolib  # for rar files
 from zipfile import ZipFile
 import time
 
-
 from utils import Dataset, test_size, random_state
-
+from config import DEFAULT_DATA_DIR
 
 class ParkinsonMultipleSoundRecordingDataset(Dataset):
     filename = 'Parkinson_Multiple_Sound_Recording.rar'
@@ -37,7 +36,7 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
         return X, y
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
             cls.download(workdir)
@@ -58,7 +57,7 @@ class MerckMolecularActivityChallengeDataset(Dataset):
     url = 'https://www.kaggle.com/c/2975/download-all/'
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
             cls.download(workdir)
@@ -73,7 +72,7 @@ class QsarAquaticToxicityDataset(Dataset):
     features = ['TPSA', 'SAacc', 'H-050', 'MLOGP', 'RDCHI', 'GATS1p', 'nN', 'C-040', 'LC50']
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df = cls.get_df(workdir, cls.filename)
         df.columns = cls.features
         y = df[df.columns[-1]]

@@ -7,6 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 
 from utils import Dataset, test_size, random_state
+from config import DEFAULT_DATA_DIR
 # import pdb ; pdb.set_trace()
 
 
@@ -15,7 +16,7 @@ class DefaultCreditCardDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00350/default of credit card clients.xls'
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df = cls.get_df(workdir, cls.filename)
         y = df['Y'][df['Y'].columns[0]]
         X = df[[f'X{i}' for i in range(1, 24)]]
@@ -29,7 +30,7 @@ class StatlogAustralianDataset(Dataset):
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/statlog/australian/australian.dat'
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df = cls.get_df(workdir, cls.filename)
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
@@ -42,7 +43,7 @@ class StatlogGermanDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric'
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df = cls.get_df(workdir, cls.filename)
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
@@ -62,7 +63,7 @@ class AdultDataset(Dataset):
     desc_url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names'
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df_train, df_test = cls.get_raw(workdir)
         X_train, y_train = cls.parse_dataset(df_train)
         X_test, y_test = cls.parse_dataset(df_test)
@@ -94,7 +95,7 @@ class SteelPlatesFaultsDataset(Dataset):
     filenames = ['Faults.NNA', 'Faults27x7_var']
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df = cls.get_df(workdir, cls.filenames[0])
 
         dataset_path = os.path.join(workdir, cls.filenames[1])
@@ -114,7 +115,7 @@ class SeismicBumpsDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00266/seismic-bumps.arff'
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df = cls.get_df(workdir, cls.filename)
         df['class'] = pd.to_numeric(df['class'])
 
@@ -134,7 +135,7 @@ class YeastDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/yeast/yeast.data'
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df = cls.get_df(workdir, cls.filename)
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
@@ -161,7 +162,7 @@ class RetinopathyDataset(Dataset):
         return df.drop(columns=['class']), df.loc[:,'class']
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df = cls.get_df(workdir, cls.filename)
         X, y = cls.preprocess(df)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
@@ -177,7 +178,7 @@ class ThoraricSurgeryDataset(Dataset):
         return df.iloc[:,:-1], df.iloc[:,-1]
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df = cls.get_df(workdir, cls.filename)
         X, y = cls.preprocess(df)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
@@ -189,7 +190,7 @@ class BreastCancerDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/breast-cancer-wisconsin.data'
 
     @classmethod
-    def get(cls, workdir):
+    def get(cls, workdir=DEFAULT_DATA_DIR):
         df = cls.get_df(workdir, cls.filename)
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
