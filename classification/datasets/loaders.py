@@ -77,7 +77,11 @@ class AdultDataset(Dataset):
 
     @classmethod
     def get_raw(cls, workdir):
-        df_train = cls.get_df(workdir, cls.filenames[0])
+        dataset_path = os.path.join(workdir, cls.filenames[0])
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df_train = pd.read_csv(os.path.join(workdir, cls.filenames[0]),
+                               header=None, skiprows=1, sep=', ', engine='python')
         df_test = pd.read_csv(os.path.join(workdir, cls.filenames[1]),
                               header=None, skiprows=1, sep=', ', engine='python')
         return df_train, df_test
