@@ -8,7 +8,6 @@ import numpy as np
 
 from utils import Dataset, test_size, random_state
 from config import DEFAULT_DATA_DIR
-# import pdb ; pdb.set_trace()
 
 
 class DefaultCreditCardDataset(Dataset):
@@ -61,6 +60,7 @@ class AdultDataset(Dataset):
     categorical_features = ['workclass', 'education', 'marital-status', 'occupation',
                             'relationship', 'race', 'sex', 'native-country']
     desc_url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names'
+    metric = 'f1'
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
