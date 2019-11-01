@@ -11,9 +11,8 @@ if isdir(workdir):
 
 
 def check_prepare_dataset(cls):
-    train, _ = AdultDataset.get(workdir)
-    X, y = train
-    cls.prepare_dataset(X, y, AdultDataset.categorical_features)
+    train, test = AdultDataset.get(workdir)
+    cls.prepare_dataset(train, test, AdultDataset.categorical_features)
 
 
 def test_random_forests_hp_space():

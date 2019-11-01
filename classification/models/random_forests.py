@@ -6,10 +6,13 @@ import numpy as np
 
 class RandomForestsModel:
     @staticmethod
-    def prepare_dataset(X, y, categorical_features):
+    def prepare_dataset(train_data, test_data, categorical_features):
+        X_train, y_train = train_data
+        X_test, y_test = test_data
         ce = CategoryEncoder(categorical_features, method='sorted_ordinal')
-        X_enc = ce.fit_transform(X, y)
-        return X_enc, y
+        X_train_enc = ce.fit_transform(X_train, y_train)
+        X_test_enc = ce.transform(X_test)
+        return X_train_enc, y_train, X_test_enc, y_test
 
     @staticmethod
     def build_estimator(args):
@@ -18,7 +21,7 @@ class RandomForestsModel:
     hp_space = {
         'max_depth': hp.pchoice('max_depth_enabled', [
             (0.7, None),
-            (0.3, scope.int(hp.qlognormal('max_depth', np.log(30), 1, 3)))]), 
+            (0.3, scope.int(hp.qlognormal('max_depth', np.log(30), 0.5, 3)))]),
         'n_estimators': scope.int(hp.qloguniform('n_estimators', np.log(9.5), np.log(300), 1)),
         'min_samples_leaf': hp.choice('min_samples_leaf_enabled', [
             1,
@@ -31,3 +34,4 @@ class RandomForestsModel:
             (0.6, hp.uniform('max_features_str_frac', 0., 1.))
         ])
     }
+
