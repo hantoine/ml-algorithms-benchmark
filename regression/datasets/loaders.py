@@ -129,3 +129,20 @@ class CommunitiesAndCrimeDataset(Dataset):
         y = df[df.columns[-1]]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
         return (X_train, y_train), (X_test, y_test)
+
+
+class ConcreteCompressiveStrengthDataset(Dataset):
+    filename = 'Concrete_Data.xls'
+    url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls'
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_excel(dataset_path)
+        print(df)
+        X = df[df.columns[:-1]]
+        y = df[df.columns[-1]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return (X_train, y_train), (X_test, y_test)
