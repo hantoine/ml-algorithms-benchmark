@@ -12,6 +12,7 @@ import time
 from utils import Dataset, test_size, random_state
 from config import DEFAULT_DATA_DIR
 
+
 class ParkinsonMultipleSoundRecordingDataset(Dataset):
     filename = 'Parkinson_Multiple_Sound_Recording.rar'
     filenames = ['train_data.txt',
@@ -23,10 +24,10 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
                      'jitter_local', 'jitter_local_abs', 'jitter_rap',
                      'jitter_ppq5', 'jitter_ddp', 'shimmer_local',
                      'shimmer_local_db', 'shimmer_apq3', 'shimmer_apq5',
-                     'shimmer_apq11', 'shimmer_dda', 'AC','NTH','HTN',
+                     'shimmer_apq11', 'shimmer_dda', 'AC', 'NTH', 'HTN',
                      'median_pitch', 'mean_pitch', 'std', 'minimum_pitch',
                      'maximum_pitch', 'nb_pulses', 'nb_periods', 'mean_period',
-                     'std', 'frac_local_unvoiced_frames','nb_voice_breaks',
+                     'std', 'frac_local_unvoiced_frames', 'nb_voice_breaks',
                      'degree_voice_breaks']
 
     @classmethod
@@ -62,7 +63,7 @@ class MerckMolecularActivityChallengeDataset(Dataset):
         if not isfile(dataset_path):
             cls.download(workdir)
         with ZipFile(dataset_path, 'r') as zipfile:
-           zipfile.extractall(workdir)
+            zipfile.extractall(workdir)
         return
 
 
@@ -78,4 +79,37 @@ class QsarAquaticToxicityDataset(Dataset):
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
+        return (X_train, y_train), (X_test, y_test)
+
+
+class WhiteWineQualityDataset(Dataset):
+    filename = 'winequality-red.csv'
+    url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv'
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_csv(dataset_path, sep=';')
+        print(df)
+        X = df[df.columns[:-1]]
+        y = df[df.columns[-1]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return (X_train, y_train), (X_test, y_test)
+
+
+class RedWineQualityDataset(Dataset):
+    filename = 'winequality-white.csv'
+    url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv'
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_csv(dataset_path, sep=';')
+        X = df[df.columns[:-1]]
+        y = df[df.columns[-1]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
         return (X_train, y_train), (X_test, y_test)
