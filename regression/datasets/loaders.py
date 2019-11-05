@@ -8,6 +8,7 @@ import numpy as np
 import patoolib  # for rar files
 from zipfile import ZipFile
 import time
+from scipy.io import arff
 
 from utils import Dataset, test_size, random_state
 from config import DEFAULT_DATA_DIR
@@ -92,7 +93,6 @@ class WhiteWineQualityDataset(Dataset):
         if not isfile(dataset_path):
             cls.download(workdir)
         df = pd.read_csv(dataset_path, sep=';')
-        print(df)
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
@@ -109,6 +109,22 @@ class RedWineQualityDataset(Dataset):
         if not isfile(dataset_path):
             cls.download(workdir)
         df = pd.read_csv(dataset_path, sep=';')
+        X = df[df.columns[:-1]]
+        y = df[df.columns[-1]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return (X_train, y_train), (X_test, y_test)
+
+
+class CommunitiesAndCrimeDataset(Dataset):
+    filename = 'communities.data'
+    url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/communities/communities.data'
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_csv(dataset_path, sep=',', header=None)
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
