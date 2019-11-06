@@ -16,11 +16,6 @@ def test_parkinson_multiple_sound_recording():
     check_dataset(dataset)
 
 
-"""def test_merck_molecular_activity_challenge():
-    dataset = ld.MerckMolecularActivityChallengeDataset.get(workdir)
-    check_dataset(dataset)"""
-
-
 def test_sqar_aquatic_toxicity():
     dataset = ds.QsarAquaticToxicityDataset.get(workdir)
     check_dataset(dataset)

@@ -69,7 +69,10 @@ class QsarAquaticToxicityDataset(Dataset):
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
-        df = cls.get_df(workdir, cls.filename)
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_csv(dataset_path, sep=';')
         df.columns = cls.features
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
@@ -108,8 +111,8 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
         patoolib.extract_archive(dataset_path, outdir=workdir)
         time.sleep(2)
 
-        train_df = cls.get_df(workdir, cls.filenames[0])
-        test_df = cls.get_df(workdir, cls.filenames[1])
+        train_df = pd.read_csv(os.path.join(workdir, cls.filenames[0]), sep=',', header=None)
+        test_df = pd.read_csv(os.path.join(workdir, cls.filenames[1]), sep=',', header=None)
         train_df = train_df.drop([27])
 
         X_train, y_train = cls.parse_dataset(train_df)
