@@ -189,3 +189,21 @@ class ConcreteCompressiveStrengthDataset(Dataset):
         y = df[df.columns[-1]]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
         return (X_train, y_train), (X_test, y_test)
+
+
+class SGEMMGPUKernelPerformancesDataset(Dataset):
+    filename = 'sgemm_product_dataset.zip'
+    url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00440/sgemm_product_dataset.zip'
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        with ZipFile(dataset_path, 'r') as zipfile:
+            zipfile.extractall(workdir)
+        df = pd.read_csv(os.path.join(workdir, 'sgemm_product.csv'), sep=';')
+        X = df[df.columns[:14]]
+        y = df[df.columns[14:]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return (X_train, y_train), (X_test, y_test)
