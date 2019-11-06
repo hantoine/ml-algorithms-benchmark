@@ -117,6 +117,24 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
         return (X_train, y_train), (X_test, y_test)
 
 
+class FacebookMetricsDataset(Dataset):
+    filename = 'Facebook_metrics.zip'
+    url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00368/Facebook_metrics.zip'
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        with ZipFile(dataset_path, 'r') as zipfile:
+            zipfile.extractall(workdir)
+        df = pd.read_csv(os.path.join(workdir, 'dataset_Facebook.csv'), sep=';')
+        X = df[df.columns[:7]]
+        y = df[df.columns[7:]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return (X_train, y_train), (X_test, y_test)
+
+
 class BikeSharingDataset(Dataset):
     filename = 'Bike-Sharing-Dataset.zip'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip'
