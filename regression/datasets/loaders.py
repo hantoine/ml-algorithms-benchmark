@@ -135,6 +135,28 @@ class BikeSharingDataset(Dataset):
         return (X_train, y_train), (X_test, y_test)
 
 
+class StudentPerformanceDataset(Dataset):
+    filename = 'student.zip'
+    url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00320/student.zip'
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        with ZipFile(dataset_path, 'r') as zipfile:
+            zipfile.extractall(workdir)
+        df_mat = pd.read_csv(os.path.join(workdir, 'student-mat.csv'), sep=';')
+        df_por = pd.read_csv(os.path.join(workdir, 'student-por.csv'), sep=';')
+        df = pd.merge(df_mat, df_por,
+                      on=['school', 'sex', 'age', 'address', 'famsize', 'Pstatus', 'Medu', 'Fedu', 'Mjob', 'Fjob',
+                          'reason', 'nursery', 'internet'])
+        X = df[df.columns[:-1]]
+        y = df[df.columns[-1]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return (X_train, y_train), (X_test, y_test)
+
+
 class ConcreteCompressiveStrengthDataset(Dataset):
     filename = 'Concrete_Data.xls'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls'
