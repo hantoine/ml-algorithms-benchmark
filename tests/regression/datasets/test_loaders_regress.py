@@ -14,6 +14,7 @@ def test_white_wine_quality():
     dataset = ds.WhiteWineQualityDataset.get(workdir)
     check_dataset(dataset)
 
+
 def test_red_whine_quality():
     dataset = ds.RedWineQualityDataset.get(workdir)
     check_dataset(dataset)
