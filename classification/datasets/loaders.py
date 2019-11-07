@@ -5,9 +5,40 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 import numpy as np
+from scipy.io import arff
 
 from utils import Dataset, test_size, random_state
 from config import DEFAULT_DATA_DIR
+
+
+class RetinopathyDataset(Dataset):
+    filename = 'messidor_features.arff'
+    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00329/messidor_features.arff'
+
+    feature_names = ['quality',
+                     'pre-screening_label'] + list(range(2, 16)) + [
+                        'dist_betw_centers',
+                        'od_diameter',
+                        'AM_FM_label',
+                        'class']
+
+    @classmethod
+    def preprocess(cls, df):
+        df.columns = cls.feature_names
+        df['class'] = pd.to_numeric(df['class'])
+        df.drop(columns=['quality'])
+        return df.drop(columns=['class']), df.loc[:, 'class']
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        data, _ = arff.loadarff(dataset_path)
+        df = pd.DataFrame(data)
+        X, y = cls.preprocess(df)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        return (X_train, y_train), (X_test, y_test)
 
 
 class DefaultCreditCardDataset(Dataset):
@@ -16,11 +47,30 @@ class DefaultCreditCardDataset(Dataset):
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
-        df = cls.get_df(workdir, cls.filename)
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_excel(dataset_path, header=[0, 1])
         y = df['Y'][df['Y'].columns[0]]
         X = df[[f'X{i}' for i in range(1, 24)]]
         X.columns = X.columns.droplevel()
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
+        return (X_train, y_train), (X_test, y_test)
+
+
+class BreastCancerDataset(Dataset):
+    filename = 'breast-cancer-wisconsin.data'
+    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/breast-cancer-wisconsin.data'
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_csv(dataset_path, delim_whitespace=True, header=None)
+        X = df[df.columns[:-1]]
+        y = df[df.columns[-1]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -30,7 +80,10 @@ class StatlogAustralianDataset(Dataset):
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
-        df = cls.get_df(workdir, cls.filename)
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_csv(dataset_path, sep=' ', header=None)
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
@@ -43,10 +96,37 @@ class StatlogGermanDataset(Dataset):
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
-        df = cls.get_df(workdir, cls.filename)
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_csv(dataset_path, delim_whitespace=True, header=None)
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
+        return (X_train, y_train), (X_test, y_test)
+
+
+class SteelPlatesFaultsDataset(Dataset):
+    urls = ['https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults.NNA',
+            'https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults27x7_var']
+    filenames = ['Faults.NNA', 'Faults27x7_var']
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        dataset_path = os.path.join(workdir, cls.filenames[0])
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_csv(dataset_path, sep='\t', header=None)
+
+        dataset_path = os.path.join(workdir, cls.filenames[1])
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        with open(dataset_path, 'r') as f:
+            cls.feature_names = f.read().strip().split('\n')
+
+        X = df[df.columns[:27]]
+        y = df[df.columns[27:]]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -93,82 +173,18 @@ class AdultDataset(Dataset):
         return X, y
 
 
-class SteelPlatesFaultsDataset(Dataset):
-    urls = ['https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults.NNA',
-            'https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults27x7_var']
-    filenames = ['Faults.NNA', 'Faults27x7_var']
-
-    @classmethod
-    def get(cls, workdir=DEFAULT_DATA_DIR):
-        df = cls.get_df(workdir, cls.filenames[0])
-
-        dataset_path = os.path.join(workdir, cls.filenames[1])
-        if not isfile(dataset_path):
-            cls.download(workdir)
-        with open(dataset_path, 'r') as f:
-            cls.feature_names = f.read().strip().split('\n')
-
-        X = df[df.columns[:27]]
-        y = df[df.columns[27:]]
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-        return (X_train, y_train), (X_test, y_test)
-
-
-class SeismicBumpsDataset(Dataset):
-    filename = 'seismic-bumps.arff'
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00266/seismic-bumps.arff'
-
-    @classmethod
-    def get(cls, workdir=DEFAULT_DATA_DIR):
-        df = cls.get_df(workdir, cls.filename)
-        df['class'] = pd.to_numeric(df['class'])
-
-        str_df = df.select_dtypes([np.object])
-        str_df = str_df.stack().str.decode('utf-8').unstack()
-        for col in str_df:
-            df[col] = str_df[col]
-
-        X = df.drop(columns=['class'])
-        y = df.loc[:, 'class']
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-        return (X_train, y_train), (X_test, y_test)
-
-
 class YeastDataset(Dataset):
     filename = 'yeast.data'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/yeast/yeast.data'
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
-        df = cls.get_df(workdir, cls.filename)
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        df = pd.read_csv(dataset_path, delim_whitespace=True, header=None)
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-        return (X_train, y_train), (X_test, y_test)
-
-
-class RetinopathyDataset(Dataset):
-    filename = 'messidor_features.arff'
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00329/messidor_features.arff'
-
-    feature_names = ['quality',
-            'pre-screening_label'] + list(range(2, 16)) + [
-            'dist_betw_centers',
-            'od_diameter',
-            'AM_FM_label',
-            'class']
-
-    @classmethod
-    def preprocess(cls, df):
-        df.columns = cls.feature_names
-        df['class'] = pd.to_numeric(df['class'])
-        df.drop(columns=['quality'])
-        return df.drop(columns=['class']), df.loc[:,'class']
-
-    @classmethod
-    def get(cls, workdir=DEFAULT_DATA_DIR):
-        df = cls.get_df(workdir, cls.filename)
-        X, y = cls.preprocess(df)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
         return (X_train, y_train), (X_test, y_test)
 
@@ -179,24 +195,39 @@ class ThoraricSurgeryDataset(Dataset):
 
     @classmethod
     def preprocess(cls, df):
-        return df.iloc[:,:-1], df.iloc[:,-1]
+        return df.iloc[:, :-1], df.iloc[:, -1]
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
-        df = cls.get_df(workdir, cls.filename)
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        data, _ = arff.loadarff(dataset_path)
+        df = pd.DataFrame(data)
         X, y = cls.preprocess(df)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
         return (X_train, y_train), (X_test, y_test)
 
 
-class BreastCancerDataset(Dataset):
-    filename = 'breast-cancer-wisconsin.data'
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/breast-cancer-wisconsin.data'
+class SeismicBumpsDataset(Dataset):
+    filename = 'seismic-bumps.arff'
+    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00266/seismic-bumps.arff'
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
-        df = cls.get_df(workdir, cls.filename)
-        X = df[df.columns[:-1]]
-        y = df[df.columns[-1]]
+        dataset_path = os.path.join(workdir, cls.filename)
+        if not isfile(dataset_path):
+            cls.download(workdir)
+        data, _ = arff.loadarff(dataset_path)
+        df = pd.DataFrame(data)
+        df['class'] = pd.to_numeric(df['class'])
+
+        str_df = df.select_dtypes([np.object])
+        str_df = str_df.stack().str.decode('utf-8').unstack()
+        for col in str_df:
+            df[col] = str_df[col]
+
+        X = df.drop(columns=['class'])
+        y = df.loc[:, 'class']
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
         return (X_train, y_train), (X_test, y_test)
