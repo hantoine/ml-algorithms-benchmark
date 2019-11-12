@@ -44,6 +44,8 @@ class RetinopathyDataset(Dataset):
 class DefaultCreditCardDataset(Dataset):
     filename = 'default of credit card clients.xls'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00350/default of credit card clients.xls'
+    categorical_features = []
+    metric = 'f1'
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
