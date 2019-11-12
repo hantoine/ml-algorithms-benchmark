@@ -1,4 +1,5 @@
 from sklearn.ensemble import RandomForestClassifier
+import pandas as pd
 from utils import CategoryEncoder
 from hyperopt import hp
 from hyperopt.pyll import scope
@@ -16,6 +17,11 @@ class RandomForestsModel:
             ce = CategoryEncoder(categorical_features, method='onehot')
         X_train_enc = ce.fit_transform(X_train, y_train)
         X_test_enc = ce.transform(X_test)
+
+        # if Xs are numpy array, ys needs to be too (for k-fold)
+        if type(y_train) == pd.Series:
+            y_train, y_test = y_train.values, y_test.values
+
         return X_train_enc, y_train, X_test_enc, y_test
 
     @staticmethod

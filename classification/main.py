@@ -7,7 +7,7 @@ from hyperopt import Trials, fmin, tpe, space_eval
 from classification import datasets as ds
 from classification import models
 
-HP_TUNING_TRIALS = 100
+HP_TUNING_TRIALS = 1
 
 def get_objective(dataset, model, X, y):
     def objective(args):
@@ -36,7 +36,9 @@ def get_objective(dataset, model, X, y):
 
 kfold = StratifiedKFold(n_splits=7, shuffle=True, random_state=0)
 
-for dataset in [ds.AdultDataset]:
+datasets_used = [ds.AdultDataset, ds.DefaultCreditCardDataset]
+
+for dataset in datasets_used:
     train, test = dataset.get()
     for model in [models.RandomForestsModel]:
         X, y, X_test, y_test = \
@@ -48,4 +50,4 @@ for dataset in [ds.AdultDataset]:
                     max_evals=HP_TUNING_TRIALS,
                     trials=trials,
                     show_progressbar=True)
-        import pdb; pdb.set_trace()
+        print(best)
