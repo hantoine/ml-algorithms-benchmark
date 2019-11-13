@@ -6,6 +6,7 @@ from hyperopt import Trials, fmin, tpe, space_eval
 
 from classification import datasets as ds
 from classification import models
+from utils import random_state
 
 HP_TUNING_TRIALS = 1
 
@@ -61,5 +62,6 @@ for dataset in datasets_used:
                     algo=tpe.suggest,
                     max_evals=HP_TUNING_TRIALS,
                     trials=trials,
-                    show_progressbar=True)
+                    show_progressbar=True,
+                    rstate=np.random.RandomState(random_state))
         print(best)
