@@ -43,3 +43,11 @@ def test_thoracic_surgery_dataset_loading():
 def test_breast_cancer_dataset_loading():
     dataset = ds.BreastCancerDataset.get(workdir)
     check_dataset(dataset)
+
+def test_seismic_bumps_dataset_loading():
+    dataset = ds.SeismicBumpsDataset.get(workdir)
+    check_dataset(dataset)
+
+def test_steel_plates_faults_dataset_loading():
+    dataset = ds.SteelPlatesFaultsDataset.get(workdir)
+    check_dataset(dataset)
