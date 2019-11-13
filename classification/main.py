@@ -9,7 +9,7 @@ from classification import models
 from classification.metrics import compute_loss
 from utils import random_state
 
-HP_TUNING_TRIALS = 1
+HP_TUNING_TRIALS = 30
 K_FOLD_K_VALUE = 7
 
 def get_objective(dataset, model, X, y, kfold):
@@ -30,6 +30,7 @@ def get_objective(dataset, model, X, y, kfold):
     return objective
 
 for dataset in ds.all_datasets:
+    print(f'Dataset: {dataset.__name__}')
     train, test = dataset.get()
     kfold = StratifiedKFold(n_splits=min(K_FOLD_K_VALUE, ds.get_min_k_fold_k_value(train)),
                             shuffle=True, random_state=random_state)
@@ -44,4 +45,6 @@ for dataset in ds.all_datasets:
                     trials=trials,
                     show_progressbar=True,
                     rstate=np.random.RandomState(random_state))
-        print(best)
+        best_score = -min(trials.losses())
+        best_hp = space_eval(model.hp_space, best)
+        print(f'Best {dataset.metric}: {best_score}\nWith hyperparams: {best_hp}')
