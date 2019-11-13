@@ -20,6 +20,8 @@ class CategoryEncoder:
         if self.method == 'onehot':
             encoder = OneHotEncoder(dtype=np.int)
         elif self.method == 'sorted_ordinal':
+            # Converting to str (OrdinalEncoder does not supported non-sorted numerical categories)
+            X[self.categorical_features] = X[self.categorical_features].astype(str)
             categories = [self.get_optimal_category_ordering(X, y, name) for name in self.categorical_features]
             encoder = OrdinalEncoder(categories=categories, dtype=np.int)
         else: # method == 'ordinal'
@@ -32,6 +34,8 @@ class CategoryEncoder:
     def transform(self, X, y=None):
         if not hasattr(self, 'encoder'):
             raise ValueError('The tree ordinal encoder has not been fitted first')
+        if self.method == 'sorted_ordinal':
+            X[self.categorical_features] = X[self.categorical_features].astype(str)
         X_enc = self.encoder.transform(X)
         if y is not None:
             return X_enc, y
