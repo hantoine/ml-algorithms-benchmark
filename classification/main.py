@@ -6,7 +6,7 @@ from hyperopt import Trials, fmin, tpe, space_eval
 
 from classification import datasets as ds
 from classification import models
-from classification.metrics import compute_score
+from classification.metrics import compute_loss
 from utils import random_state
 
 HP_TUNING_TRIALS = 1
@@ -25,7 +25,7 @@ def get_objective(dataset, model, X, y, kfold):
             confusion_matrices.append(conf_matrix)
             
         confusion_matrix = np.array(confusion_matrices).sum(axis=0)
-        return compute_score(dataset.metric, confusion_matrix)
+        return compute_loss(dataset.metric, confusion_matrix)
 
     return objective
 
