@@ -9,8 +9,9 @@ from classification import models
 from utils import random_state
 
 HP_TUNING_TRIALS = 1
+K_FOLD_K_VALUE = 7
 
-def get_objective(dataset, model, X, y):
+def get_objective(dataset, model, X, y, kfold):
     def objective(args):
         estimator = model.build_estimator(args)
         confusion_matrices = []
@@ -47,17 +48,15 @@ def get_objective(dataset, model, X, y):
             return -score
     return objective
 
-kfold = StratifiedKFold(n_splits=7, shuffle=True, random_state=0)
-
-datasets_used = [ds.AdultDataset, ds.DefaultCreditCardDataset]
-
-for dataset in datasets_used:
+for dataset in ds.all_datasets:
     train, test = dataset.get()
+    kfold = StratifiedKFold(n_splits=min(K_FOLD_K_VALUE, ds.get_min_k_fold_k_value(train)),
+                            shuffle=True, random_state=random_state)
     for model in [models.RandomForestsModel]:
         X, y, X_test, y_test = \
             model.prepare_dataset(train, test, dataset.categorical_features)
         trials = Trials()
-        best = fmin(get_objective(dataset, model, X, y),
+        best = fmin(get_objective(dataset, model, X, y, kfold),
                     model.hp_space,
                     algo=tpe.suggest,
                     max_evals=HP_TUNING_TRIALS,

@@ -8,3 +8,10 @@ from .loaders import SteelPlatesFaultsDataset
 from .loaders import RetinopathyDataset
 from .loaders import BreastCancerDataset
 from .loaders import ThoraricSurgeryDataset
+
+from .utils import get_min_k_fold_k_value
+
+all_datasets = [StatlogAustralianDataset, StatlogGermanDataset, SteelPlatesFaultsDataset,
+                ThoraricSurgeryDataset, YeastDataset, SeismicBumpsDataset,
+                RetinopathyDataset, AdultDataset, DefaultCreditCardDataset,
+                BreastCancerDataset]
