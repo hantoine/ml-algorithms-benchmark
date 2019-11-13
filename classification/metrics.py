@@ -25,7 +25,6 @@ def compute_score_multiclass(metric, confusion_matrix):
     if metric == 'accuracy':
         correct = np.sum(np.diag(confusion_matrix))
         total = np.sum(confusion_matrix)
-        print(confusion_matrix)
         score = correct / total
     elif metric == 'f1':
         f1_per_class = np.empty(len(confusion_matrix))

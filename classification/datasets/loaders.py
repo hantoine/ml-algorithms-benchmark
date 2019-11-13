@@ -129,7 +129,7 @@ class SteelPlatesFaultsDataset(Dataset):
             'https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults27x7_var']
     filenames = ['Faults.NNA', 'Faults27x7_var']
     categorical_features = []
-    metric = 'accuracy' # Could use macro-f1
+    metric = 'f1'
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
@@ -202,7 +202,7 @@ class AdultDataset(Dataset):
 class YeastDataset(Dataset):
     filename = 'yeast.data'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/yeast/yeast.data'
-    metric = 'accuracy' # Macro f1 would be better
+    metric = 'f1'
     categorical_features = []
 
     @classmethod
