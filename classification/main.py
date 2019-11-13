@@ -6,6 +6,7 @@ from hyperopt import Trials, fmin, tpe, space_eval
 
 from classification import datasets as ds
 from classification import models
+from classification.metrics import compute_score
 from utils import random_state
 
 HP_TUNING_TRIALS = 1
@@ -23,29 +24,9 @@ def get_objective(dataset, model, X, y, kfold):
             conf_matrix = compute_confusion_matrix(y_val, estimator.predict(X_val))
             confusion_matrices.append(conf_matrix)
             
-            confusion_matrix = np.array(confusion_matrices).sum(axis=0)
+        confusion_matrix = np.array(confusion_matrices).sum(axis=0)
+        return compute_score(dataset.metric, confusion_matrix)
 
-            # Deal with non-binary classification case
-            is_binary_classification = confusion_matrix.shape == (2, 2)
-            if is_binary_classification:
-                tn, fp, fn, tp = confusion_matrix.ravel()
-            elif dataset.metric == 'accuracy':
-                tp = np.sum(np.diag(confusion_matrix))
-                fn = np.sum(confusion_matrix) - tp
-                tn, fp = 0, 0
-            else:
-                raise NotImplementedError
-
-            if dataset.metric == 'f1':
-                # Averaging of f1 across folds as suggested by Forman & Scholz
-                # https://www.hpl.hp.com/techreports/2009/HPL-2009-359.pdf
-                score = (2*tp) / (2*tp + fp + fn)
-            elif dataset.metric == 'accuracy':
-                score = (tp + tn) / (tn + fp + fn + tp)
-            else:
-                raise ValueError(f'Metric for dataset f{type(dataset).__name__}'
-                                 + ' not implemented (f{dataset.metric})')
-            return -score
     return objective
 
 for dataset in ds.all_datasets:
