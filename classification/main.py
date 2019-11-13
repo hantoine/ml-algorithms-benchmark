@@ -1,6 +1,6 @@
 #%% Get Dataset
 import numpy as np
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix as compute_confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 from hyperopt import Trials, fmin, tpe, space_eval
 
@@ -18,10 +18,22 @@ def get_objective(dataset, model, X, y):
             y_train, y_val = y[train_index], y[val_index]
 
             estimator.fit(X_train, y_train)
-            conf_matrix = confusion_matrix(y_val, estimator.predict(X_val))
+            conf_matrix = compute_confusion_matrix(y_val, estimator.predict(X_val))
             confusion_matrices.append(conf_matrix)
             
-            tn, fp, fn, tp = np.array(confusion_matrices).sum(axis=0).ravel()
+            confusion_matrix = np.array(confusion_matrices).sum(axis=0)
+
+            # Deal with non-binary classification case
+            is_binary_classification = confusion_matrix.shape == (2, 2)
+            if is_binary_classification:
+                tn, fp, fn, tp = confusion_matrix.ravel()
+            elif dataset.metric == 'accuracy':
+                tp = np.sum(np.diag(confusion_matrix))
+                fn = np.sum(confusion_matrix) - tp
+                tn, fp = 0, 0
+            else:
+                raise NotImplementedError
+
             if dataset.metric == 'f1':
                 # Averaging of f1 across folds as suggested by Forman & Scholz
                 # https://www.hpl.hp.com/techreports/2009/HPL-2009-359.pdf
