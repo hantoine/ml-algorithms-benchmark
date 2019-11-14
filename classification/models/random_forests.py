@@ -50,6 +50,11 @@ class RandomForestsModel:
             (0.1, 'log2'),  # less common choice.
             (0.1, None),  # all features, less common choice.
             (0.6, hp.uniform('max_features_str_frac', 0., 1.))
+        ]),
+        'class_weight': hp.pchoice('class_weight', [
+            (0.5, None),
+            (0.3, 'balanced'),
+            (0.2, 'balanced_subsample')
         ])
     }
 
