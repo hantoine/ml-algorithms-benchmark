@@ -12,11 +12,12 @@ from utils import random_state
 HP_TUNING_TRIALS = 30
 K_FOLD_K_VALUE = 7
 
-def get_objective(dataset, model, X, y, kfold):
+def get_objective(dataset, model, train, kfold):
     def objective(args):
         estimator = model.build_estimator(args)
         confusion_matrices = []
-        for train_index, val_index in kfold.split(X, y):
+        X, y, *_ = train
+        for train_index, val_index in kfold.split(*train):
             X_train, X_val = X[train_index], X[val_index]
             y_train, y_val = y[train_index], y[val_index]
 
@@ -35,10 +36,9 @@ for dataset in ds.all_datasets:
     kfold = StratifiedKFold(n_splits=min(K_FOLD_K_VALUE, ds.get_min_k_fold_k_value(train)),
                             shuffle=True, random_state=random_state)
     for model in [models.RandomForestsModel]:
-        X, y, X_test, y_test = \
-            model.prepare_dataset(train, test, dataset.categorical_features)
+        train, test = model.prepare_dataset(train, test, dataset.categorical_features)
         trials = Trials()
-        best = fmin(get_objective(dataset, model, X, y, kfold),
+        best = fmin(get_objective(dataset, model, train, kfold),
                     model.hp_space,
                     algo=tpe.suggest,
                     max_evals=HP_TUNING_TRIALS,

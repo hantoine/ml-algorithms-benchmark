@@ -23,6 +23,7 @@ def test_random_forest_training():
         train, test = dataset.get()
         model = models.RandomForestsModel
         hyperparams = sample_hp(models.RandomForestsModel.hp_space)
-        X, y, _, _ = model.prepare_dataset(train, test, dataset.categorical_features)
+        train, test = model.prepare_dataset(train, test, dataset.categorical_features)
         estimator = model.build_estimator(hyperparams)
+        X, y, *_ = train
         estimator.fit(X, y)

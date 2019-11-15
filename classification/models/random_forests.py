@@ -30,7 +30,7 @@ class RandomForestsModel:
             X_train_enc = imp.fit_transform(X_train_enc)
             X_test_enc = imp.transform(X_test_enc)
 
-        return X_train_enc, y_train, X_test_enc, y_test
+        return (X_train_enc, y_train), (X_test_enc, y_test)
 
     @staticmethod
     def build_estimator(args):
