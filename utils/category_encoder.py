@@ -18,7 +18,7 @@ class CategoryEncoder:
 
     def fit(self, X, y):
         if self.method == 'onehot':
-            encoder = OneHotEncoder(dtype=np.int)
+            encoder = OneHotEncoder(dtype=np.int, categories='auto')
         elif self.method == 'sorted_ordinal':
             # Converting to str (OrdinalEncoder does not supported non-sorted numerical categories)
             X[self.categorical_features] = X[self.categorical_features].astype(str)
