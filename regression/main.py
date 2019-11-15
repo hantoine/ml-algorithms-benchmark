@@ -8,7 +8,7 @@ from regression import models
 from regression.metrics import compute_metric, aggregate_metrics
 from utils import random_state
 
-HP_TUNING_TRIALS = 1
+HP_TUNING_TRIALS = 30
 K_FOLD_K_VALUE = 7
 
 def get_objective(dataset, model, train, kfold):
@@ -24,8 +24,8 @@ def get_objective(dataset, model, train, kfold):
             metric_value = compute_metric(y_val, estimator.predict(X_val), dataset.metric)
             metric_values.append(metric_value)
             
-        score = aggregate_metrics(metric_values, dataset.metric)
-        return -score
+        loss = aggregate_metrics(metric_values, dataset.metric)
+        return loss
 
     return objective
 
