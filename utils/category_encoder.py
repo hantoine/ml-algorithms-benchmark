@@ -13,7 +13,7 @@ class CategoryEncoder:
     @staticmethod
     def get_optimal_category_ordering(X, y, feature_name):
         p_pos_per_category = [(category, y[X[feature_name] == category].mean())
-                        for category in X[feature_name].unique()]
+                              for category in np.unique(X[feature_name])]
         return list(map(itemgetter(0), sorted(p_pos_per_category, key=itemgetter(1))))
 
     def fit(self, X, y):

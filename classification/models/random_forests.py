@@ -1,6 +1,7 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
+from sklearn.preprocessing import StandardScaler
 import pandas as pd
 from utils import CategoryEncoder, random_state
 from hyperopt import hp
@@ -26,6 +27,11 @@ class RandomForestsModel:
 
         # Impute missing values if any
         if np.isnan(X_train_enc).any() or np.isnan(X_test_enc).any():
+            # Scaling first since imputer uses BayesianRidge
+            scaler = StandardScaler()
+            X_train_enc = scaler.fit_transform(X_train_enc)
+            X_test_enc = scaler.transform(X_test_enc)
+            
             imp = IterativeImputer(max_iter=10, random_state=random_state)
             X_train_enc = imp.fit_transform(X_train_enc)
             X_test_enc = imp.transform(X_test_enc)
