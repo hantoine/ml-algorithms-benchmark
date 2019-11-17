@@ -7,6 +7,7 @@ from utils import CategoryEncoder, random_state
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np
+import scipy
 
 class RandomForestsModel:
     @staticmethod
@@ -27,6 +28,11 @@ class RandomForestsModel:
 
         # Impute missing values if any
         if np.isnan(X_train_enc).any() or np.isnan(X_test_enc).any():
+            # StandardScaler does not support sparse matrix
+            if type(X_train_enc) == scipy.sparse.csr.csr_matrix:
+                X_train_enc = X_train_enc.toarray()
+                X_test_enc = X_test_enc.toarray()
+
             # Scaling first since imputer uses BayesianRidge
             scaler = StandardScaler()
             X_train_enc = scaler.fit_transform(X_train_enc)

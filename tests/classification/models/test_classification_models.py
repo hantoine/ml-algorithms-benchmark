@@ -1,3 +1,4 @@
+from numpy.random import RandomState
 from classification import models
 from hyperopt.pyll.stochastic import sample as sample_hp
 from classification import datasets as ds
@@ -19,11 +20,21 @@ def test_random_forests_prepare():
     check_prepare_dataset(models.RandomForestsModel)
 
 def test_random_forest_training():
+    model = models.RandomForestsModel
+    hyperparams = sample_hp(model.hp_space, rng=RandomState(9))
     for dataset in ds.all_datasets:
         train, test = dataset.get()
-        model = models.RandomForestsModel
-        hyperparams = sample_hp(models.RandomForestsModel.hp_space)
         train, test = model.prepare_dataset(train, test, dataset.categorical_features)
         estimator = model.build_estimator(hyperparams)
+        X, y, *_ = train
+        estimator.fit(X, y)
+
+def test_svm_training():
+    model = models.SVMModel
+    hyperparams = sample_hp(models.SVMModel.hp_space, rng=RandomState(1))
+    for dataset in ds.all_datasets:
+        train, test = dataset.get()
+        train, test = model.prepare_dataset(train, test, dataset.categorical_features)
+        estimator = model.build_estimator(hyperparams, test=True)
         X, y, *_ = train
         estimator.fit(X, y)

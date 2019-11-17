@@ -7,6 +7,7 @@ from utils import CategoryEncoder, random_state
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np
+import scipy
 
 class SVMModel:
     @staticmethod
@@ -21,7 +22,10 @@ class SVMModel:
         if type(y_train) == pd.Series:
             y_train, y_test = y_train.values, y_test.values
 
-        # Standardization
+        # StandardScaler does not support sparse matrix
+        if type(X_train_enc) == scipy.sparse.csr.csr_matrix:
+            X_train_enc = X_train_enc.toarray()
+            X_test_enc = X_test_enc.toarray()
         scaler = StandardScaler()
         X_train_enc = scaler.fit_transform(X_train_enc)
         X_test_enc = scaler.transform(X_test_enc)
@@ -35,11 +39,13 @@ class SVMModel:
         return (X_train_enc, y_train), (X_test_enc, y_test)
 
     @staticmethod
-    def build_estimator(args):
+    def build_estimator(args, test=False):
         return SVC(
             random_state=random_state,
-            max_iter=int(2e6), # Prevent very long training time for some hyper-parameters
-            cache_size=4096, # Use 4GB of cache to speed up  
+            # Prevent very long training time for some hyper-parameters
+            max_iter=int(1e3) if test else int(2e6),
+             # Use 4GB of cache to speed up
+            cache_size=4096, 
             **args
         )
     
