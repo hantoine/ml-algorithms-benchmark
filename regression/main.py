@@ -8,7 +8,7 @@ from regression import models
 from regression.metrics import compute_metric, aggregate_metrics
 from utils import random_state
 
-HP_TUNING_TRIALS = 1
+HP_TUNING_TRIALS = 50
 K_FOLD_K_VALUE = 7
 
 def get_objective(dataset, model, train, kfold):
@@ -37,7 +37,7 @@ for dataset in ds.all_datasets:
         kfold = GroupKFold(n_splits=K_FOLD_K_VALUE)
     else:
         kfold = KFold(n_splits=K_FOLD_K_VALUE, shuffle=True, random_state=random_state)
-    for model in [models.RandomForestsModel]:
+    for model in models.all_models:
         train, test = model.prepare_dataset(train, test, dataset.categorical_features)
         trials = Trials()
         best = fmin(get_objective(dataset, model, train, kfold),

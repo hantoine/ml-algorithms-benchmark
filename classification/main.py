@@ -35,7 +35,7 @@ for dataset in ds.all_datasets:
     train, test = dataset.get()
     kfold = StratifiedKFold(n_splits=min(K_FOLD_K_VALUE, ds.get_min_k_fold_k_value(train)),
                             shuffle=True, random_state=random_state)
-    for model in [models.RandomForestsModel]:
+    for model in models.all_models:
         train, test = model.prepare_dataset(train, test, dataset.categorical_features)
         trials = Trials()
         best = fmin(get_objective(dataset, model, train, kfold),
