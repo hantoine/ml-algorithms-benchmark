@@ -7,5 +7,5 @@ all_datasets = [
                 FacebookCommentDataset, BikeSharingDataset, SGEMMGPUKernelPerformancesDataset,
                 ConcreteCompressiveStrengthDataset, StudentMathPerformanceDataset,
                 StudentPortuguesePerformanceDataset, StudentMathPerformanceNoPrevGradesDataset,
-                StudentPortuguesePerformanceNoPrevGradesDataset
-                ]
+                StudentPortuguesePerformanceNoPrevGradesDataset, MerckMolecularActivityDataset
+               ]

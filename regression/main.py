@@ -8,7 +8,7 @@ from regression import models
 from regression.metrics import compute_metric, aggregate_metrics
 from utils import random_state
 
-HP_TUNING_TRIALS = 30
+HP_TUNING_TRIALS = 1
 K_FOLD_K_VALUE = 7
 
 def get_objective(dataset, model, train, kfold):
@@ -24,8 +24,8 @@ def get_objective(dataset, model, train, kfold):
             metric_value = compute_metric(y_val, estimator.predict(X_val), dataset.metric)
             metric_values.append(metric_value)
             
-        loss = aggregate_metrics(metric_values, dataset.metric)
-        return loss
+        score = aggregate_metrics(metric_values, dataset.metric)
+        return -score
 
     return objective
 
@@ -49,4 +49,7 @@ for dataset in ds.all_datasets:
                     rstate=np.random.RandomState(random_state))
         best_score = -min(trials.losses())
         best_hp = space_eval(model.hp_space, best)
-        print(f'Best {dataset.metric}: {best_score}\nWith hyperparams: {best_hp}')
+        best_trial_index = np.array(trials.losses()).argmin()
+        print(f'Best {dataset.metric}: {best_score}')
+        print(f'With hyperparams: {best_hp}')
+        print(f'Obtained after {best_trial_index-1} trials')

@@ -6,21 +6,65 @@ from functools import partial
 import pandas as pd
 from sklearn.model_selection import train_test_split, GroupShuffleSplit
 from sklearn.preprocessing import LabelEncoder
+from sklearn.impute import SimpleImputer
 import numpy as np
 import patoolib  # for rar files
 from zipfile import ZipFile
 import time
 from scipy.io import arff
 import shutil
+import kaggle
+import zipfile
 
 from utils import Dataset, test_size, random_state, encode_feature_as_cyclical
 from config import DEFAULT_DATA_DIR
 
 
+class MerckMolecularActivityDataset(Dataset):
+    filename = 'TrainingSet.zip'
+    metric = 'r2'
+    categorical_features = []
+
+    @classmethod
+    def get(cls, workdir=DEFAULT_DATA_DIR):
+        if not isdir(os.path.join(workdir, 'TrainingSet')):
+            cls.prepare(workdir)
+        df_1 = pd.read_csv(os.path.join(workdir, 'TrainingSet/ACT2_competition_training.csv'))
+        df_2 = pd.read_csv(os.path.join(workdir, 'TrainingSet/ACT4_competition_training.csv'))
+        df = pd.concat((df_1, df_2), axis=0, sort=True)
+        X = df[df.columns[1:-1]]
+        y = df['Act']
+
+        # Remove columns with more NaNs than values (still more than 5k columns left)
+        X = X.loc[:, X.count() > 0.5*len(X)]
+
+        X_train, X_test, y_train, y_test = \
+            train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        # Replace NaNs by mean (Interactive Imputer is extremely slow with a dataset of this size)
+        imp = SimpleImputer()
+        X_train = imp.fit_transform(X_train)
+        X_test = imp.transform(X_test)
+
+        return (X_train, y_train), (X_test, y_test)
+
+    @classmethod
+    def prepare(cls, workdir):
+        kaggle.api.competition_download_file(competition='MerckActivity',
+                                             file_name=cls.filename,
+                                             path=workdir,
+                                             quiet=True)
+
+        with zipfile.ZipFile(os.path.join(workdir, cls.filename), 'r') as zip_file:
+            zip_file.extract('TrainingSet/ACT2_competition_training.csv', path=workdir)
+            zip_file.extract('TrainingSet/ACT4_competition_training.csv', path=workdir)
+
+
+
 class WhiteWineQualityDataset(Dataset):
     filename = 'winequality-red.csv'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv'
-    metric = 'rmse'
+    metric = '-rmse'
     categorical_features = []
 
     @classmethod
@@ -39,7 +83,7 @@ class WhiteWineQualityDataset(Dataset):
 class RedWineQualityDataset(Dataset):
     filename = 'winequality-white.csv'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv'
-    metric = 'rmse'
+    metric = '-rmse'
     categorical_features = []
 
     @classmethod
@@ -58,7 +102,7 @@ class RedWineQualityDataset(Dataset):
 class CommunitiesAndCrimeDataset(Dataset):
     filename = 'communities.data'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/communities/communities.data'
-    metric = 'rmse'
+    metric = '-rmse'
     categorical_features = []
 
     @classmethod
@@ -81,7 +125,7 @@ class QsarAquaticToxicityDataset(Dataset):
     filename = 'qsar_aquatic_toxicity.csv'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00505//qsar_aquatic_toxicity.csv'
     features = ['TPSA', 'SAacc', 'H-050', 'MLOGP', 'RDCHI', 'GATS1p', 'nN', 'C-040', 'LC50']
-    metric = 'rmse'
+    metric = '-rmse'
     categorical_features = []
 
     @classmethod
@@ -112,7 +156,7 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
                      'maximum_pitch', 'nb_pulses', 'nb_periods', 'mean_period',
                      'std', 'frac_local_unvoiced_frames', 'nb_voice_breaks',
                      'degree_voice_breaks', 'UPDRS', 'class']
-    metric = 'rmse'
+    metric = '-rmse'
     categorical_features = []
     need_grouped_split = True
 
@@ -156,7 +200,7 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
 class FacebookMetricsDataset(Dataset):
     filename = 'Facebook_metrics.zip'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00368/Facebook_metrics.zip'
-    metric = 'rmse'
+    metric = '-rmse'
     categorical_features = ['Type', 'Category', 'Post Weekday']
     """
         We decide to encode Post Hour and Post Month as cyclical numeric.
@@ -225,7 +269,7 @@ class FacebookCommentDataset(FacebookMetricsDataset):
 class BikeSharingDataset(Dataset):
     filename = 'Bike-Sharing-Dataset.zip'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip'
-    metric = 'rmse'
+    metric = '-rmse'
     categorical_features = ['season', 'weekday']
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
@@ -250,7 +294,7 @@ class BikeSharingDataset(Dataset):
 class StudentPerformanceBaseDataset(Dataset):
     filename = 'student.zip'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00320/student.zip'
-    metric = 'rmse'
+    metric = '-rmse'
     categorical_features = ['school', 'sex', 'address', 'famsize', 'Pstatus', 'Mjob', 'Fjob', 'reason', 'guardian']
 
     @classmethod
@@ -312,7 +356,7 @@ class StudentPortuguesePerformanceNoPrevGradesDataset(StudentPerformanceNoPrevGr
 class ConcreteCompressiveStrengthDataset(Dataset):
     filename = 'Concrete_Data.xls'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls'
-    metric = 'rmse'
+    metric = '-rmse'
     categorical_features = []
 
     @classmethod
@@ -331,7 +375,7 @@ class ConcreteCompressiveStrengthDataset(Dataset):
 class SGEMMGPUKernelPerformancesDataset(Dataset):
     filename = 'sgemm_product_dataset.zip'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00440/sgemm_product_dataset.zip'
-    metric = 'rmse'
+    metric = '-rmse'
     categorical_features = []
 
     @classmethod
