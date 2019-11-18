@@ -48,3 +48,12 @@ def test_lr_training():
         estimator = model.build_estimator(hyperparams)
         X, y, *_ = train
         estimator.fit(X, y)
+
+def test_gaussian_nb_training():
+    model = models.GaussianNBModel
+    for dataset in ds.all_datasets:
+        train, test = dataset.get()
+        train, test = model.prepare_dataset(train, test, dataset.categorical_features)
+        estimator = model.build_estimator(None)
+        X, y, *_ = train
+        estimator.fit(X, y)

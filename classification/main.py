@@ -58,6 +58,13 @@ for dataset in ds.all_datasets:
         train_prepared, test_prepared = \
             model.prepare_dataset(train_prepared, test_prepared, dataset.categorical_features)
 
+        # For models without hyper-parameters
+        is_model_tunable = hasattr(model, 'hp_space')
+        if not is_model_tunable:
+            loss = get_objective(dataset, model, train_prepared, kfold)(None)
+            print(f'Resulting {dataset.metric}: {-loss}')
+            continue
+
         trials = Trials()
         rstate = np.random.RandomState(random_state)
         start_time = time.time()
