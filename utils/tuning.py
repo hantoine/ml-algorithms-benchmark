@@ -1,11 +1,36 @@
 import time
+import warnings
 import numpy as np
+from datetime import timedelta
+
 from hyperopt import fmin, tpe, Trials, space_eval
 from sklearn.model_selection import StratifiedKFold, GroupKFold, KFold
 from sklearn.utils import shuffle
+from sklearn.exceptions import ConvergenceWarning
 
-from utils import compute_metric, compute_loss, random_state
-from config import K_FOLD_K_VALUE
+from utils import compute_metric, compute_loss
+from config import K_FOLD_K_VALUE, random_state
+
+def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_per_step=5,
+                                    tuning_time=120):
+    warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+    minimum_runtime = tuning_time * len(models) * len(datasets)
+    print(f'Expected minimum runtime: {timedelta(seconds=minimum_runtime)}')
+
+    for dataset in datasets:
+        print(f'Dataset: {dataset.__name__}')
+        train, test = dataset.get()
+        for model in models:
+            print(f'Model: {model.__name__}')
+            try:
+                train, test = model.prepare_dataset(train, test, dataset.categorical_features)
+
+                best_hp = tune_hyperparams(task_type, dataset, model, train,
+                                           tuning_trials_per_step, tuning_time)
+            except MemoryError:
+                print('Memory requirements for this model with this dataset too high')
+
 
 def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tuning_time):
     kfold, train_data = create_kfold(task_type, dataset, train_data)

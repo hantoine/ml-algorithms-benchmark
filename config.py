@@ -2,3 +2,5 @@ DEFAULT_DATA_DIR = 'data'
 K_FOLD_K_VALUE = 7
 test_size = 0.25
 random_state = 42
+HP_TUNING_STEP_TRIALS = 5
+HP_TUNE_MAX_TIME = 120
