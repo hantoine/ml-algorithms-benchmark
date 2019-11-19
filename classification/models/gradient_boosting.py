@@ -1,4 +1,4 @@
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.preprocessing import StandardScaler
@@ -9,7 +9,8 @@ from hyperopt.pyll import scope
 import numpy as np
 import scipy
 
-class RandomForestsModel:
+
+class GradientBoostingModel:
     @staticmethod
     def prepare_dataset(train_data, test_data, categorical_features):
         X_train, y_train, *other = train_data
@@ -37,7 +38,7 @@ class RandomForestsModel:
             scaler = StandardScaler()
             X_train_enc = scaler.fit_transform(X_train_enc)
             X_test_enc = scaler.transform(X_test_enc)
-            
+
             imp = IterativeImputer(max_iter=10, random_state=random_state)
             X_train_enc = imp.fit_transform(X_train_enc)
             X_test_enc = imp.transform(X_test_enc)
@@ -46,27 +47,31 @@ class RandomForestsModel:
 
     @staticmethod
     def build_estimator(args):
-        return RandomForestClassifier(random_state=random_state, n_jobs=-1, **args)
-    
+        return GradientBoostingClassifier(random_state=random_state, presort=True, **args)
+
     hp_space = {
-        'max_depth': hp.pchoice('max_depth_enabled', [
-            (0.7, None),
-            (0.3, scope.int(hp.qlognormal('max_depth', np.log(30), 0.5, 3)))]),
-        'n_estimators': scope.int(hp.qloguniform('n_estimators', np.log(9.5), np.log(300), 1)),
+        'n_estimators': scope.int(hp.qloguniform('n_estimators', np.log(10.5), np.log(1000.5), 1)),
+        'learning_rate': hp.lognormal('learning_rate', np.log(0.01), np.log(10.0)),
+        'criterion': hp.choice('criterion', ['mse', 'friedman_mse', 'mae']),
+        'max_depth': hp.pchoice('max_depth', [
+            (0.2, 2),
+            (0.5, 3),
+            (0.2, 4),
+            (0.1, 5)
+        ]),
         'min_samples_leaf': hp.choice('min_samples_leaf_enabled', [
-            1,
-            scope.int(hp.qloguniform('min_samples_leaf', np.log(1.5), np.log(50.5), 1))
+            1,  # most common choice.
+            scope.int(hp.qloguniform('min_samples_leaf' + '.gt1', np.log(1.5), np.log(50.5), 1))
+        ]),
+        'subsample': hp.pchoice('subsample_enabled', [
+            (0.2, 1.0),  # default choice.
+            (0.8, hp.uniform('subsample' + '.sgb', 0.5, 1.0))  # stochastic grad boosting.
         ]),
         'max_features': hp.pchoice('max_features_str', [
-            (0.2, 'sqrt'),  # most common choice.
-            (0.1, 'log2'),  # less common choice.
+            (0.1, 'sqrt'),  # most common choice.
+            (0.2, 'log2'),  # less common choice.
             (0.1, None),  # all features, less common choice.
             (0.6, hp.uniform('max_features_str_frac', 0., 1.))
         ]),
-        'class_weight': hp.pchoice('class_weight', [
-            (0.5, None),
-            (0.3, 'balanced'),
-            (0.2, 'balanced_subsample')
-        ])
+        'loss': hp.choice('loss', ['deviance', 'exponential'])
     }
-

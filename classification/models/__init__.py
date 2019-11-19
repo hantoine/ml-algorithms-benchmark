@@ -6,6 +6,7 @@ from .decision_tree import DecisionTreeModel
 from .adaboost import AdaBoostModel
 from .k_nearest_neighbours import KNearestNeighborsModel
 from .neural_network import NeuralNetworkModel
+from .gradient_boosting import GradientBoostingModel
 
 all_models = [
     RandomForestsModel,
@@ -15,5 +16,6 @@ all_models = [
     DecisionTreeModel,
     AdaBoostModel,
     KNearestNeighborsModel,
-    NeuralNetworkModel
+    NeuralNetworkModel,
+    GradientBoostingModel
 ]
