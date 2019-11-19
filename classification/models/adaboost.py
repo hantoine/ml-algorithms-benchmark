@@ -1,5 +1,4 @@
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.preprocessing import StandardScaler
