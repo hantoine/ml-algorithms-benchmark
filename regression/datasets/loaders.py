@@ -37,7 +37,7 @@ class MerckMolecularActivityDataset(Dataset):
         y = df['Act']
 
         # Remove columns with more NaNs than values (still more than 5k columns left)
-        X = X.loc[:, X.count() > 0.5*len(X)]
+        X = X.loc[:, X.count() > 0.5 * len(X)]
 
         X_train, X_test, y_train, y_test = \
             train_test_split(X, y, test_size=test_size, random_state=random_state)
@@ -59,7 +59,6 @@ class MerckMolecularActivityDataset(Dataset):
         with zipfile.ZipFile(os.path.join(workdir, cls.filename), 'r') as zip_file:
             zip_file.extract('TrainingSet/ACT2_competition_training.csv', path=workdir)
             zip_file.extract('TrainingSet/ACT4_competition_training.csv', path=workdir)
-
 
 
 class WhiteWineQualityDataset(Dataset):
@@ -112,10 +111,10 @@ class CommunitiesAndCrimeDataset(Dataset):
         if not isfile(dataset_path):
             cls.download(workdir)
         df = pd.read_csv(dataset_path, sep=',', header=None)
-        X = df[df.columns[5:-1]] # First 5 columns are not predictive according to the dataset description
+        X = df[df.columns[5:-1]]  # First 5 columns are not predictive according to the dataset description
         y = df[df.columns[-1]]
 
-        X = X.apply(partial(pd.to_numeric, errors='coerce')) # replace '?' by NaN
+        X = X.apply(partial(pd.to_numeric, errors='coerce'))  # replace '?' by NaN
 
         X_train, X_test, y_train, y_test = \
             train_test_split(X, y, test_size=test_size, random_state=random_state)
@@ -149,14 +148,14 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00301/Parkinson_Multiple_Sound_Recording.rar'
 
     column_names = ['subject_id',
-                     'jitter_local', 'jitter_local_abs', 'jitter_rap',
-                     'jitter_ppq5', 'jitter_ddp', 'shimmer_local',
-                     'shimmer_local_db', 'shimmer_apq3', 'shimmer_apq5',
-                     'shimmer_apq11', 'shimmer_dda', 'AC', 'NTH', 'HTN',
-                     'median_pitch', 'mean_pitch', 'std', 'minimum_pitch',
-                     'maximum_pitch', 'nb_pulses', 'nb_periods', 'mean_period',
-                     'std', 'frac_local_unvoiced_frames', 'nb_voice_breaks',
-                     'degree_voice_breaks', 'UPDRS', 'class']
+                    'jitter_local', 'jitter_local_abs', 'jitter_rap',
+                    'jitter_ppq5', 'jitter_ddp', 'shimmer_local',
+                    'shimmer_local_db', 'shimmer_apq3', 'shimmer_apq5',
+                    'shimmer_apq11', 'shimmer_dda', 'AC', 'NTH', 'HTN',
+                    'median_pitch', 'mean_pitch', 'std', 'minimum_pitch',
+                    'maximum_pitch', 'nb_pulses', 'nb_periods', 'mean_period',
+                    'std', 'frac_local_unvoiced_frames', 'nb_voice_breaks',
+                    'degree_voice_breaks', 'UPDRS', 'class']
     metric = '-rmse'
     categorical_features = []
     need_grouped_split = True
@@ -166,9 +165,9 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
             cls.download(workdir)
-        
+
         extracted_path = os.path.join(workdir, 'parkinson_dataset')
-        if isdir(extracted_path): # patoollib does not support overwriting
+        if isdir(extracted_path):  # patoollib does not support overwriting
             shutil.rmtree(extracted_path)
         os.mkdir(extracted_path)
         patoolib.extract_archive(dataset_path, outdir=extracted_path, verbosity=-1)
@@ -182,7 +181,7 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
             in the training set. We will therefore use the training set for bothe training and testing.
             To evaluate the performance of the model on new subject (patients), we will ensure the test
             set contains only new subjects.
-        """ 
+        """
         df = pd.read_csv(os.path.join(extracted_path, cls.filenames[0]), sep=',', header=None)
         df.columns = cls.column_names
         groups = df['subject_id']
@@ -272,6 +271,7 @@ class BikeSharingDataset(Dataset):
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip'
     metric = '-rmse'
     categorical_features = ['season', 'weekday']
+
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
         dataset_path = os.path.join(workdir, cls.filename)
@@ -318,14 +318,15 @@ class StudentPerformanceBaseDataset(Dataset):
             train_test_split(X, y, test_size=test_size, random_state=random_state)
         return (X_train, y_train), (X_test, y_test)
 
+
 class StudentPerformanceNoPrevGradesBaseDataset(StudentPerformanceBaseDataset):
     @classmethod
     def get(cls, subject, workdir=DEFAULT_DATA_DIR):
         train, test = super(StudentPerformanceNoPrevGradesBaseDataset, cls).get(subject, workdir)
         train = cls.remove_previous_grades(train)
         test = cls.remove_previous_grades(test)
-        return train, test 
-    
+        return train, test
+
     @staticmethod
     def remove_previous_grades(data):
         X, y = data
@@ -339,20 +340,24 @@ class StudentMathPerformanceDataset(StudentPerformanceBaseDataset):
     def get(cls, workdir=DEFAULT_DATA_DIR):
         return super(StudentMathPerformanceDataset, cls).get('mat', workdir)
 
+
 class StudentPortuguesePerformanceDataset(StudentPerformanceBaseDataset):
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
         return super(StudentPortuguesePerformanceDataset, cls).get('por', workdir)
+
 
 class StudentMathPerformanceNoPrevGradesDataset(StudentPerformanceNoPrevGradesBaseDataset):
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
         return super(StudentMathPerformanceNoPrevGradesDataset, cls).get('mat', workdir)
 
+
 class StudentPortuguesePerformanceNoPrevGradesDataset(StudentPerformanceNoPrevGradesBaseDataset):
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
         return super(StudentPortuguesePerformanceNoPrevGradesDataset, cls).get('por', workdir)
+
 
 class ConcreteCompressiveStrengthDataset(Dataset):
     filename = 'Concrete_Data.xls'
@@ -366,7 +371,7 @@ class ConcreteCompressiveStrengthDataset(Dataset):
         if not isfile(dataset_path):
             cls.download(workdir)
         df = pd.read_excel(dataset_path)
-        
+
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)

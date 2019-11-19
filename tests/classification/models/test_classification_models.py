@@ -2,9 +2,6 @@ from numpy.random import RandomState
 from classification import models
 from hyperopt.pyll.stochastic import sample as sample_hp
 from classification import datasets as ds
-import os
-from os.path import isdir
-from shutil import rmtree
 
 workdir = 'test-workdir'
 
