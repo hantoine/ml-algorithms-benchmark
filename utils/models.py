@@ -1,16 +1,22 @@
+from copy import deepcopy
+
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
-from utils import CategoryEncoder
-from config import RANDOM_STATE
 import numpy as np
 import scipy
+
+from utils import CategoryEncoder
+from config import RANDOM_STATE
 
 
 class TreeBasedModel:
     @classmethod
     def prepare_dataset(cls, train_data, test_data, categorical_features):
+        # Ensure original data is not modified
+        train_data, test_data = deepcopy((train_data, test_data))
+
         X_train, y_train, *other = train_data
         X_test, y_test = test_data
         is_binary_classification = len(np.unique(y_train)) == 2
@@ -47,6 +53,9 @@ class TreeBasedModel:
 class NonTreeBasedModel:
     @classmethod
     def prepare_dataset(cls, train_data, test_data, categorical_features):
+        # Ensure original data is not modified
+        train_data, test_data = deepcopy((train_data, test_data))
+
         X_train, y_train, *other = train_data
         X_test, y_test = test_data
         ce = CategoryEncoder(categorical_features, method='onehot')
