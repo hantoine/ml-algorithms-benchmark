@@ -53,7 +53,6 @@ class KNearestNeighborsModel:
     hp_space = {
         'n_neighbors': scope.int(hp.qloguniform('n_neighbors', np.log(0.5), np.log(50.5), 1)),
         'weights': hp.choice('weights', ['uniform', 'distance']),
-        # 'algorithm': hp.choice('algorithm', ['auto', 'ball_tree', 'kd_tree', 'brute']),
         'metric': metric_hp[0],
         'p': metric_hp[1]
     }
