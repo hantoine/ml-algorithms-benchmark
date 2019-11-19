@@ -1,1 +1,2 @@
 DEFAULT_DATA_DIR = 'data'
+K_FOLD_K_VALUE = 7
