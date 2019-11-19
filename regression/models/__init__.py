@@ -5,9 +5,9 @@ from .neural_network import NeuralNetworkModel
 from .gaussian_process import GaussianProcessModel
 
 all_models = [
-    # RandomForestsModel,
+    RandomForestsModel,
     SVMModel,
-    # LinearRegressionModel,
-    # NeuralNetworkModel,
-    # GaussianProcessModel
+    LinearRegressionModel,
+    NeuralNetworkModel,
+    GaussianProcessModel
 ]
