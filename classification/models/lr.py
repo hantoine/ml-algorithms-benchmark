@@ -1,5 +1,6 @@
 from sklearn.linear_model import LogisticRegression
-from utils import NonTreeBasedModel, random_state
+from utils import NonTreeBasedModel
+from config import random_state
 from hyperopt import hp
 import numpy as np
 

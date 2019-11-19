@@ -1,5 +1,6 @@
 from sklearn.tree import DecisionTreeClassifier
-from utils import random_state, TreeBasedModel
+from utils import TreeBasedModel
+from config import random_state
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np

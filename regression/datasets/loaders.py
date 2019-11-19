@@ -16,7 +16,8 @@ import shutil
 import kaggle
 import zipfile
 
-from utils import Dataset, test_size, random_state, encode_feature_as_cyclical
+from utils import Dataset, encode_feature_as_cyclical
+from config import test_size, random_state
 from config import DEFAULT_DATA_DIR
 
 

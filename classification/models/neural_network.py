@@ -1,5 +1,6 @@
 from sklearn.neural_network import MLPClassifier
-from utils import random_state, NonTreeBasedModel
+from utils import NonTreeBasedModel
+from config import random_state
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np

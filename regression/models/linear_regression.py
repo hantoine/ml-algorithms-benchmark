@@ -1,5 +1,6 @@
 from sklearn.linear_model import Ridge
-from utils import random_state, NonTreeBasedModel
+from utils import NonTreeBasedModel
+from config import random_state
 from hyperopt import hp
 import numpy as np
 

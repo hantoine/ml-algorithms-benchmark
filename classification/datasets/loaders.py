@@ -9,7 +9,8 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 from scipy.io import arff
 
-from utils import Dataset, test_size, random_state
+from utils import Dataset
+from config import test_size, random_state
 from config import DEFAULT_DATA_DIR
 
 

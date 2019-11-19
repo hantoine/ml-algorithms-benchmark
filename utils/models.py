@@ -2,7 +2,8 @@ from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
-from utils import CategoryEncoder, random_state
+from utils import CategoryEncoder
+from config import random_state
 import numpy as np
 import scipy
 
