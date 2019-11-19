@@ -1,6 +1,6 @@
 from sklearn.tree import DecisionTreeRegressor
 from utils import TreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np
@@ -9,7 +9,7 @@ import numpy as np
 class DecisionTreeModel(TreeBasedModel):
     @staticmethod
     def build_estimator(args):
-        return DecisionTreeRegressor(random_state=random_state, presort=True, **args)
+        return DecisionTreeRegressor(random_state=RANDOM_STATE, presort=True, **args)
 
     hp_space = {
         'criterion': hp.choice('criterion', ['mse', 'friedman_mse', 'mae']),

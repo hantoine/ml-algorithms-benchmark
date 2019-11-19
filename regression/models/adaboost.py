@@ -1,6 +1,6 @@
 from sklearn.ensemble import AdaBoostRegressor
 from utils import TreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np
@@ -9,7 +9,7 @@ import numpy as np
 class AdaBoostModel(TreeBasedModel):
     @staticmethod
     def build_estimator(args):
-        return AdaBoostRegressor(random_state=random_state, **args)
+        return AdaBoostRegressor(random_state=RANDOM_STATE, **args)
 
     hp_space = {
         'loss': hp.choice('loss', ['linear', 'square', 'exponential']),

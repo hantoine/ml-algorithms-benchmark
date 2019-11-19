@@ -1,6 +1,6 @@
 from sklearn.neural_network import MLPRegressor
 from utils import NonTreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np
@@ -10,7 +10,7 @@ class NeuralNetworkModel(NonTreeBasedModel):
     @staticmethod
     def build_estimator(args, test=False):
         return MLPRegressor(
-            random_state=random_state,
+            random_state=RANDOM_STATE,
             max_iter=(1 if test else 300),
             **args
         )

@@ -1,6 +1,6 @@
 from sklearn.linear_model import LogisticRegression
 from utils import NonTreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 import numpy as np
 
@@ -9,7 +9,7 @@ class LRModel(NonTreeBasedModel):
     @staticmethod
     def build_estimator(args, test=False):
         return LogisticRegression(
-            random_state=random_state,
+            random_state=RANDOM_STATE,
             solver='saga',
             **args
         )

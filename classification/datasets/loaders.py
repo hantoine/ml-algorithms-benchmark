@@ -10,7 +10,7 @@ import numpy as np
 from scipy.io import arff
 
 from utils import Dataset
-from config import test_size, random_state
+from config import TEST_SIZE, RANDOM_STATE
 from config import DEFAULT_DATA_DIR
 
 
@@ -43,7 +43,7 @@ class RetinopathyDataset(Dataset):
         df = pd.DataFrame(data)
         X, y = cls.preprocess(df)
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -63,7 +63,7 @@ class DefaultCreditCardDataset(Dataset):
         X = df[[f'X{i}' for i in range(1, 24)]]
         X.columns = X.columns.droplevel()
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -83,7 +83,7 @@ class BreastCancerDataset(Dataset):
         X = X.apply(partial(pd.to_numeric, errors='coerce'))  # replace '?' by NaN
         y = (df[df.columns[-1]] == 4).astype(int)
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -102,7 +102,7 @@ class StatlogAustralianDataset(Dataset):
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -121,7 +121,7 @@ class StatlogGermanDataset(Dataset):
         y = (df[df.columns[-1]] == 2).astype(int)
         X = df[df.columns[:-1]]
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -153,7 +153,7 @@ class SteelPlatesFaultsDataset(Dataset):
         y = y.idxmax(axis=1)
 
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -219,7 +219,7 @@ class YeastDataset(Dataset):
         y = LabelEncoder().fit_transform(y)
 
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -260,7 +260,7 @@ class ThoraricSurgeryDataset(Dataset):
         X, y = cls.preprocess(df)
 
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -287,5 +287,5 @@ class SeismicBumpsDataset(Dataset):
         X = df.drop(columns=['class'])
         y = df.loc[:, 'class']
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
         return (X_train, y_train), (X_test, y_test)

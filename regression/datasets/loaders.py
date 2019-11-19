@@ -17,7 +17,7 @@ import kaggle
 import zipfile
 
 from utils import Dataset, encode_feature_as_cyclical
-from config import test_size, random_state
+from config import TEST_SIZE, RANDOM_STATE
 from config import DEFAULT_DATA_DIR
 
 
@@ -40,7 +40,7 @@ class MerckMolecularActivityDataset(Dataset):
         X = X.loc[:, X.count() > 0.5 * len(X)]
 
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
 
         # Replace NaNs by mean (Interactive Imputer is extremely slow with a dataset of this size)
         imp = SimpleImputer()
@@ -76,7 +76,7 @@ class WhiteWineQualityDataset(Dataset):
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -95,7 +95,7 @@ class RedWineQualityDataset(Dataset):
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -117,7 +117,7 @@ class CommunitiesAndCrimeDataset(Dataset):
         X = X.apply(partial(pd.to_numeric, errors='coerce'))  # replace '?' by NaN
 
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -137,7 +137,7 @@ class QsarAquaticToxicityDataset(Dataset):
         df.columns = cls.features
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -188,7 +188,7 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
         X = df[df.columns[1:-2]]
         y = df['UPDRS']
 
-        splitter = GroupShuffleSplit(test_size=test_size, random_state=random_state)
+        splitter = GroupShuffleSplit(test_size=TEST_SIZE, random_state=RANDOM_STATE)
         train_idx, test_idx = next(splitter.split(X, y, groups))
         X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
         y_train, y_test = y[train_idx], y[test_idx]
@@ -223,7 +223,7 @@ class FacebookMetricsDataset(Dataset):
 
         y = df[df.columns[7:]]
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
         return (X_train, y_train), (X_test, y_test)
 
     @staticmethod
@@ -288,7 +288,7 @@ class BikeSharingDataset(Dataset):
         X = encode_feature_as_cyclical(X, 'mnth', 12)
 
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -315,7 +315,7 @@ class StudentPerformanceBaseDataset(Dataset):
         X = X.replace('no', 0)
 
         X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=test_size, random_state=random_state)
+            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -374,7 +374,7 @@ class ConcreteCompressiveStrengthDataset(Dataset):
 
         X = df[df.columns[:-1]]
         y = df[df.columns[-1]]
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
         return (X_train, y_train), (X_test, y_test)
 
 
@@ -399,5 +399,5 @@ class SGEMMGPUKernelPerformancesDataset(Dataset):
         X_log_2 = {col: np.log2(X[col]) for col in X.columns[:-4]}
         X = X.assign(**X_log_2)
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
         return (X_train, y_train), (X_test, y_test)

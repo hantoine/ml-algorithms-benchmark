@@ -1,6 +1,6 @@
 from sklearn.svm import SVC
 from utils import NonTreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 import numpy as np
 
@@ -9,7 +9,7 @@ class SVMModel(NonTreeBasedModel):
     @staticmethod
     def build_estimator(args, test=False):
         return SVC(
-            random_state=random_state,
+            random_state=RANDOM_STATE,
             # Prevent very long training time for some hyper-parameters
             max_iter=int(1e3) if test else int(2e6),
             # Use 4GB of cache to speed up
