@@ -9,7 +9,8 @@ from sklearn.utils import shuffle
 from sklearn.exceptions import ConvergenceWarning
 
 from utils import compute_metric, compute_loss
-from config import K_FOLD_K_VALUE, random_state
+from config import K_FOLD_K_VALUE, RANDOM_STATE
+
 
 def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_per_step=5,
                                     tuning_time=120):
@@ -42,7 +43,7 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
         loss = objective_fct(None)
         print(f'Resulting {dataset.metric}: {-loss}')
         return {}
-    
+
     trials = Trials()
     rstate = np.random.RandomState(random_state)
     start_time = time.time()
@@ -55,7 +56,7 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
     best_trial_index = np.array(trials.losses()).argmin()
     print(f'Best {dataset.metric}: {best_score}')
     print(f'With hyperparams: \n{best_hp}')
-    print(f'Obtained after {best_trial_index-1} trials')
+    print(f'Obtained after {best_trial_index - 1} trials')
     print(f'Total tuning time: {tuning_time:.0f}s')
     return best_hp
 
@@ -69,6 +70,7 @@ def make_tuning_step(objective_fct, hp_space, trials, rstate, step_size):
                 show_progressbar=True,
                 rstate=rstate)
 
+
 def create_tuning_objective(dataset, model, train, kfold):
     def objective(args):
         estimator = model.build_estimator(args)
@@ -81,10 +83,11 @@ def create_tuning_objective(dataset, model, train, kfold):
             estimator.fit(X_train, y_train)
             metric_value = compute_metric(y_val, estimator.predict(X_val), dataset.metric)
             metric_values.append(metric_value)
-            
+
         return compute_loss(dataset.metric, metric_values)
 
     return objective
+
 
 def create_kfold(task_type, dataset, train_data):
     if task_type == 'classification':
