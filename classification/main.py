@@ -1,6 +1,7 @@
 from copy import deepcopy
 import warnings
 import time
+from datetime import timedelta
 import numpy as np
 from sklearn.metrics import confusion_matrix as compute_confusion_matrix
 from sklearn.model_selection import StratifiedKFold
@@ -44,6 +45,9 @@ def tune_hyperparams(trials, dataset, model, train_data, kfold, rstate):
                 trials=trials,
                 show_progressbar=True,
                 rstate=rstate)
+
+minimum_runtime = HP_TUNE_MAX_TIME * len(models.all_models) * len(ds.all_datasets)
+print(f'Expected minimum runtime: {timedelta(seconds=minimum_runtime)}')
 
 for dataset in ds.all_datasets:
     print(f'Dataset: {dataset.__name__}')
