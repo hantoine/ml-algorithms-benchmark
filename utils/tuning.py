@@ -45,7 +45,7 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
         return {}
 
     trials = Trials()
-    rstate = np.random.RandomState(random_state)
+    rstate = np.random.RandomState(RANDOM_STATE)
     start_time = time.time()
     while time.time() - start_time < tuning_time:
         best = make_tuning_step(objective_fct, model.hp_space, trials, rstate, tuning_step_size)
@@ -92,11 +92,11 @@ def create_tuning_objective(dataset, model, train, kfold):
 def create_kfold(task_type, dataset, train_data):
     if task_type == 'classification':
         n_splits = min(K_FOLD_K_VALUE, dataset.get_min_k_fold_k_value(train_data))
-        kfold = StratifiedKFold(n_splits, shuffle=True, random_state=random_state)
+        kfold = StratifiedKFold(n_splits, shuffle=True, random_state=RANDOM_STATE)
     elif task_type == 'regression':
         if getattr(dataset, 'need_grouped_split', False):
-            train_data = shuffle(*train_data, random_state=random_state)
+            train_data = shuffle(*train_data, random_state=RANDOM_STATE)
             kfold = GroupKFold(n_splits=K_FOLD_K_VALUE)
         else:
-            kfold = KFold(n_splits=K_FOLD_K_VALUE, shuffle=True, random_state=random_state)
+            kfold = KFold(n_splits=K_FOLD_K_VALUE, shuffle=True, random_state=RANDOM_STATE)
     return kfold, train_data
