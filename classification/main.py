@@ -3,15 +3,13 @@ import warnings
 import time
 from datetime import timedelta
 import numpy as np
-from sklearn.metrics import confusion_matrix as compute_confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 from sklearn.exceptions import ConvergenceWarning
 from hyperopt import Trials, fmin, tpe, space_eval
 
 from classification import datasets as ds
 from classification import models
-from classification.metrics import compute_loss
-from utils import random_state
+from utils import random_state, compute_metric, compute_loss
 
 HP_TUNING_STEP_TRIALS = 5
 HP_TUNE_MAX_TIME = 120
@@ -22,18 +20,17 @@ warnings.filterwarnings("ignore", category=ConvergenceWarning)
 def get_objective(dataset, model, train, kfold):
     def objective(args):
         estimator = model.build_estimator(args)
-        confusion_matrices = []
+        metric_values = []
         X, y, *_ = train
         for train_index, val_index in kfold.split(*train):
             X_train, X_val = X[train_index], X[val_index]
             y_train, y_val = y[train_index], y[val_index]
 
             estimator.fit(X_train, y_train)
-            conf_matrix = compute_confusion_matrix(y_val, estimator.predict(X_val))
-            confusion_matrices.append(conf_matrix)
+            metric_value = compute_metric(y_val, estimator.predict(X_val), dataset.metric)
+            metric_values.append(metric_value)
             
-        confusion_matrix = np.array(confusion_matrices).sum(axis=0)
-        return compute_loss(dataset.metric, confusion_matrix)
+        return compute_loss(dataset.metric, metric_values)
 
     return objective
 

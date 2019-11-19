@@ -9,8 +9,7 @@ from hyperopt import Trials, fmin, tpe, space_eval
 
 from regression import datasets as ds
 from regression import models
-from regression.metrics import compute_metric, aggregate_metrics
-from utils import random_state
+from utils import random_state, compute_metric, compute_loss
 
 HP_TUNING_STEP_TRIALS = 1
 HP_TUNE_MAX_TIME = 1
@@ -31,8 +30,7 @@ def get_objective(dataset, model, train, kfold):
             metric_value = compute_metric(y_val, estimator.predict(X_val), dataset.metric)
             metric_values.append(metric_value)
             
-        score = aggregate_metrics(metric_values, dataset.metric)
-        return -score
+        return compute_loss(metric_values, dataset.metric)
 
     return objective
 
