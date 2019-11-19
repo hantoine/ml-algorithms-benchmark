@@ -14,6 +14,10 @@ def check_prepare_dataset(cls):
     cls.prepare_dataset(train, test, ds.AdultDataset.categorical_features)
 
 
+def test_random_forests_hp_space():
+    sample_hp(models.RandomForestsModel.hp_space)
+
+
 def test_decision_tree_training():
     model = models.DecisionTreeModel
     hyperparams = sample_hp(model.hp_space, rng=RandomState(9))
@@ -46,6 +50,12 @@ def test_knn_training():
         X, y, *_ = train
         estimator.fit(X, y)
 
+def test_neural_network_hp_space():
+    sample_hp(models.NeuralNetworkModel.hp_space)
+
+def test_random_forests_prepare():
+    check_prepare_dataset(models.RandomForestsModel)
+
 
 def test_random_forest_training():
     model = models.RandomForestsModel
@@ -71,6 +81,17 @@ def test_svm_training():
 
 def test_lr_training():
     model = models.LRModel
+    hyperparams = sample_hp(model.hp_space, rng=RandomState(1))
+    for dataset in ds.all_datasets:
+        train, test = dataset.get()
+        train, test = model.prepare_dataset(train, test, dataset.categorical_features)
+        estimator = model.build_estimator(hyperparams)
+        X, y, *_ = train
+        estimator.fit(X, y)
+
+
+def test_neural_network_training():
+    model = models.NeuralNetworkModel
     hyperparams = sample_hp(model.hp_space, rng=RandomState(1))
     for dataset in ds.all_datasets:
         train, test = dataset.get()
