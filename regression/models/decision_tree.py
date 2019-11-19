@@ -1,4 +1,4 @@
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor
 from utils import TreeBasedModel
 from config import random_state
 from hyperopt import hp
@@ -9,9 +9,10 @@ import numpy as np
 class DecisionTreeModel(TreeBasedModel):
     @staticmethod
     def build_estimator(args):
-        return DecisionTreeClassifier(random_state=random_state, presort=True, **args)
+        return DecisionTreeRegressor(random_state=random_state, presort=True, **args)
 
     hp_space = {
+        'criterion': hp.choice('criterion', ['mse', 'friedman_mse', 'mae']),
         'max_depth': hp.pchoice('max_depth_enabled', [
             (0.7, None),
             (0.3, scope.int(hp.qlognormal('max_depth', np.log(30), 0.5, 3)))]),

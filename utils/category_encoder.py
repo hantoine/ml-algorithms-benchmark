@@ -3,6 +3,7 @@ from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 import numpy as np
 
+
 class CategoryEncoder:
     def __init__(self, categorical_features, method='onehot'):
         self.categorical_features = categorical_features
@@ -24,7 +25,7 @@ class CategoryEncoder:
             X[self.categorical_features] = X[self.categorical_features].astype(str)
             categories = [self.get_optimal_category_ordering(X, y, name) for name in self.categorical_features]
             encoder = OrdinalEncoder(categories=categories, dtype=np.int)
-        else: # method == 'ordinal'
+        else:  # method == 'ordinal'
             encoder = OrdinalEncoder(dtype=np.int)
         self.encoder = ColumnTransformer([('encoder', encoder, self.categorical_features)],
                                          remainder='passthrough')

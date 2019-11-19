@@ -1,4 +1,4 @@
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsRegressor
 from utils import NonTreeBasedModel
 from hyperopt import hp
 from hyperopt.pyll import scope
@@ -8,7 +8,7 @@ import numpy as np
 class KNearestNeighborsModel(NonTreeBasedModel):
     @staticmethod
     def build_estimator(args):
-        return KNeighborsClassifier(n_jobs=-1, **args)
+        return KNeighborsRegressor(n_jobs=-1, **args)
 
     metric_hp = hp.pchoice('metric', [
         (0.55, ('euclidean', 2)),
