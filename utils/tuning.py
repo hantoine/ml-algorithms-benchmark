@@ -9,7 +9,8 @@ from sklearn.utils import shuffle
 from sklearn.exceptions import ConvergenceWarning
 
 from utils import compute_metric, compute_loss
-from config import K_FOLD_K_VALUE, random_state
+from config import K_FOLD_K_VALUE, RANDOM_STATE
+import classification.datasets as classification_ds
 
 def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_per_step=5,
                                     tuning_time=120):
@@ -28,6 +29,8 @@ def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_p
 
                 best_hp = tune_hyperparams(task_type, dataset, model, train,
                                            tuning_trials_per_step, tuning_time)
+
+                # save best hp here
             except MemoryError:
                 print('Memory requirements for this model with this dataset too high')
 
@@ -44,7 +47,7 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
         return {}
     
     trials = Trials()
-    rstate = np.random.RandomState(random_state)
+    rstate = np.random.RandomState(RANDOM_STATE)
     start_time = time.time()
     while time.time() - start_time < tuning_time:
         best = make_tuning_step(objective_fct, model.hp_space, trials, rstate, tuning_step_size)
@@ -88,12 +91,12 @@ def create_tuning_objective(dataset, model, train, kfold):
 
 def create_kfold(task_type, dataset, train_data):
     if task_type == 'classification':
-        n_splits = min(K_FOLD_K_VALUE, dataset.get_min_k_fold_k_value(train_data))
-        kfold = StratifiedKFold(n_splits, shuffle=True, random_state=random_state)
+        n_splits = min(K_FOLD_K_VALUE, classification_ds.get_min_k_fold_k_value(train_data))
+        kfold = StratifiedKFold(n_splits, shuffle=True, random_state=RANDOM_STATE)
     elif task_type == 'regression':
         if getattr(dataset, 'need_grouped_split', False):
-            train_data = shuffle(*train_data, random_state=random_state)
+            train_data = shuffle(*train_data, random_state=RANDOM_STATE)
             kfold = GroupKFold(n_splits=K_FOLD_K_VALUE)
         else:
-            kfold = KFold(n_splits=K_FOLD_K_VALUE, shuffle=True, random_state=random_state)
+            kfold = KFold(n_splits=K_FOLD_K_VALUE, shuffle=True, random_state=RANDOM_STATE)
     return kfold, train_data
