@@ -1,4 +1,4 @@
-from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import AdaBoostRegressor
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.preprocessing import StandardScaler
@@ -47,7 +47,7 @@ class AdaBoostModel:
 
     @staticmethod
     def build_estimator(args):
-        return AdaBoostClassifier(random_state=random_state, **args)
+        return AdaBoostRegressor(random_state=random_state, **args)
 
     hp_space = {
         'loss': hp.choice('loss', ['linear', 'square', 'exponential']),
