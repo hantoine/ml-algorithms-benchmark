@@ -1,6 +1,6 @@
 from sklearn.ensemble import AdaBoostClassifier
 from utils import TreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np
@@ -9,7 +9,7 @@ import numpy as np
 class AdaBoostModel(TreeBasedModel):
     @staticmethod
     def build_estimator(args):
-        return AdaBoostClassifier(random_state=random_state, **args)
+        return AdaBoostClassifier(random_state=RANDOM_STATE, **args)
 
     hp_space = {
         'algorithm': hp.choice('algorithm', ['SAMME', 'SAMME.R']),

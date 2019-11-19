@@ -1,6 +1,6 @@
 from sklearn.tree import DecisionTreeClassifier
 from utils import TreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np
@@ -9,7 +9,7 @@ import numpy as np
 class DecisionTreeModel(TreeBasedModel):
     @staticmethod
     def build_estimator(args):
-        return DecisionTreeClassifier(random_state=random_state, presort=True, **args)
+        return DecisionTreeClassifier(random_state=RANDOM_STATE, presort=True, **args)
 
     hp_space = {
         'max_depth': hp.pchoice('max_depth_enabled', [

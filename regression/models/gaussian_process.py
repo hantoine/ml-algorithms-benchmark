@@ -1,6 +1,6 @@
 from sklearn.gaussian_process import GaussianProcessRegressor
 from utils import NonTreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 import numpy as np
 
@@ -14,7 +14,7 @@ class GaussianProcessModel(NonTreeBasedModel):
         """
         return GaussianProcessRegressor(
             normalize_y=True,
-            random_state=random_state,
+            random_state=RANDOM_STATE,
             **args
         )
 

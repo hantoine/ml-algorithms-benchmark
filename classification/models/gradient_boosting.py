@@ -1,6 +1,6 @@
 from sklearn.ensemble import GradientBoostingClassifier
 from utils import TreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np
@@ -9,7 +9,7 @@ import numpy as np
 class GradientBoostingModel(TreeBasedModel):
     @staticmethod
     def build_estimator(args):
-        return GradientBoostingClassifier(random_state=random_state, presort=True, **args)
+        return GradientBoostingClassifier(random_state=RANDOM_STATE, presort=True, **args)
 
     hp_space = {
         'n_estimators': scope.int(hp.qloguniform('n_estimators', np.log(10.5), np.log(1000.5), 1)),

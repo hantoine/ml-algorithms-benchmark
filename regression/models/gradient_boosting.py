@@ -1,6 +1,6 @@
 from sklearn.ensemble import GradientBoostingRegressor
 from utils import TreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np
@@ -9,7 +9,7 @@ import numpy as np
 class GradientBoostingModel(TreeBasedModel):
     @staticmethod
     def build_estimator(args):
-        return GradientBoostingRegressor(random_state=random_state, presort=True, **args)
+        return GradientBoostingRegressor(random_state=RANDOM_STATE, presort=True, **args)
 
     loss_alpha = hp.choice('loss_alpha', [
         ('ls', 0.9),

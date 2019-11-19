@@ -1,6 +1,6 @@
 from sklearn.linear_model import Ridge
 from utils import NonTreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 import numpy as np
 
@@ -13,7 +13,7 @@ class LinearRegressionModel(NonTreeBasedModel):
             sklearn.linear_model.LinearRegression does not support any regularization.
         """
         return Ridge(
-            random_state=random_state,
+            random_state=RANDOM_STATE,
             # Prevent very long training time for some hyper-parameters
             max_iter=100 if test else 3000,
             **args

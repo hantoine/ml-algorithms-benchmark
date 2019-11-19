@@ -1,6 +1,6 @@
 from sklearn.ensemble import RandomForestRegressor
 from utils import TreeBasedModel
-from config import random_state
+from config import RANDOM_STATE
 from hyperopt import hp
 from hyperopt.pyll import scope
 import numpy as np
@@ -9,7 +9,7 @@ import numpy as np
 class RandomForestsModel(TreeBasedModel):
     @staticmethod
     def build_estimator(args):
-        return RandomForestRegressor(random_state=random_state, n_jobs=-1, **args)
+        return RandomForestRegressor(random_state=RANDOM_STATE, n_jobs=-1, **args)
 
     hp_space = {
         'max_depth': hp.pchoice('max_depth_enabled', [
