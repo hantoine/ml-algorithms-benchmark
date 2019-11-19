@@ -9,7 +9,8 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 from scipy.io import arff
 
-from utils import Dataset, test_size, random_state
+from utils import Dataset
+from config import test_size, random_state
 from config import DEFAULT_DATA_DIR
 
 
@@ -79,7 +80,7 @@ class BreastCancerDataset(Dataset):
             cls.download(workdir)
         df = pd.read_csv(dataset_path, header=None)
         X = df[df.columns[1:-1]]
-        X = X.apply(partial(pd.to_numeric, errors='coerce')) # replace '?' by NaN
+        X = X.apply(partial(pd.to_numeric, errors='coerce'))  # replace '?' by NaN
         y = (df[df.columns[-1]] == 4).astype(int)
         X_train, X_test, y_train, y_test = \
             train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
@@ -109,7 +110,7 @@ class StatlogGermanDataset(Dataset):
     filename = 'german.data-numeric'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric'
     metric = 'f1'
-    categorical_features = [] # already encoded
+    categorical_features = []  # already encoded
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
@@ -146,7 +147,7 @@ class SteelPlatesFaultsDataset(Dataset):
 
         X = df[df.columns[:27]]
         y = df[df.columns[27:]]
-        
+
         # Convert labels from onehot to ordinal 
         y.columns = range(7)
         y = y.idxmax(axis=1)
@@ -214,7 +215,7 @@ class YeastDataset(Dataset):
         df = df.drop_duplicates()
 
         X = df[df.columns[1:-1]]
-        y = df[df.columns[-1]] 
+        y = df[df.columns[-1]]
         y = LabelEncoder().fit_transform(y)
 
         X_train, X_test, y_train, y_test = \

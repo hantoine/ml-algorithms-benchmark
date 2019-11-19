@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from utils import encode_feature_as_cyclical
 
+
 def test_encode_feature_as_cyclical():
     X = pd.DataFrame({'feature': [1, 2, 3, 4]})
     X_expected = pd.DataFrame({'feature_cos': [0, -1, 0, 1],
