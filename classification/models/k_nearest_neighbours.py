@@ -10,7 +10,7 @@ import numpy as np
 import scipy
 
 
-class RandomForestsModel:
+class KNearestNeighborsModel:
     @staticmethod
     def prepare_dataset(train_data, test_data, categorical_features):
         X_train, y_train = train_data
