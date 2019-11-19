@@ -12,7 +12,7 @@ import scipy
 class RandomForestsModel:
     @staticmethod
     def prepare_dataset(train_data, test_data, categorical_features):
-        X_train, y_train = train_data
+        X_train, y_train, *other = train_data
         X_test, y_test = test_data
         is_binary_classification = len(np.unique(y_train)) == 2
         if is_binary_classification:
@@ -42,7 +42,7 @@ class RandomForestsModel:
             X_train_enc = imp.fit_transform(X_train_enc)
             X_test_enc = imp.transform(X_test_enc)
 
-        return (X_train_enc, y_train), (X_test_enc, y_test)
+        return (X_train_enc, y_train, *other), (X_test_enc, y_test)
 
     @staticmethod
     def build_estimator(args):
