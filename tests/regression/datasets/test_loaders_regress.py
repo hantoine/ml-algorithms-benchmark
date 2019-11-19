@@ -36,7 +36,13 @@ def test_parkinson_multiple_sound_recording():
 
 
 def test_facebook_metrics():
-    dataset = ds.FacebookMetricsDataset.get(workdir)
+    dataset = ds.FacebookLikesDataset.get(workdir)
+    check_dataset(dataset)
+    dataset = ds.FacebookInteractionsDataset.get(workdir)
+    check_dataset(dataset)
+    dataset = ds.FacebookShareDataset.get(workdir)
+    check_dataset(dataset)
+    dataset = ds.FacebookCommentDataset.get(workdir)
     check_dataset(dataset)
 
 
@@ -46,7 +52,13 @@ def test_bike_sharing():
 
 
 def test_student_performance():
-    dataset = ds.StudentPerformanceDataset.get(workdir)
+    dataset = ds.StudentMathPerformanceDataset.get(workdir)
+    check_dataset(dataset)
+    dataset = ds.StudentPortuguesePerformanceDataset.get(workdir)
+    check_dataset(dataset)
+    dataset = ds.StudentMathPerformanceNoPrevGradesDataset.get(workdir)
+    check_dataset(dataset)
+    dataset = ds.StudentPortuguesePerformanceNoPrevGradesDataset.get(workdir)
     check_dataset(dataset)
 
 
@@ -57,4 +69,9 @@ def test_concrete_compressive_stength():
 
 def test_sgemm_gpu_kernel_performance():
     dataset = ds.SGEMMGPUKernelPerformancesDataset.get(workdir)
+    check_dataset(dataset)
+
+
+def test_merck_molecular_activity():
+    dataset = ds.MerckMolecularActivityDataset.get(workdir)
     check_dataset(dataset)
