@@ -116,6 +116,7 @@ def test_gradient_boosting_training():
         X, y, *_ = train
         estimator.fit(X, y)
 
+
 def test_svm_training():
     model = models.SVMModel
     hyperparams = sample_hp(model.hp_space, rng=RandomState(1))
@@ -125,6 +126,7 @@ def test_svm_training():
         estimator = model.build_estimator(hyperparams, test=True)
         X, y, *_ = train
         estimator.fit(X, y)
+
 
 def test_linear_regression_training():
     model = models.LinearRegressionModel
