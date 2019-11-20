@@ -51,3 +51,11 @@ def plot_from_data(data):
     B = data[2048:3072].reshape(32,32)
     img = np.dstack([R,G,B])
     plt.imshow(img)
+
+
+if __name__ == "__main__":
+    data_path = '/path_to_downloaded_dataset'
+    train_set, test_set, labels_info = get_data_from_files(data_path)
+    X_train, y_train = train_set
+    first_img = X_train[0]
+    plot_from_data(first_img)
