@@ -59,3 +59,20 @@ class Config():
         nb_epochs = nb_epochs
         lr = learning_rate
         momentum = momentum
+
+
+if __name__ == "__main__":
+    saved_model_path = None
+    if saved_model_path:
+        net.load_state_dict(torch.load(saved_model_path))
+    else:
+        net = LeNetPytorch()
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(device)
+    net.to(device)
+
+    trainloader, testloader = get_loaders()
+    config = Config(10, 0.001, 0.9)
+    training(trainloader, net, Config)
+    validation(net)
