@@ -33,3 +33,22 @@ def training(trainloader, net, config):
         running_loss = 0.0
 
     print('Finished Training')
+
+
+def validation():
+    correct = 0
+    total = 0
+    net.eval()
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data
+            batch_size = images.shape[0]
+            outputs = net(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += batch_size
+            correct += (predicted == labels).sum().item()
+
+    print(correct)
+    print(total)
+    print('Accuracy of the network on the 10000 test images: %d %%' % (
+        100 * correct / total))
