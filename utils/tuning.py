@@ -51,7 +51,7 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
         loss = objective_fct(None)
         print(f'Resulting {dataset.metric}: {-loss}')
         return {}
-    
+
     trials = Trials()
     rstate = np.random.RandomState(RANDOM_STATE)
     start_time = time.time()
@@ -94,6 +94,7 @@ def make_tuning_step(objective_fct, hp_space, trials, rstate, step_size):
          show_progressbar=True,
          rstate=rstate)
 
+
 def create_tuning_objective(dataset, model, train, kfold):
     def objective(args):
         estimator = model.build_estimator(args)
@@ -106,10 +107,11 @@ def create_tuning_objective(dataset, model, train, kfold):
             estimator.fit(X_train, y_train)
             metric_value = compute_metric(y_val, estimator.predict(X_val), dataset.metric)
             metric_values.append(metric_value)
-            
+
         return compute_loss(dataset.metric, metric_values)
 
     return objective
+
 
 def create_kfold(task_type, dataset, train_data):
     if task_type == 'classification':
