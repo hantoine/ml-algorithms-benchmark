@@ -42,7 +42,7 @@ class MerckMolecularActivityDataset(Dataset):
         X_train, X_test, y_train, y_test = \
             train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
 
-        # Replace NaNs by mean (Interactive Imputer is extremely slow with a datasets of this size)
+        # Replace NaNs by mean (Interactive Imputer is extremely slow with a dataset of this size)
         imp = SimpleImputer()
         X_train = imp.fit_transform(X_train)
         X_test = imp.transform(X_test)
@@ -111,7 +111,7 @@ class CommunitiesAndCrimeDataset(Dataset):
         if not isfile(dataset_path):
             cls.download(workdir)
         df = pd.read_csv(dataset_path, sep=',', header=None)
-        X = df[df.columns[5:-1]]  # First 5 columns are not predictive according to the datasets description
+        X = df[df.columns[5:-1]]  # First 5 columns are not predictive according to the dataset description
         y = df[df.columns[-1]]
 
         X = X.apply(partial(pd.to_numeric, errors='coerce'))  # replace '?' by NaN
@@ -174,7 +174,7 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
         time.sleep(2)
 
         """
-            This datasets is initially a classification datasets whose goal is to predict for 
+            This dataset is initially a classification dataset whose goal is to predict for 
             each example if the patient is healthy or sick.
             It can be used for regression. In that case the goal is to predict the UPDRS (Unified
             Parkinson's Disease Rating Scale) score. However, this score is only given for examples
@@ -206,7 +206,7 @@ class FacebookMetricsDataset(Dataset):
         We decide to encode Post Hour and Post Month as cyclical numeric.
 
         Would be possible to keep them as is or encode them as categories, it would be
-        intersting to implement datasets specific hyperparameters for this kind of thing
+        intersting to implement dataset specific hyperparameters for this kind of thing
     """
 
     @classmethod
