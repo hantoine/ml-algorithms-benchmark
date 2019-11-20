@@ -11,10 +11,9 @@ from sklearn.utils import shuffle
 from sklearn.exceptions import ConvergenceWarning
 import json
 
-from utils import compute_metric, compute_loss
+from utils import compute_metric, compute_loss, get_min_k_fold_k_value
 from config import K_FOLD_K_VALUE, RANDOM_STATE
-import classification.datasets as classification_ds
-from config import HYPERPARAMS_DIR
+from config import RESULTS_DIR
 
 def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_per_step=5,
                                     tuning_time=120, max_trials_without_improvement=150):
@@ -29,15 +28,12 @@ def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_p
         for model in models:
             print(f'Model: {model.__name__}')
             try:
-                train_data, test_data = model.prepare_dataset(train, test,
-                                                              dataset.categorical_features)
+                train_data, _ = model.prepare_dataset(train, test,
+                                                      dataset.categorical_features)
 
-                best_hp = tune_hyperparams(task_type, dataset, model, train_data,
-                                           tuning_trials_per_step, tuning_time,
-                                           max_trials_without_improvement)
-
-                save_hyperparams_as_json(best_hp, joinpath(HYPERPARAMS_DIR, dataset.__name__,
-                                                           model.__name__, 'hp.json'))
+                tune_hyperparams(task_type, dataset, model, train_data,
+                                 tuning_trials_per_step, tuning_time,
+                                 max_trials_without_improvement)
             except MemoryError:
                 print('Memory requirements for this model with this dataset are too high')
 
@@ -72,6 +68,10 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
 
     best_hp = space_eval(model.hp_space, best)
     best_trial_index = np.array(trials.losses()).argmin()
+
+    tuning_results_dir = joinpath(RESULTS_DIR, dataset.__name__, model.__name__)
+    save_tuning_results(tuning_results_dir, best_hp, best_score, best_trial_index)
+
     print(f'Best {dataset.metric}: {best_score}')
     print(f'With hyperparams: \n{best_hp}')
     print(f'Obtained after {best_trial_index-1} trials')
@@ -107,7 +107,7 @@ def create_tuning_objective(dataset, model, train, kfold):
 
 def create_kfold(task_type, dataset, train_data):
     if task_type == 'classification':
-        n_splits = min(K_FOLD_K_VALUE, classification_ds.get_min_k_fold_k_value(train_data))
+        n_splits = min(K_FOLD_K_VALUE, get_min_k_fold_k_value(train_data))
         kfold = StratifiedKFold(n_splits, shuffle=True, random_state=RANDOM_STATE)
     elif task_type == 'regression':
         if getattr(dataset, 'need_grouped_split', False):
@@ -117,7 +117,21 @@ def create_kfold(task_type, dataset, train_data):
             kfold = KFold(n_splits=K_FOLD_K_VALUE, shuffle=True, random_state=RANDOM_STATE)
     return kfold, train_data
 
-def save_hyperparams_as_json(hyperparams, path):
-    makedirs(dirname(path), exist_ok=True)
-    with open(path, 'w', encoding='utf-8') as file:
-        json.dump(hyperparams, file, ensure_ascii=False, indent=4)
+def save_tuning_results(tuning_results_dir, hyperparams, score, n_trials):
+    makedirs(tuning_results_dir, exist_ok=True)
+
+    try:
+        with open(joinpath(tuning_results_dir, 'tuning.json'), 'r', encoding='utf-8') as file:
+            prev_results = json.load(file)
+            better_results = score > prev_results['score']
+    except FileNotFoundError:
+        better_results = True
+
+    if better_results:
+        results = {
+            'hp': hyperparams,
+            'score': score,
+            'n_trials': n_trials
+        }
+        with open(joinpath(tuning_results_dir, 'tuning.json'), 'w', encoding='utf-8') as file:
+            json.dump(results, file, ensure_ascii=False, indent=4)

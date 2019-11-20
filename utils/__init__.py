@@ -1,4 +1,4 @@
-from .dataset import Dataset
+from .dataset import Dataset, get_min_k_fold_k_value
 from .tests_utils import check_dataset
 from .category_encoder import CategoryEncoder
 from .cyclical_encoding import encode_feature_as_cyclical
