@@ -2,15 +2,19 @@ import time
 import warnings
 import numpy as np
 from datetime import timedelta
+from os.path import dirname, join as joinpath
+from os import makedirs
 
 from hyperopt import fmin, tpe, Trials, space_eval
 from sklearn.model_selection import StratifiedKFold, GroupKFold, KFold
 from sklearn.utils import shuffle
 from sklearn.exceptions import ConvergenceWarning
+import json
 
 from utils import compute_metric, compute_loss
 from config import K_FOLD_K_VALUE, RANDOM_STATE
 import classification.datasets as classification_ds
+from config import HYPERPARAMS_DIR
 
 def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_per_step=5,
                                     tuning_time=120):
@@ -30,7 +34,7 @@ def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_p
                 best_hp = tune_hyperparams(task_type, dataset, model, train_data,
                                            tuning_trials_per_step, tuning_time)
 
-                # save best hp here
+                save_hyperparams_as_json(best_hp, joinpath(HYPERPARAMS_DIR, dataset.__name__, model.__name__, 'hp.json'))
             except MemoryError:
                 print('Memory requirements for this model with this dataset too high')
 
@@ -100,3 +104,8 @@ def create_kfold(task_type, dataset, train_data):
         else:
             kfold = KFold(n_splits=K_FOLD_K_VALUE, shuffle=True, random_state=RANDOM_STATE)
     return kfold, train_data
+
+def save_hyperparams_as_json(hyperparams, path):
+    makedirs(dirname(path), exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as file:
+        json.dump(hyperparams, file, ensure_ascii=False, indent=4)
