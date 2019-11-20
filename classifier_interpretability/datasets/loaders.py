@@ -11,6 +11,8 @@ from os.path import isfile
 class Cifar10Dataset(Dataset):
     filename = 'cifar-10-python.tar.gz'
     url = 'https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz'
+    categorical_features = []
+    metric = 'accuracy'
 
     @staticmethod
     def unpickle(file_path):
