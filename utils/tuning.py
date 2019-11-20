@@ -72,7 +72,7 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
     best_trial_index = np.array(trials.losses()).argmin()
 
     tuning_results_dir = joinpath(RESULTS_DIR, dataset.__name__, model.__name__)
-    save_tuning_results(tuning_results_dir, best_hp, best_score, best_trial_index)
+    save_tuning_results(tuning_results_dir, best_hp, best_score, best_trial_index, tuning_time)
 
     print(f'Best {dataset.metric}: {best_score:.2f}')
     print(f'With hyperparams: \n{best_hp}')
@@ -119,7 +119,7 @@ def create_kfold(task_type, dataset, train_data):
             kfold = KFold(n_splits=K_FOLD_K_VALUE, shuffle=True, random_state=RANDOM_STATE)
     return kfold, train_data
 
-def save_tuning_results(tuning_results_dir, hyperparams, score, n_trials):
+def save_tuning_results(tuning_results_dir, hyperparams, score, n_trials, tuning_time):
     makedirs(tuning_results_dir, exist_ok=True)
 
     try:
@@ -133,7 +133,8 @@ def save_tuning_results(tuning_results_dir, hyperparams, score, n_trials):
         results = {
             'hp': hyperparams,
             'score': score,
-            'n_trials': int(n_trials)
+            'n_trials': int(n_trials),
+            'tuning_time': tuning_time
         }
         with open(joinpath(tuning_results_dir, 'tuning.json'), 'w', encoding='utf-8') as file:
             json.dump(results, file, ensure_ascii=False, indent=4)
