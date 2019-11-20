@@ -7,3 +7,4 @@ patool
 pytest
 kaggle
 timeout_decorator
+matplotlib
