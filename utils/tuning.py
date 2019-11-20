@@ -56,7 +56,10 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
     rstate = np.random.RandomState(RANDOM_STATE)
     start_time = time.time()
     n_trials_without_improvement = 0
-    make_tuning_step_with_timeout = set_timeout(make_tuning_step, tuning_step_max_time)
+    if tuning_step_max_time > 0:
+        make_tuning_step_with_timeout = set_timeout(make_tuning_step, tuning_step_max_time)
+    else:
+        make_tuning_step_with_timeout = make_tuning_step
     while (time.time() - start_time < tuning_time
            and n_trials_without_improvement < max_trials_without_improvement):
 
