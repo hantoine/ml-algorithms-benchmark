@@ -2,9 +2,7 @@ import torch
 import torchvision
 import torch.nn as nn
 import torch.optim as optim
-import cifar_classifiation as cs
-from cs import get_loaders
-from cs.models import LeNet, LeNetPytorch
+from models import LeNet, LeNetPytorch
 
 
 def training(trainloader, net, config):
