@@ -1,12 +1,16 @@
 import argparse
 from classification import tune_all_models_on_all_classification_datasets, \
-                            evaluate_all_models_on_all_classification_datasets
+    evaluate_all_models_on_all_classification_datasets
 from regression import tune_all_models_on_all_regression_datasets, \
-                       evaluate_all_models_on_all_regression_datasets
+    evaluate_all_models_on_all_regression_datasets
+from classifier_interpretability import tune_all_models_on_all_classifier_interpretability_datasets, \
+    evaluate_all_models_on_all_classifier_interpretability_datasets
 
 parser = argparse.ArgumentParser()
 
 subparsers = parser.add_subparsers(title='commands')
+
+
 def add_tuning_arguments(parser):
     parser.add_argument('-s', '--tuning_trials_per_step', type=int, default=5)
     parser.add_argument('-t', '--tuning_time', type=int, default=120)
@@ -22,13 +26,22 @@ parser_tune_regression = subparsers.add_parser('regression-tuning')
 add_tuning_arguments(parser_tune_regression)
 parser_tune_regression.set_defaults(func=tune_all_models_on_all_regression_datasets)
 
-parser_train_regression = subparsers.add_parser('regression-evaluation')
-parser_train_regression.add_argument('-m', '--max_training_time', type=int, default=180)
-parser_train_regression.set_defaults(func=evaluate_all_models_on_all_regression_datasets)
+parser_tune_classifier_interpretability = subparsers.add_parser('classifier-interpretability-tuning')
+add_tuning_arguments(parser_tune_classifier_interpretability)
+parser_tune_classifier_interpretability.set_defaults(func=tune_all_models_on_all_classifier_interpretability_datasets)
 
 parser_train_classification = subparsers.add_parser('classification-evaluation')
 parser_train_classification.add_argument('-m', '--max_training_time', type=int, default=180)
 parser_train_classification.set_defaults(func=evaluate_all_models_on_all_classification_datasets)
+
+parser_train_regression = subparsers.add_parser('regression-evaluation')
+parser_train_regression.add_argument('-m', '--max_training_time', type=int, default=180)
+parser_train_regression.set_defaults(func=evaluate_all_models_on_all_regression_datasets)
+
+parser_train_classifier_interpretability = subparsers.add_parser('classifier-interpretability-evaluation')
+parser_train_classifier_interpretability.add_argument('-m', '--max_training_time', type=int, default=180)
+parser_train_classifier_interpretability.set_defaults(
+    func=evaluate_all_models_on_all_classifier_interpretability_datasets)
 
 args = parser.parse_args()
 
