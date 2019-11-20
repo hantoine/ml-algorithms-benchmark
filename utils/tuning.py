@@ -13,10 +13,12 @@ from sklearn.utils import shuffle
 
 from config import K_FOLD_K_VALUE, RANDOM_STATE, RESULTS_DIR
 from utils import compute_loss, compute_metric, get_min_k_fold_k_value
+from .timeout import set_timeout, TimeoutError
 
 
 def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_per_step=5,
-                                    tuning_time=120, max_trials_without_improvement=150):
+                                    tuning_time=120, max_trials_without_improvement=150,
+                                    tuning_step_max_time=60):
     warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
     minimum_runtime = tuning_time * len(models) * len(datasets)
@@ -33,13 +35,13 @@ def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_p
 
                 tune_hyperparams(task_type, dataset, model, train_data,
                                  tuning_trials_per_step, tuning_time,
-                                 max_trials_without_improvement)
+                                 max_trials_without_improvement, tuning_step_max_time)
             except MemoryError:
                 print('Memory requirements for this model with this dataset are too high')
 
 
 def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tuning_time,
-                     max_trials_without_improvement):
+                     max_trials_without_improvement, tuning_step_max_time):
     kfold, train_data = create_kfold(task_type, dataset, train_data)
     objective_fct = create_tuning_objective(dataset, model, train_data, kfold)
 
@@ -53,42 +55,44 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
     trials = Trials()
     rstate = np.random.RandomState(RANDOM_STATE)
     start_time = time.time()
-    prev_best_score = -1e8
     n_trials_without_improvement = 0
+    make_tuning_step_with_timeout = set_timeout(make_tuning_step, tuning_step_max_time)
     while (time.time() - start_time < tuning_time
            and n_trials_without_improvement < max_trials_without_improvement):
         
-        best = make_tuning_step(objective_fct, model.hp_space, trials, rstate, tuning_step_size)
-        
-        best_score = -min(trials.losses())
-        if best_score <= prev_best_score:
-            n_trials_without_improvement += tuning_step_size
-        else:
-            prev_best_score = best_score
-            n_trials_without_improvement = 0
+        try:
+            make_tuning_step_with_timeout(objective_fct, model.hp_space, trials,
+                                          rstate, tuning_step_size)
+        except TimeoutError:
+            pass
+
+        best_trial = min(trials.trials, key=lambda r: r['result']['loss'])
+        best_trial_index = best_trial['tid']
+        n_trials_without_improvement = len(trials.trials) - best_trial_index
     tuning_time = time.time() - start_time
 
-    best_hp = space_eval(model.hp_space, best)
-    best_trial_index = np.array(trials.losses()).argmin()
+    best_score = best_trial['result']['loss']
+    best_hp_raw = {k: v[0] if len(v) else None for k, v in best_trial['misc']['vals'].items()}
+    best_hp = space_eval(model.hp_space, best_hp_raw)
 
     tuning_results_dir = joinpath(RESULTS_DIR, dataset.__name__, model.__name__)
     save_tuning_results(tuning_results_dir, best_hp, best_score, best_trial_index, tuning_time)
 
     print(f'Best {dataset.metric}: {best_score:.2f}')
     print(f'With hyperparams: \n{best_hp}')
-    print(f'Obtained after {best_trial_index-1} trials')
+    print(f'Obtained after {best_trial_index} trials')
     print(f'Total tuning time: {tuning_time:.1f}s')
     return best_hp
 
 
 def make_tuning_step(objective_fct, hp_space, trials, rstate, step_size):
-    return fmin(objective_fct,
-                hp_space,
-                algo=tpe.suggest,
-                max_evals=len(trials.trials) + step_size,
-                trials=trials,
-                show_progressbar=True,
-                rstate=rstate)
+    fmin(objective_fct,
+         hp_space,
+         algo=tpe.suggest,
+         max_evals=len(trials.trials) + step_size,
+         trials=trials,
+         show_progressbar=True,
+         rstate=rstate)
 
 def create_tuning_objective(dataset, model, train, kfold):
     def objective(args):
