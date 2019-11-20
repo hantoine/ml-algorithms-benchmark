@@ -53,6 +53,10 @@ def plot_from_data(data):
     plt.imshow(img)
 
 
+def save_model(net, filepath):
+    torch.save(net.state_dict(), filepath)
+
+
 if __name__ == "__main__":
     data_path = '/path_to_downloaded_dataset'
     train_set, test_set, labels_info = get_data_from_files(data_path)
