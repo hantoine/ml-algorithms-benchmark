@@ -13,3 +13,12 @@ def unpickle(file_path):
     with open(file_path, 'rb') as fo:
         d = pickle.load(fo, encoding='bytes')
     return d
+
+
+def get_data(filename):
+    # each row is a RVB img : [32x32 entries, 32x32, 32x32]
+    print(f'file {filename} processed')
+    batch = unpickle(filename)
+    return batch[b'data'], batch[b'labels']
+
+    
