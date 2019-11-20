@@ -56,10 +56,13 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
     rstate = np.random.RandomState(RANDOM_STATE)
     start_time = time.time()
     n_trials_without_improvement = 0
-    make_tuning_step_with_timeout = set_timeout(make_tuning_step, tuning_step_max_time)
+    if tuning_step_max_time > 0:
+        make_tuning_step_with_timeout = set_timeout(make_tuning_step, tuning_step_max_time)
+    else:
+        make_tuning_step_with_timeout = make_tuning_step
     while (time.time() - start_time < tuning_time
            and n_trials_without_improvement < max_trials_without_improvement):
-        
+
         try:
             make_tuning_step_with_timeout(objective_fct, model.hp_space, trials,
                                           rstate, tuning_step_size)
@@ -71,7 +74,7 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
             best_trial_index = best_trial['tid']
             n_trials_without_improvement = len(trials.trials) - best_trial_index
     tuning_time = time.time() - start_time
-    
+
     if len(trials.trials) == 0:
         print('No trials finished within allowed time')
         return
@@ -129,6 +132,7 @@ def create_kfold(task_type, dataset, train_data):
         else:
             kfold = KFold(n_splits=K_FOLD_K_VALUE, shuffle=True, random_state=RANDOM_STATE)
     return kfold, train_data
+
 
 def save_tuning_results(tuning_results_dir, hyperparams, score, n_trials, tuning_time):
     makedirs(tuning_results_dir, exist_ok=True)
