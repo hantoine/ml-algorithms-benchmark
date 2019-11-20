@@ -2,7 +2,7 @@ import torch
 import torchvision
 import torch.nn as nn
 import torch.optim as optim
-from models import LeNet, LeNetPytorch
+from models import LeNet, CustomizedLeNet
 
 
 def training(trainloader, net, config):
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     if saved_model_path:
         net.load_state_dict(torch.load(saved_model_path))
     else:
-        net = LeNetPytorch()
+        net = CustomizedLeNet()
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
