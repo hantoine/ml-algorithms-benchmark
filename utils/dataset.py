@@ -1,7 +1,9 @@
 import os
+import urllib.request
 from os import makedirs
 from os.path import isfile
-import urllib.request
+
+import numpy as np
 import pandas as pd
 from scipy.io import arff
 
@@ -9,7 +11,6 @@ from scipy.io import arff
 class Dataset:
     @classmethod
     def download(cls, workdir):
-        # import pdb ; pdb.set_trace()
         makedirs(workdir, exist_ok=True)
         if hasattr(cls, 'url'):
             filepath = os.path.join(workdir, cls.filename)
@@ -25,3 +26,9 @@ class Dataset:
     def download_file(url, filepath):
         url = url.replace(' ', '%20')
         urllib.request.urlretrieve(url, filepath)
+
+def get_min_k_fold_k_value(train_data):
+    _, y = train_data
+    if type(y) == pd.Series:
+        y = y.values
+    return np.bincount(y).min()

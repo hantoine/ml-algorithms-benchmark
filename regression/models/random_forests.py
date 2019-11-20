@@ -14,7 +14,7 @@ class RandomForestsModel(TreeBasedModel):
     hp_space = {
         'max_depth': hp.pchoice('max_depth_enabled', [
             (0.7, None),
-            (0.3, scope.int(hp.qlognormal('max_depth', np.log(30), 0.5, 3)))]),
+            (0.3, 1 + scope.int(hp.qlognormal('max_depth', np.log(30), 0.5, 3)))]),
         'n_estimators': scope.int(hp.qloguniform('n_estimators', np.log(9.5), np.log(300), 1)),
         'min_samples_leaf': hp.choice('min_samples_leaf_enabled', [
             1,
