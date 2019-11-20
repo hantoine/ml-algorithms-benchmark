@@ -1,19 +1,19 @@
+import json
 import time
 import warnings
-import numpy as np
 from datetime import timedelta
-from os.path import dirname, join as joinpath
 from os import makedirs
+from os.path import join as joinpath
 
-from hyperopt import fmin, tpe, Trials, space_eval
-from sklearn.model_selection import StratifiedKFold, GroupKFold, KFold
-from sklearn.utils import shuffle
+import numpy as np
+from hyperopt import Trials, fmin, space_eval, tpe
 from sklearn.exceptions import ConvergenceWarning
-import json
+from sklearn.model_selection import GroupKFold, KFold, StratifiedKFold
+from sklearn.utils import shuffle
 
-from utils import compute_metric, compute_loss, get_min_k_fold_k_value
-from config import K_FOLD_K_VALUE, RANDOM_STATE
-from config import RESULTS_DIR
+from config import K_FOLD_K_VALUE, RANDOM_STATE, RESULTS_DIR
+from utils import compute_loss, compute_metric, get_min_k_fold_k_value
+
 
 def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_per_step=5,
                                     tuning_time=120, max_trials_without_improvement=150):
@@ -57,7 +57,9 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
     n_trials_without_improvement = 0
     while (time.time() - start_time < tuning_time
            and n_trials_without_improvement < max_trials_without_improvement):
+        
         best = make_tuning_step(objective_fct, model.hp_space, trials, rstate, tuning_step_size)
+        
         best_score = -min(trials.losses())
         if best_score <= prev_best_score:
             n_trials_without_improvement += tuning_step_size
@@ -72,10 +74,10 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
     tuning_results_dir = joinpath(RESULTS_DIR, dataset.__name__, model.__name__)
     save_tuning_results(tuning_results_dir, best_hp, best_score, best_trial_index)
 
-    print(f'Best {dataset.metric}: {best_score}')
+    print(f'Best {dataset.metric}: {best_score:.2f}')
     print(f'With hyperparams: \n{best_hp}')
     print(f'Obtained after {best_trial_index-1} trials')
-    print(f'Total tuning time: {tuning_time:.0f}s')
+    print(f'Total tuning time: {tuning_time:.1f}s')
     return best_hp
 
 
@@ -131,7 +133,7 @@ def save_tuning_results(tuning_results_dir, hyperparams, score, n_trials):
         results = {
             'hp': hyperparams,
             'score': score,
-            'n_trials': n_trials
+            'n_trials': int(n_trials)
         }
         with open(joinpath(tuning_results_dir, 'tuning.json'), 'w', encoding='utf-8') as file:
             json.dump(results, file, ensure_ascii=False, indent=4)

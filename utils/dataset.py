@@ -1,9 +1,10 @@
 import os
+import urllib.request
 from os import makedirs
 from os.path import isfile
-import urllib.request
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 from scipy.io import arff
 
 
@@ -31,4 +32,3 @@ def get_min_k_fold_k_value(train_data):
     if type(y) == pd.Series:
         y = y.values
     return np.bincount(y).min()
-

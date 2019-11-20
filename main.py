@@ -1,6 +1,8 @@
 import argparse
-from classification import tune_all_models_on_all_classification_datasets
-from regression import tune_all_models_on_all_regression_datasets
+from classification import tune_all_models_on_all_classification_datasets, \
+                            evaluate_all_models_on_all_classification_datasets
+from regression import tune_all_models_on_all_regression_datasets, \
+                       evaluate_all_models_on_all_regression_datasets
 
 parser = argparse.ArgumentParser()
 
@@ -17,6 +19,12 @@ parser_tune_classification.set_defaults(func=tune_all_models_on_all_classificati
 parser_tune_regression = subparsers.add_parser('regression-tuning')
 add_tuning_arguments(parser_tune_regression)
 parser_tune_regression.set_defaults(func=tune_all_models_on_all_regression_datasets)
+
+parser_train_regression = subparsers.add_parser('regression-evaluation')
+parser_train_regression.set_defaults(func=evaluate_all_models_on_all_regression_datasets)
+
+parser_train_classification = subparsers.add_parser('classification-evaluation')
+parser_train_classification.set_defaults(func=evaluate_all_models_on_all_classification_datasets)
 
 args = parser.parse_args()
 
