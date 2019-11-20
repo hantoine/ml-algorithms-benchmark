@@ -25,9 +25,9 @@ def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_p
         for model in models:
             print(f'Model: {model.__name__}')
             try:
-                train, test = model.prepare_dataset(train, test, dataset.categorical_features)
+                train_data, test_data = model.prepare_dataset(train, test, dataset.categorical_features)
 
-                best_hp = tune_hyperparams(task_type, dataset, model, train,
+                best_hp = tune_hyperparams(task_type, dataset, model, train_data,
                                            tuning_trials_per_step, tuning_time)
 
                 # save best hp here
