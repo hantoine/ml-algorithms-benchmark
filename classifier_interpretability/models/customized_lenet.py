@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-class LeNetPytorch(nn.Module):
+class CustomizedLeNet(nn.Module):
     """ Inspired by Alexnet
     Using relu and max pooling
     """
