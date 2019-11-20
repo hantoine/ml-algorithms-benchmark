@@ -34,6 +34,5 @@ class GradientBoostingModel(TreeBasedModel):
             (0.2, 'log2'),  # less common choice.
             (0.1, None),  # all features, less common choice.
             (0.6, hp.uniform('max_features_str_frac', 0., 1.))
-        ]),
-        'loss': hp.choice('loss', ['deviance', 'exponential'])
+        ])
     }
