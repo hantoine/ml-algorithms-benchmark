@@ -15,7 +15,7 @@ def compute_metric(y, y_pred, metric_name):
     return score
 
 
-def compute_loss(metric_values, metric_name):
+def compute_loss(metric_name, metric_values):
     if metric_name == 'accuracy' or metric_name == 'f1':
         confusion_matrices = metric_values
         confusion_matrix = np.array(confusion_matrices).sum(axis=0)

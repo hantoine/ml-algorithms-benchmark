@@ -17,6 +17,10 @@ def check_dataset(dataset):
     assert (type(x_train) == type(x_test) == pd.core.frame.DataFrame
             or type(x_train) == type(x_test) == np.ndarray)
     assert x_train.shape[1] == x_test.shape[1]
+    assert hasattr(dataset, 'categorical_features')
+    assert type(dataset.categorical_features) == list
+    assert hasattr(dataset, 'metric')
+    assert type(dataset.metric) == str
 
     if len(others) != 0:
         assert len(others) == 1

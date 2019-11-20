@@ -9,7 +9,7 @@ import numpy as np
 class DecisionTreeModel(TreeBasedModel):
     @staticmethod
     def build_estimator(args):
-        return DecisionTreeClassifier(random_state=RANDOM_STATE, presort=True, **args)
+        return DecisionTreeClassifier(random_state=RANDOM_STATE, presort=False, **args)
 
     hp_space = {
         'max_depth': hp.pchoice('max_depth_enabled', [

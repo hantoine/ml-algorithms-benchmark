@@ -2,9 +2,10 @@ import torch
 import torchvision
 import torch.nn as nn
 import torch.optim as optim
-import cifar_classifiation as cs 
+import cifar_classifiation as cs
 from cs import get_loaders
 from cs.models import LeNet, LeNetPytorch
+
 
 def training(trainloader, net, config):
     criterion = nn.CrossEntropyLoss()
@@ -29,7 +30,7 @@ def training(trainloader, net, config):
 
             # print statistics
             running_loss += loss.item()
-            
+
         print(f'Epoch {epoch} loss: {running_loss / i}')
         running_loss = 0.0
 
@@ -51,6 +52,10 @@ def validation():
 
     print('Accuracy of the network on the 10000 test images: %d %%' % (
         100 * correct / total))
+
+
+def save_model(net, filepath):
+    torch.save(net.state_dict(), filepath)
 
 
 class Config():

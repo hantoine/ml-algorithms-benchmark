@@ -15,7 +15,7 @@ class DecisionTreeModel(TreeBasedModel):
         'criterion': hp.choice('criterion', ['mse', 'friedman_mse', 'mae']),
         'max_depth': hp.pchoice('max_depth_enabled', [
             (0.7, None),
-            (0.3, scope.int(hp.qlognormal('max_depth', np.log(30), 0.5, 3)))]),
+            (0.3, 1 + scope.int(hp.qlognormal('max_depth', np.log(30), 0.5, 3)))]),
         'splitter': hp.choice('splitter_str', ['best', 'random']),
         'max_features': hp.pchoice('max_features_str', [
             (0.2, 'sqrt'),  # most common choice.
