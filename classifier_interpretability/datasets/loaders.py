@@ -46,6 +46,4 @@ class Cifar10Dataset(Dataset):
             X = np.concatenate((X, x))
             Y = np.concatenate((Y, y))
 
-        print(type(Y), type(y_test))
-
         return (X, Y), (X_test, y_test)
