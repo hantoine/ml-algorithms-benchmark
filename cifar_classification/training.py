@@ -52,3 +52,10 @@ def validation():
     print(total)
     print('Accuracy of the network on the 10000 test images: %d %%' % (
         100 * correct / total))
+
+
+class Config():
+    def __init__(self, nb_epochs, learning_rate, momentum):
+        nb_epochs = nb_epochs
+        lr = learning_rate
+        momentum = momentum
