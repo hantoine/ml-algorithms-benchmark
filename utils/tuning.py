@@ -66,10 +66,15 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
         except TimeoutError:
             pass
 
-        best_trial = min(trials.trials, key=lambda r: r['result']['loss'])
-        best_trial_index = best_trial['tid']
-        n_trials_without_improvement = len(trials.trials) - best_trial_index
+        if len(trials.trials):
+            best_trial = min(trials.trials, key=lambda r: r['result']['loss'])
+            best_trial_index = best_trial['tid']
+            n_trials_without_improvement = len(trials.trials) - best_trial_index
     tuning_time = time.time() - start_time
+    
+    if len(trials.trials) == 0:
+        print('No trials finished within allowed time')
+        return
 
     best_score = best_trial['result']['loss']
     best_hp_raw = {k: v[0] if len(v) else None for k, v in best_trial['misc']['vals'].items()}
