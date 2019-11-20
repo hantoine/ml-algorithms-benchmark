@@ -29,4 +29,8 @@ class DecisionTreeModel(TreeBasedModel):
             1,
             scope.int(hp.qloguniform('min_samples_leaf', np.log(1.5), np.log(50.5), 1))
         ]),
+        'class_weight': hp.pchoice('class_weight', [
+            (0.5, None),
+            (0.5, 'balanced'),
+        ])
     }
