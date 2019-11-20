@@ -9,5 +9,5 @@ def tune_all_models_on_all_classification_datasets(tuning_trials_per_step=5, tun
                                     max_trials_without_improvement, tuning_step_max_time)
 
 
-def evaluate_all_models_on_all_classification_datasets():
-    train_all_models_on_all_datasets(datasets.all_datasets, models.all_models)
+def evaluate_all_models_on_all_classification_datasets(max_training_time=180):
+    train_all_models_on_all_datasets(datasets.all_datasets, models.all_models, max_training_time)

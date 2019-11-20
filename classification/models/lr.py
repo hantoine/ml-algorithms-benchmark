@@ -11,6 +11,7 @@ class LRModel(NonTreeBasedModel):
         return LogisticRegression(
             random_state=RANDOM_STATE,
             solver='saga',
+            max_iter=500, # increased because Convergence was not always reached
             **args
         )
 

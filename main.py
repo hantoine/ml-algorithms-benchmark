@@ -23,9 +23,11 @@ add_tuning_arguments(parser_tune_regression)
 parser_tune_regression.set_defaults(func=tune_all_models_on_all_regression_datasets)
 
 parser_train_regression = subparsers.add_parser('regression-evaluation')
+parser_train_regression.add_argument('-m', '--max_training_time', type=int, default=180)
 parser_train_regression.set_defaults(func=evaluate_all_models_on_all_regression_datasets)
 
 parser_train_classification = subparsers.add_parser('classification-evaluation')
+parser_train_classification.add_argument('-m', '--max_training_time', type=int, default=180)
 parser_train_classification.set_defaults(func=evaluate_all_models_on_all_classification_datasets)
 
 args = parser.parse_args()

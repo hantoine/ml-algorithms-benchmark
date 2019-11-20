@@ -8,11 +8,12 @@ from sklearn.exceptions import ConvergenceWarning
 
 from config import RESULTS_DIR
 from utils import compute_loss, compute_metric
+from .timeout import set_timeout, TimeoutError
 
 
-def train_all_models_on_all_datasets(datasets, models):
-    # warnings.filterwarnings("ignore", category=ConvergenceWarning)
-
+def train_all_models_on_all_datasets(datasets, models, max_training_time=180):
+    warnings.filterwarnings("ignore", category=ConvergenceWarning)
+    evaluate_model_with_timeout = set_timeout(evaluate_model, max_training_time)
     for dataset in datasets:
         print(f'Dataset: {dataset.__name__}')
         train, test = dataset.get()
@@ -25,19 +26,13 @@ def train_all_models_on_all_datasets(datasets, models):
                     print('No hyper-parameters saved for this dataset and model')
                     continue
 
-                start_time = time.time()
-                train_data, test_data = \
-                    model.prepare_dataset(train, test, dataset.categorical_features)
-                estimator = model.build_estimator(tuning_results['hp'])
-                X, y, *_ = train_data
-                estimator.fit(X, y)
-                train_time = time.time() - start_time
-
-                start_time = time.time()
-                X_test, y_test = test_data
-                metric_value = compute_metric(y_test, estimator.predict(X_test), dataset.metric)
-                score = -compute_loss(dataset.metric, [metric_value])
-                evaluation_time = time.time() - start_time
+                try:
+                    hyperparams = tuning_results['hp']
+                    score, train_time, evaluation_time = \
+                        evaluate_model_with_timeout(model, dataset, train, test, hyperparams)
+                except TimeoutError:
+                    print(f'Model training and testing exceeded allowed time ({max_training_time}s)')
+                    continue
 
                 save_evaluation_results(dataset, model, tuning_results, score, train_time,
                                         evaluation_time)
@@ -49,6 +44,23 @@ def train_all_models_on_all_datasets(datasets, models):
             except MemoryError:
                 print('Memory requirements for this model with this dataset are too high')
 
+
+def evaluate_model(model, dataset, train, test, hyperparams):
+    start_time = time.time()
+    train_data, test_data = \
+        model.prepare_dataset(train, test, dataset.categorical_features)
+    estimator = model.build_estimator(hyperparams)
+    X, y, *_ = train_data
+    estimator.fit(X, y)
+    train_time = time.time() - start_time
+
+    start_time = time.time()
+    X_test, y_test = test_data
+    metric_value = compute_metric(y_test, estimator.predict(X_test), dataset.metric)
+    score = -compute_loss(dataset.metric, [metric_value])
+    evaluation_time = time.time() - start_time
+
+    return score, train_time, evaluation_time 
 
 def get_tuning_results(dataset, model):
     tuning_results_dir = joinpath(RESULTS_DIR, dataset.__name__, model.__name__)
