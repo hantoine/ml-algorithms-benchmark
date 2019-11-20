@@ -17,7 +17,7 @@ import classification.datasets as classification_ds
 from config import HYPERPARAMS_DIR
 
 def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_per_step=5,
-                                    tuning_time=120):
+                                    tuning_time=120, max_trials_without_improvement=150):
     warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
     minimum_runtime = tuning_time * len(models) * len(datasets)
@@ -29,17 +29,21 @@ def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_p
         for model in models:
             print(f'Model: {model.__name__}')
             try:
-                train_data, test_data = model.prepare_dataset(train, test, dataset.categorical_features)
+                train_data, test_data = model.prepare_dataset(train, test,
+                                                              dataset.categorical_features)
 
                 best_hp = tune_hyperparams(task_type, dataset, model, train_data,
-                                           tuning_trials_per_step, tuning_time)
+                                           tuning_trials_per_step, tuning_time,
+                                           max_trials_without_improvement)
 
-                save_hyperparams_as_json(best_hp, joinpath(HYPERPARAMS_DIR, dataset.__name__, model.__name__, 'hp.json'))
+                save_hyperparams_as_json(best_hp, joinpath(HYPERPARAMS_DIR, dataset.__name__,
+                                                           model.__name__, 'hp.json'))
             except MemoryError:
-                print('Memory requirements for this model with this dataset too high')
+                print('Memory requirements for this model with this dataset are too high')
 
 
-def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tuning_time):
+def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tuning_time,
+                     max_trials_without_improvement):
     kfold, train_data = create_kfold(task_type, dataset, train_data)
     objective_fct = create_tuning_objective(dataset, model, train_data, kfold)
 
@@ -53,11 +57,19 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tu
     trials = Trials()
     rstate = np.random.RandomState(RANDOM_STATE)
     start_time = time.time()
-    while time.time() - start_time < tuning_time:
+    prev_best_score = -1e8
+    n_trials_without_improvement = 0
+    while (time.time() - start_time < tuning_time
+           and n_trials_without_improvement < max_trials_without_improvement):
         best = make_tuning_step(objective_fct, model.hp_space, trials, rstate, tuning_step_size)
+        best_score = -min(trials.losses())
+        if best_score <= prev_best_score:
+            n_trials_without_improvement += tuning_step_size
+        else:
+            prev_best_score = best_score
+            n_trials_without_improvement = 0
     tuning_time = time.time() - start_time
 
-    best_score = -min(trials.losses())
     best_hp = space_eval(model.hp_space, best)
     best_trial_index = np.array(trials.losses()).argmin()
     print(f'Best {dataset.metric}: {best_score}')
