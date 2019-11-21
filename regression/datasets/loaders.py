@@ -24,6 +24,7 @@ from config import DEFAULT_DATA_DIR
 class MerckMolecularActivityDataset(Dataset):
     filename = 'TrainingSet.zip'
     metric = 'r2'
+    is_metric_maximized = True
     categorical_features = []
 
     @classmethod
@@ -64,7 +65,8 @@ class MerckMolecularActivityDataset(Dataset):
 class WhiteWineQualityDataset(Dataset):
     filename = 'winequality-red.csv'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv'
-    metric = '-rmse'
+    metric = 'rmse'
+    is_metric_maximized = False
     categorical_features = []
 
     @classmethod
@@ -83,7 +85,8 @@ class WhiteWineQualityDataset(Dataset):
 class RedWineQualityDataset(Dataset):
     filename = 'winequality-white.csv'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv'
-    metric = '-rmse'
+    metric = 'rmse'
+    is_metric_maximized = False
     categorical_features = []
 
     @classmethod
@@ -102,7 +105,8 @@ class RedWineQualityDataset(Dataset):
 class CommunitiesAndCrimeDataset(Dataset):
     filename = 'communities.data'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/communities/communities.data'
-    metric = '-rmse'
+    metric = 'rmse'
+    is_metric_maximized = False
     categorical_features = []
 
     @classmethod
@@ -125,7 +129,8 @@ class QsarAquaticToxicityDataset(Dataset):
     filename = 'qsar_aquatic_toxicity.csv'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00505//qsar_aquatic_toxicity.csv'
     features = ['TPSA', 'SAacc', 'H-050', 'MLOGP', 'RDCHI', 'GATS1p', 'nN', 'C-040', 'LC50']
-    metric = '-rmse'
+    metric = 'rmse'
+    is_metric_maximized = False
     categorical_features = []
 
     @classmethod
@@ -156,7 +161,8 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
                     'maximum_pitch', 'nb_pulses', 'nb_periods', 'mean_period',
                     'std', 'frac_local_unvoiced_frames', 'nb_voice_breaks',
                     'degree_voice_breaks', 'UPDRS', 'class']
-    metric = '-rmse'
+    metric = 'rmse'
+    is_metric_maximized = False
     categorical_features = []
     need_grouped_split = True
 
@@ -200,7 +206,8 @@ class ParkinsonMultipleSoundRecordingDataset(Dataset):
 class FacebookMetricsDataset(Dataset):
     filename = 'Facebook_metrics.zip'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00368/Facebook_metrics.zip'
-    metric = '-rmse'
+    metric = 'rmse'
+    is_metric_maximized = False
     categorical_features = ['Type', 'Category', 'Post Weekday']
     """
         We decide to encode Post Hour and Post Month as cyclical numeric.
@@ -269,7 +276,8 @@ class FacebookCommentDataset(FacebookMetricsDataset):
 class BikeSharingDataset(Dataset):
     filename = 'Bike-Sharing-Dataset.zip'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip'
-    metric = '-rmse'
+    metric = 'rmse'
+    is_metric_maximized = False
     categorical_features = ['season', 'weekday']
 
     @classmethod
@@ -295,7 +303,8 @@ class BikeSharingDataset(Dataset):
 class StudentPerformanceBaseDataset(Dataset):
     filename = 'student.zip'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00320/student.zip'
-    metric = '-rmse'
+    metric = 'rmse'
+    is_metric_maximized = False
     categorical_features = ['school', 'sex', 'address', 'famsize', 'Pstatus', 'Mjob', 'Fjob', 'reason', 'guardian']
 
     @classmethod
@@ -362,7 +371,8 @@ class StudentPortuguesePerformanceNoPrevGradesDataset(StudentPerformanceNoPrevGr
 class ConcreteCompressiveStrengthDataset(Dataset):
     filename = 'Concrete_Data.xls'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls'
-    metric = '-rmse'
+    metric = 'rmse'
+    is_metric_maximized = False
     categorical_features = []
 
     @classmethod
@@ -381,7 +391,8 @@ class ConcreteCompressiveStrengthDataset(Dataset):
 class SGEMMGPUKernelPerformancesDataset(Dataset):
     filename = 'sgemm_product_dataset.zip'
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/00440/sgemm_product_dataset.zip'
-    metric = '-rmse'
+    metric = 'rmse'
+    is_metric_maximized = False
     categorical_features = []
 
     @classmethod

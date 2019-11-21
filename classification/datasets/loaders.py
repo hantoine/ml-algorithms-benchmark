@@ -26,6 +26,7 @@ class RetinopathyDataset(Dataset):
                         'class']
     categorical_features = []
     metric = 'accuracy'
+    is_metric_maximized = True
 
     @classmethod
     def preprocess(cls, df):
@@ -52,6 +53,7 @@ class DefaultCreditCardDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00350/default of credit card clients.xls'
     categorical_features = []
     metric = 'f1'
+    is_metric_maximized = True
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
@@ -72,6 +74,7 @@ class BreastCancerDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/breast-cancer-wisconsin.data'
     categorical_features = []
     metric = 'f1'
+    is_metric_maximized = True
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
@@ -92,6 +95,7 @@ class StatlogAustralianDataset(Dataset):
     url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/statlog/australian/australian.dat'
     categorical_features = [0, 3, 4, 5, 7, 8, 10, 11]
     metric = 'accuracy'
+    is_metric_maximized = True
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
@@ -110,6 +114,7 @@ class StatlogGermanDataset(Dataset):
     filename = 'german.data-numeric'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric'
     metric = 'f1'
+    is_metric_maximized = True
     categorical_features = []  # already encoded
 
     @classmethod
@@ -131,6 +136,7 @@ class SteelPlatesFaultsDataset(Dataset):
     filenames = ['Faults.NNA', 'Faults27x7_var']
     categorical_features = []
     metric = 'f1'
+    is_metric_maximized = True
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
@@ -168,6 +174,7 @@ class AdultDataset(Dataset):
                             'relationship', 'race', 'sex', 'native-country']
     desc_url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names'
     metric = 'f1'
+    is_metric_maximized = True
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
@@ -204,6 +211,7 @@ class YeastDataset(Dataset):
     filename = 'yeast.data'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/yeast/yeast.data'
     metric = 'f1'
+    is_metric_maximized = True
     categorical_features = []
 
     @classmethod
@@ -227,6 +235,7 @@ class ThoraricSurgeryDataset(Dataset):
     filename = 'ThoraricSurgery.arff'
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00277/ThoraricSurgery.arff'
     metric = 'f1'
+    is_metric_maximized = True
     categorical_features = ['DGN', 'PRE6']
 
     @classmethod
@@ -269,6 +278,7 @@ class SeismicBumpsDataset(Dataset):
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00266/seismic-bumps.arff'
     categorical_features = ['seismic', 'seismoacoustic', 'shift', 'ghazard']
     metric = 'f1'
+    is_metric_maximized = True
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
