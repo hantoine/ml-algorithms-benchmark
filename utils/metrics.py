@@ -6,7 +6,7 @@ from sklearn.metrics import confusion_matrix as compute_confusion_matrix
 def compute_metric(y, y_pred, metric_name):
     if metric_name == 'accuracy' or metric_name == 'f1':
         score = compute_confusion_matrix(y, y_pred)
-    elif metric_name == '-rmse':
+    elif metric_name == 'rmse':
         score = mean_squared_error(y, y_pred)
     elif metric_name == 'r2':
         score = r2_score(y, y_pred)
@@ -24,7 +24,7 @@ def compute_loss(metric_name, metric_values):
             score = compute_score_binary(metric_name, confusion_matrix)
         else:
             score = compute_score_multiclass(metric_name, confusion_matrix)
-    elif metric_name == '-rmse':
+    elif metric_name == 'rmse':
         # Each fold has approximately the same number of samples
         score = sum(metric_values) / len(metric_values)
         score = -sqrt(score)

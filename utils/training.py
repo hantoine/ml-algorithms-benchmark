@@ -79,7 +79,10 @@ def save_evaluation_results(dataset, model, tuning_results, score, train_time, e
     try:
         with open(joinpath(results_dir, 'evaluation.json'), 'r', encoding='utf-8') as file:
             prev_results = json.load(file)
-            better_val_results = tuning_results['score'] > prev_results['val_score']
+            if dataset.is_metric_maximized:
+                better_val_results = tuning_results['score'] > prev_results['val_score']
+            else:
+                better_val_results = tuning_results['score'] < prev_results['val_score']
     except FileNotFoundError:
         better_val_results = True
 
@@ -90,7 +93,8 @@ def save_evaluation_results(dataset, model, tuning_results, score, train_time, e
             'tuning_n_trials': tuning_results['n_trials'],
             'val_score': tuning_results['score'],
             'train_time': train_time,
-            'evaluation_time': evaluation_time
+            'evaluation_time': evaluation_time,
+            'metric_used': dataset.metric
         }
         with open(joinpath(results_dir, 'evaluation.json'), 'w', encoding='utf-8') as file:
             json.dump(results, file, ensure_ascii=False, indent=4)

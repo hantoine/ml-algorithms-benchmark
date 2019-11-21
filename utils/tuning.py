@@ -66,7 +66,7 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, ma
     while time_left and n_trials_wo_improvement < max_trials_wo_improvement:
         try:
             make_tuning_step_w_timeout(objective_fct, model.hp_space, trials, rstate, tuning_step_size)
-        except TimeoutError as e:
+        except TimeoutError:
             pass
         n_trials_wo_improvement = update_n_trials_wo_improvement(trials)
         time_left = (time.time() - start_time) < max_tuning_time
@@ -92,11 +92,14 @@ def process_tuning_result(trials, tuning_time, model, dataset):
 
     best_trial = min(trials.trials, key=lambda r: r['result']['loss'])
     best_trial_index = best_trial['tid']
-    best_score = best_trial['result']['loss']
+    best_loss = best_trial['result']['loss']
     best_hp_raw = {k: v[0] if len(v) else None for k, v in best_trial['misc']['vals'].items()}
     best_hp = space_eval(model.hp_space, best_hp_raw)
 
-    save_tuning_results(tuning_results_dir, best_hp, best_score, best_trial_index, tuning_time)
+    best_score = -best_loss if dataset.is_metric_maximized else best_loss
+
+    save_tuning_results(tuning_results_dir, best_hp, best_score, best_trial_index, tuning_time,
+                        dataset.is_metric_maximized)
 
     print(f'Best {dataset.metric}: {best_score:.2f}')
     print(f'With hyperparams: \n{best_hp}')
@@ -144,13 +147,17 @@ def create_kfold(task_type, dataset, train_data):
     return kfold, train_data
 
 
-def save_tuning_results(tuning_results_dir, hyperparams, score, n_trials, tuning_time):
+def save_tuning_results(tuning_results_dir, hyperparams, score, n_trials, tuning_time,
+                        is_metric_maximized):
     makedirs(tuning_results_dir, exist_ok=True)
 
     try:
         with open(joinpath(tuning_results_dir, 'tuning.json'), 'r', encoding='utf-8') as file:
             prev_results = json.load(file)
-            better_results = score > prev_results['score']
+            if is_metric_maximized:
+                better_results = score > prev_results['score']
+            else:
+                better_results = score < prev_results['score']
     except FileNotFoundError:
         better_results = True
 
