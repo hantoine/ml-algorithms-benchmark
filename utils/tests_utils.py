@@ -20,6 +20,7 @@ def check_dataset(dataset):
     assert hasattr(dataset, 'categorical_features')
     assert type(dataset.categorical_features) == list
     assert hasattr(dataset, 'metric')
+    assert hasattr(dataset, 'is_metric_maximized')
     assert type(dataset.metric) == str
 
     if len(others) != 0:
