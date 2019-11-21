@@ -2,9 +2,8 @@ import torch
 import torchvision
 import torch.nn as nn
 import torch.optim as optim
-import cifar_classifiation as cs 
-from cs import get_loaders
-from cs.models import LeNet, LeNetPytorch
+from models import LeNet, CustomizedLeNet
+
 
 def training(trainloader, net, config):
     criterion = nn.CrossEntropyLoss()
@@ -29,7 +28,7 @@ def training(trainloader, net, config):
 
             # print statistics
             running_loss += loss.item()
-            
+
         print(f'Epoch {epoch} loss: {running_loss / i}')
         running_loss = 0.0
 
@@ -53,6 +52,10 @@ def validation():
         100 * correct / total))
 
 
+def save_model(net, filepath):
+    torch.save(net.state_dict(), filepath)
+
+
 class Config():
     def __init__(self, nb_epochs, learning_rate, momentum):
         nb_epochs = nb_epochs
@@ -65,7 +68,7 @@ if __name__ == "__main__":
     if saved_model_path:
         net.load_state_dict(torch.load(saved_model_path))
     else:
-        net = LeNetPytorch()
+        net = CustomizedLeNet()
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
