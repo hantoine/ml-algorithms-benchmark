@@ -17,11 +17,11 @@ from .timeout import set_timeout, TimeoutError
 
 
 def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_per_step=5,
-                                    tuning_time=120, max_trials_without_improvement=150,
+                                    max_tuning_time=120, max_trials_without_improvement=150,
                                     tuning_step_max_time=60):
     warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-    minimum_runtime = tuning_time * len(models) * len(datasets)
+    minimum_runtime = max_tuning_time * len(models) * len(datasets)
     print(f'Expected minimum runtime: {timedelta(seconds=minimum_runtime)}')
 
     for dataset in datasets:
@@ -34,64 +34,74 @@ def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_p
                                                       dataset.categorical_features)
 
                 tune_hyperparams(task_type, dataset, model, train_data,
-                                 tuning_trials_per_step, tuning_time,
+                                 tuning_trials_per_step, max_tuning_time,
                                  max_trials_without_improvement, tuning_step_max_time)
             except MemoryError:
                 print('Memory requirements for this model with this dataset are too high')
 
 
-def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, tuning_time,
-                     max_trials_without_improvement, tuning_step_max_time):
+def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, max_tuning_time,
+                     max_trials_wo_improvement, tuning_step_max_time):
     kfold, train_data = create_kfold(task_type, dataset, train_data)
     objective_fct = create_tuning_objective(dataset, model, train_data, kfold)
 
-    # For models without hyper-parameters
+    # No tuning for models without hyper-parameters
     is_model_tunable = hasattr(model, 'hp_space')
     if not is_model_tunable:
         loss = objective_fct(None)
         print(f'Resulting {dataset.metric}: {-loss}')
-        return {}
+        return
 
-    trials = Trials()
-    rstate = np.random.RandomState(RANDOM_STATE)
-    start_time = time.time()
-    n_trials_without_improvement = 0
     if tuning_step_max_time > 0:
-        make_tuning_step_with_timeout = set_timeout(make_tuning_step, tuning_step_max_time)
+        make_tuning_step_w_timeout = set_timeout(make_tuning_step, tuning_step_max_time)
     else:
-        make_tuning_step_with_timeout = make_tuning_step
-    while (time.time() - start_time < tuning_time
-           and n_trials_without_improvement < max_trials_without_improvement):
+        make_tuning_step_w_timeout = make_tuning_step
 
+    # Tuning loop
+    trials = Trials()
+    start_time = time.time()
+    rstate = np.random.RandomState(RANDOM_STATE)
+    n_trials_wo_improvement = 0
+    time_left = True
+    while time_left and n_trials_wo_improvement < max_trials_wo_improvement:
         try:
-            make_tuning_step_with_timeout(objective_fct, model.hp_space, trials,
-                                          rstate, tuning_step_size)
-        except TimeoutError:
+            make_tuning_step_w_timeout(objective_fct, model.hp_space, trials, rstate, tuning_step_size)
+        except TimeoutError as e:
             pass
-
-        if len(trials.trials):
-            best_trial = min(trials.trials, key=lambda r: r['result']['loss'])
-            best_trial_index = best_trial['tid']
-            n_trials_without_improvement = len(trials.trials) - best_trial_index
+        n_trials_wo_improvement = update_n_trials_wo_improvement(trials)
+        time_left = (time.time() - start_time) < max_tuning_time
     tuning_time = time.time() - start_time
 
+    process_tuning_result(trials, tuning_time, model, dataset)
+
+
+def update_n_trials_wo_improvement(trials):
+    if len(trials.trials) == 0:
+        return 0
+    best_trial = min(trials.trials, key=lambda r: r['result']['loss'])
+    best_trial_index = best_trial['tid']
+    return len(trials.trials) - best_trial_index
+
+
+def process_tuning_result(trials, tuning_time, model, dataset):
     if len(trials.trials) == 0:
         print('No trials finished within allowed time')
         return
 
+    tuning_results_dir = joinpath(RESULTS_DIR, dataset.__name__, model.__name__)
+
+    best_trial = min(trials.trials, key=lambda r: r['result']['loss'])
+    best_trial_index = best_trial['tid']
     best_score = best_trial['result']['loss']
     best_hp_raw = {k: v[0] if len(v) else None for k, v in best_trial['misc']['vals'].items()}
     best_hp = space_eval(model.hp_space, best_hp_raw)
 
-    tuning_results_dir = joinpath(RESULTS_DIR, dataset.__name__, model.__name__)
     save_tuning_results(tuning_results_dir, best_hp, best_score, best_trial_index, tuning_time)
 
     print(f'Best {dataset.metric}: {best_score:.2f}')
     print(f'With hyperparams: \n{best_hp}')
     print(f'Obtained after {best_trial_index} trials')
     print(f'Total tuning time: {tuning_time:.1f}s')
-    return best_hp
-
 
 def make_tuning_step(objective_fct, hp_space, trials, rstate, step_size):
     fmin(objective_fct,
