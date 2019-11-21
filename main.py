@@ -5,6 +5,7 @@ from regression import tune_all_models_on_all_regression_datasets, \
     evaluate_all_models_on_all_regression_datasets
 from classifier_interpretability import tune_all_models_on_all_classifier_interpretability_datasets, \
     evaluate_all_models_on_all_classifier_interpretability_datasets
+from utils import print_results
 
 parser = argparse.ArgumentParser()
 
@@ -42,6 +43,10 @@ parser_train_classifier_interpretability = subparsers.add_parser('classifier-int
 parser_train_classifier_interpretability.add_argument('-m', '--max_training_time', type=int, default=180)
 parser_train_classifier_interpretability.set_defaults(
     func=evaluate_all_models_on_all_classifier_interpretability_datasets)
+
+parser_summarize_results = subparsers.add_parser('summarize_results')
+parser_summarize_results.set_defaults(func=print_results) 
+
 
 args = parser.parse_args()
 
