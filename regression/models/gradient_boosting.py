@@ -8,7 +8,7 @@ import numpy as np
 
 class GradientBoostingModel(TreeBasedModel):
     @staticmethod
-    def build_estimator(args):
+    def build_estimator(args, train_data=None):
         return GradientBoostingRegressor(random_state=RANDOM_STATE, presort=True, **args)
 
     loss_alpha = hp.choice('loss_alpha', [

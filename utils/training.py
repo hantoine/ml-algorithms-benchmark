@@ -122,4 +122,5 @@ def get_results_table():
 def print_results():
     results = get_results_table()
     pd.set_option('display.max_rows', -1)
+    pd.set_option('display.max_colwidth', -1)
     print(results)

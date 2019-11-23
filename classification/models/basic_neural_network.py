@@ -6,9 +6,9 @@ from hyperopt.pyll import scope
 import numpy as np
 
 
-class NeuralNetworkModel(NonTreeBasedModel):
+class BasicNeuralNetworkModel(NonTreeBasedModel):
     @staticmethod
-    def build_estimator(args, test=False):
+    def build_estimator(args, train_data=None, test=False):
         return MLPClassifier(
             random_state=RANDOM_STATE,
             max_iter=(1 if test else 300),

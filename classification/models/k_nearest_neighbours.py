@@ -7,7 +7,7 @@ import numpy as np
 
 class KNearestNeighborsModel(NonTreeBasedModel):
     @staticmethod
-    def build_estimator(args):
+    def build_estimator(args, train_data=None):
         return KNeighborsClassifier(n_jobs=-1, **args)
 
     metric_hp = hp.pchoice('metric', [

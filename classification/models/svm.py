@@ -7,7 +7,7 @@ import numpy as np
 
 class SVMModel(NonTreeBasedModel):
     @staticmethod
-    def build_estimator(args, test=False):
+    def build_estimator(args, train_data=None, test=False):
         return SVC(
             random_state=RANDOM_STATE,
             # Prevent very long training time for some hyper-parameters

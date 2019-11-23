@@ -7,7 +7,7 @@ import numpy as np
 
 class LinearRegressionModel(NonTreeBasedModel):
     @staticmethod
-    def build_estimator(args, test=False):
+    def build_estimator(args, train_data=None, test=False):
         """
             Using Ridge to make it possible to use L2 regularizations.
             sklearn.linear_model.LinearRegression does not support any regularization.

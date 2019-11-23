@@ -118,7 +118,7 @@ def make_tuning_step(objective_fct, hp_space, trials, rstate, step_size):
 
 def create_tuning_objective(dataset, model, train, kfold):
     def objective(args):
-        estimator = model.build_estimator(args)
+        estimator = model.build_estimator(args, train)
         metric_values = []
         X, y, *_ = train
         for train_index, val_index in kfold.split(*train):

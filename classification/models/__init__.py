@@ -5,8 +5,9 @@ from .gaussian_nb import GaussianNBModel
 from .decision_tree import DecisionTreeModel
 from .adaboost import AdaBoostModel
 from .k_nearest_neighbours import KNearestNeighborsModel
-from .neural_network import NeuralNetworkModel
+from .basic_neural_network import BasicNeuralNetworkModel
 from .gradient_boosting import GradientBoostingModel
+from .advanced_neural_network import AdvancedNeuralNetworkModel
 
 all_models = [
     RandomForestsModel,
@@ -16,6 +17,7 @@ all_models = [
     DecisionTreeModel,
     AdaBoostModel,
     KNearestNeighborsModel,
-    NeuralNetworkModel,
-    GradientBoostingModel
+    BasicNeuralNetworkModel,
+    GradientBoostingModel,
+    AdvancedNeuralNetworkModel
 ]

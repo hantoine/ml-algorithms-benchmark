@@ -8,7 +8,7 @@ import numpy as np
 
 class AdaBoostModel(TreeBasedModel):
     @staticmethod
-    def build_estimator(args):
+    def build_estimator(args, train_data=None):
         return AdaBoostRegressor(random_state=RANDOM_STATE, **args)
 
     hp_space = {
