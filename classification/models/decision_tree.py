@@ -8,7 +8,7 @@ import numpy as np
 
 class DecisionTreeModel(TreeBasedModel):
     @staticmethod
-    def build_estimator(args):
+    def build_estimator(args, train_data=None):
         return DecisionTreeClassifier(random_state=RANDOM_STATE, presort=True, **args)
 
     hp_space = {

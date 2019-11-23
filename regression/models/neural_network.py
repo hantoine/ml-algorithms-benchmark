@@ -8,7 +8,7 @@ import numpy as np
 
 class NeuralNetworkModel(NonTreeBasedModel):
     @staticmethod
-    def build_estimator(args, test=False):
+    def build_estimator(args, train_data=None, test=False):
         return MLPRegressor(
             random_state=RANDOM_STATE,
             max_iter=(1 if test else 300),

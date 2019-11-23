@@ -7,7 +7,7 @@ import numpy as np
 
 class LRModel(NonTreeBasedModel):
     @staticmethod
-    def build_estimator(args, test=False):
+    def build_estimator(args, train_data=None, test=False):
         return LogisticRegression(
             random_state=RANDOM_STATE,
             solver='saga',

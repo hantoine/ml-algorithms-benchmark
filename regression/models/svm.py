@@ -6,7 +6,7 @@ import numpy as np
 
 class SVMModel(NonTreeBasedModel):
     @staticmethod
-    def build_estimator(args, test=False):
+    def build_estimator(args, train_data=None, test=False):
         return SVR(
             # Prevent very long training time for some hyper-parameters
             max_iter=int(1e3) if test else int(2e6),

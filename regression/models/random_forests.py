@@ -8,7 +8,7 @@ import numpy as np
 
 class RandomForestsModel(TreeBasedModel):
     @staticmethod
-    def build_estimator(args):
+    def build_estimator(args, train_data=None):
         return RandomForestRegressor(random_state=RANDOM_STATE, n_jobs=-1, **args)
 
     hp_space = {
