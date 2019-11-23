@@ -82,7 +82,7 @@ class AdvancedNeuralNetworkModel(NonTreeBasedModel):
             (0.7, 'balanced'),
         ]),
         'weight_decay': hp.loguniform('alpha', np.log(1e-7), np.log(1e-2)),
-        'n_layers': hp.choice('n_layers', [1, 2, 3, 4])
+        'n_layers': hp.choice('n_layers', [2, 3, 4, 5])
     }
 
 class NNModule(nn.Module):
@@ -97,7 +97,7 @@ class NNModule(nn.Module):
 
         self.first_layer = Layer(in_features, n_neuron_per_layer, activation, p_dropout)
         self.middle_layers = ListModule(self, 'middle_layer')
-        for _ in range(n_layers):
+        for _ in range(n_layers-2):
             self.middle_layers.append(
                 Layer(n_neuron_per_layer, n_neuron_per_layer, activation, p_dropout))
         self.fc = nn.Linear(n_neuron_per_layer, n_classes)
