@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from hyperopt import hp
 from hyperopt.pyll import scope
 from sklearn.datasets import make_classification
-from skorch import NeuralNetClassifier
+from skorch import NeuralNetRegressor
 from skorch.callbacks import EarlyStopping, LRScheduler, EpochScoring
 from skorch.dataset import CVSplit
 from torch import nn
@@ -20,7 +20,8 @@ class AdvancedNeuralNetworkModel(NonTreeBasedModel):
          (X_train, y_train, *other), (X_test, y_test) = \
              super(AdvancedNeuralNetworkModel, cls).prepare_dataset(train_data, test_data,
                                                                     categorical_features)
-         return (X_train.astype(np.float32), y_train, *other), (X_test.astype(np.float32), y_test)
+         return ((X_train.astype(np.float32), y_train.astype(np.float32).reshape((-1, 1)), *other),
+                 (X_test.astype(np.float32), y_test.astype(np.float32).reshape((-1, 1))))
 
     @staticmethod
     def build_estimator(hyperparams, train_data, test=False):
@@ -29,12 +30,10 @@ class AdvancedNeuralNetworkModel(NonTreeBasedModel):
         # Extract info from training data
         X, y, *_ = train_data
         in_features = X.shape[1]
-        n_classes = len(np.unique(y))
-        n_samples = y.shape[0]
-        bal_weights = torch.from_numpy(n_samples / (n_classes * np.bincount(y))).float().to(device)
 
         callbacks = [
-            ('f1_score_valid', EpochScoring('f1' if n_classes == 2 else 'f1_macro', name='valid_f1', lower_is_better=False)),
+            ('r2_score_valid', EpochScoring('r2',
+                                            lower_is_better=False)),
             ('early_stopping', EarlyStopping(monitor='valid_loss',
                                              patience=5,
                                              lower_is_better=True)),
@@ -47,24 +46,22 @@ class AdvancedNeuralNetworkModel(NonTreeBasedModel):
                                                     )),
         ]
 
-        return NeuralNetClassifier(
+        return NeuralNetRegressor(
             NNModule,
-            criterion=nn.CrossEntropyLoss,
+            criterion=nn.MSELoss,
             optimizer=torch.optim.SGD,
             max_epochs=300,
             iterator_train__shuffle=True, # Shuffle training data on each epoch
             callbacks=callbacks,
             device=device,
-            train_split=CVSplit(cv=5, stratified=True, random_state=RANDOM_STATE),
+            train_split=CVSplit(cv=5, random_state=RANDOM_STATE),
             lr=hyperparams['lr'],
             batch_size=hyperparams['batch_size'],
             module__in_features=in_features,
-            module__n_classes=n_classes,
             module__n_layers=hyperparams['n_layers'],
             module__n_neuron_per_layer=hyperparams['n_neuron_per_layer'],
             module__activation=getattr(F, hyperparams['activation']),
             module__p_dropout=hyperparams['p_dropout'],
-            criterion__weight=bal_weights if hyperparams['class_weight'] == 'balanced' else None,
             optimizer__momentum=hyperparams['momentum'],
             optimizer__weight_decay=hyperparams['weight_decay'],
             optimizer__nesterov=True,
@@ -78,10 +75,6 @@ class AdvancedNeuralNetworkModel(NonTreeBasedModel):
         'activation': hp.choice('activation', ['relu', 'leaky_relu', 'selu']),
         'p_dropout': hp.uniform('p_dropout', 0.0, 0.5),
         'momentum': hp.uniform('momentum', 0.87, 0.99),
-        'class_weight': hp.pchoice('class_weight', [
-            (0.3, None),
-            (0.7, 'balanced'),
-        ]),
         'weight_decay': hp.loguniform('alpha', np.log(1e-7), np.log(1e-2)),
         'n_layers': hp.choice('n_layers', [2, 3, 4, 5])
     }
@@ -89,7 +82,6 @@ class AdvancedNeuralNetworkModel(NonTreeBasedModel):
 class NNModule(nn.Module):
     def __init__(self,
                  in_features,
-                 n_classes,
                  n_layers,
                  n_neuron_per_layer=10,
                  activation=F.relu,
@@ -101,7 +93,7 @@ class NNModule(nn.Module):
         for _ in range(n_layers-2):
             self.middle_layers.append(
                 Layer(n_neuron_per_layer, n_neuron_per_layer, activation, p_dropout))
-        self.fc = nn.Linear(n_neuron_per_layer, n_classes)
+        self.fc = nn.Linear(n_neuron_per_layer, 1)
 
     def forward(self, X, **kwargs):
         X = self.first_layer(X)

@@ -2,6 +2,7 @@ import json
 import time
 import warnings
 from datetime import timedelta
+import math
 from os import makedirs
 from os.path import join as joinpath
 
@@ -78,7 +79,8 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, ma
 def update_n_trials_wo_improvement(trials):
     if len(trials.trials) == 0:
         return 0
-    best_trial = min(trials.trials, key=lambda r: r['result']['loss'])
+    best_trial = min(trials.trials,
+                     key=lambda r: r['result']['loss'] if r['result']['status'] == 'ok' else math.inf)
     best_trial_index = best_trial['tid']
     return len(trials.trials) - best_trial_index
 
@@ -90,7 +92,8 @@ def process_tuning_result(trials, tuning_time, model, dataset):
 
     tuning_results_dir = joinpath(RESULTS_DIR, dataset.__name__, model.__name__)
 
-    best_trial = min(trials.trials, key=lambda r: r['result']['loss'])
+    best_trial = min(trials.trials,
+                     key=lambda r: r['result']['loss'] if r['result']['status'] == 'ok' else math.inf)
     best_trial_index = best_trial['tid']
     best_loss = best_trial['result']['loss']
     best_hp_raw = {k: v[0] if len(v) else None for k, v in best_trial['misc']['vals'].items()}
@@ -118,18 +121,24 @@ def make_tuning_step(objective_fct, hp_space, trials, rstate, step_size):
 
 def create_tuning_objective(dataset, model, train, kfold):
     def objective(args):
-        estimator = model.build_estimator(args, train)
-        metric_values = []
-        X, y, *_ = train
-        for train_index, val_index in kfold.split(*train):
-            X_train, X_val = X[train_index], X[val_index]
-            y_train, y_val = y[train_index], y[val_index]
+        try:
+            estimator = model.build_estimator(args, train)
+            metric_values = []
+            X, y, *_ = train
+            for train_index, val_index in kfold.split(*train):
+                X_train, X_val = X[train_index], X[val_index]
+                y_train, y_val = y[train_index], y[val_index]
 
-            estimator.fit(X_train, y_train)
-            metric_value = compute_metric(y_val, estimator.predict(X_val), dataset.metric)
-            metric_values.append(metric_value)
+                estimator.fit(X_train, y_train)
+                metric_value = compute_metric(y_val, estimator.predict(X_val), dataset.metric)
+                metric_values.append(metric_value)
 
-        return compute_loss(dataset.metric, metric_values)
+            return compute_loss(dataset.metric, metric_values)
+        except ValueError:
+            """ With some hyper-parameters combinations, a ValueError can be raised during training
+                (in particular MLPRegressor)
+            """
+            return {'status': 'fail'}
 
     return objective
 
