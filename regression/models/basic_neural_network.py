@@ -6,7 +6,7 @@ from hyperopt.pyll import scope
 import numpy as np
 
 
-class NeuralNetworkModel(NonTreeBasedModel):
+class BasicNeuralNetworkModel(NonTreeBasedModel):
     @staticmethod
     def build_estimator(args, train_data=None, test=False):
         return MLPRegressor(
