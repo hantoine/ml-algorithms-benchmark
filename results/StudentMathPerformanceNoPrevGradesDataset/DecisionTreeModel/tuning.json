@@ -1,0 +1,13 @@
+{
+    "hp": {
+        "criterion": "friedman_mse",
+        "max_depth": 25,
+        "max_features": 0.4761730773548391,
+        "min_samples_leaf": 12,
+        "min_samples_split": 6,
+        "splitter": "best"
+    },
+    "score": 3.9105795664041265,
+    "n_trials": 150,
+    "tuning_time": 70.55397272109985
+}

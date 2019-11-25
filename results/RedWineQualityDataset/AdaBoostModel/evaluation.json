@@ -1,0 +1,13 @@
+{
+    "hp": {
+        "learning_rate": 0.04027666915662976,
+        "loss": "exponential",
+        "n_estimators": 489
+    },
+    "score": -0.7251193657770382,
+    "tuning_n_trials": 66,
+    "val_score": 0.7405789317805525,
+    "train_time": 3.690725803375244,
+    "evaluation_time": 0.09345388412475586,
+    "metric_used": "rmse"
+}

@@ -1,0 +1,16 @@
+{
+    "hp": {
+        "criterion": "mse",
+        "max_depth": null,
+        "max_features": 0.9837572071222125,
+        "min_samples_leaf": 7,
+        "min_samples_split": 9,
+        "splitter": "best"
+    },
+    "score": -2.119220862255596,
+    "tuning_n_trials": 156,
+    "val_score": 1.7293661437756265,
+    "train_time": 0.01721644401550293,
+    "evaluation_time": 0.0003745555877685547,
+    "metric_used": "rmse"
+}

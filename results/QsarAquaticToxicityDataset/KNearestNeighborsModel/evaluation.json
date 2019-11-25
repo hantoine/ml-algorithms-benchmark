@@ -1,0 +1,14 @@
+{
+    "hp": {
+        "metric": "euclidean",
+        "n_neighbors": 10,
+        "p": 2,
+        "weights": "distance"
+    },
+    "score": -1.2035750764038011,
+    "tuning_n_trials": 24,
+    "val_score": 1.1432054207318094,
+    "train_time": 0.0045545101165771484,
+    "evaluation_time": 0.11736917495727539,
+    "metric_used": "rmse"
+}

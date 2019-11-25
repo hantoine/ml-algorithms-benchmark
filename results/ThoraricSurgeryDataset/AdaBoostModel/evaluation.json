@@ -1,0 +1,13 @@
+{
+    "hp": {
+        "algorithm": "SAMME.R",
+        "learning_rate": 8.733464847377624,
+        "n_estimators": 490
+    },
+    "score": 0.26865671641791045,
+    "tuning_n_trials": 35,
+    "val_score": 0.2639593908629442,
+    "train_time": 0.6332316398620605,
+    "evaluation_time": 0.07239794731140137,
+    "metric_used": "f1"
+}

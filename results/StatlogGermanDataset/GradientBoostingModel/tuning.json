@@ -1,0 +1,14 @@
+{
+    "hp": {
+        "criterion": "mse",
+        "learning_rate": 0.5276485572764454,
+        "max_depth": 3,
+        "max_features": 0.8215550752606184,
+        "min_samples_leaf": 1,
+        "n_estimators": 21,
+        "subsample": 0.9422882999124447
+    },
+    "score": 0.5620608899297423,
+    "n_trials": 111,
+    "tuning_time": 1003.2596898078918
+}

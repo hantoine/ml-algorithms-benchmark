@@ -1,0 +1,15 @@
+{
+    "hp": {
+        "class_weight": "balanced_subsample",
+        "max_depth": null,
+        "max_features": null,
+        "min_samples_leaf": 8,
+        "n_estimators": 259
+    },
+    "score": 0.588957055214724,
+    "tuning_n_trials": 21,
+    "val_score": 0.6194331983805668,
+    "train_time": 1.244213581085205,
+    "evaluation_time": 0.14484381675720215,
+    "metric_used": "f1"
+}

@@ -1,0 +1,16 @@
+{
+    "hp": {
+        "C": 2.032929109142468e-05,
+        "coef0": 5.046886608108386,
+        "degree": 5.0,
+        "epsilon": 0.023428409322651302,
+        "gamma": "scale",
+        "kernel": "poly"
+    },
+    "score": -0.12709791789866084,
+    "tuning_n_trials": 57,
+    "val_score": 0.1385042786682187,
+    "train_time": 24.30567955970764,
+    "evaluation_time": 0.0693063735961914,
+    "metric_used": "rmse"
+}

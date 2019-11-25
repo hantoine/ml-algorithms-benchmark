@@ -1,0 +1,13 @@
+{
+    "hp": {
+        "C": 1.0486014876405698,
+        "class_weight": null,
+        "coef0": 0.7434322771459642,
+        "degree": 2.0,
+        "gamma": "auto",
+        "kernel": "poly"
+    },
+    "score": 0.5830932293866162,
+    "n_trials": 737,
+    "tuning_time": 1068.2471039295197
+}
