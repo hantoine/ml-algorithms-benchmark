@@ -13,6 +13,7 @@ class Cifar10Dataset(Dataset):
     url = 'https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz'
     categorical_features = []
     metric = 'accuracy'
+    is_metric_maximized = True
 
     @staticmethod
     def unpickle(file_path):
