@@ -17,6 +17,7 @@ def add_tuning_arguments(parser):
     parser.add_argument('-m', '--max_tuning_time', type=int, default=120)
     parser.add_argument('-e', '--max_trials_without_improvement', type=int, default=150)
     parser.add_argument('-t', '--tuning_step_max_time', type=int, default=60)
+    parser.add_argument('-d', '--mongo_address', type=str, default=None)
 
 
 parser_tune_classification = subparsers.add_parser('classification-tuning')

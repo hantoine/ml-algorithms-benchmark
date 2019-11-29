@@ -8,6 +8,7 @@ from os.path import join as joinpath
 
 import numpy as np
 from hyperopt import Trials, fmin, space_eval, tpe
+from hyperopt.mongoexp import MongoTrials
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import GroupKFold, KFold, StratifiedKFold
 from sklearn.utils import shuffle
@@ -19,7 +20,7 @@ from .timeout import set_timeout, TimeoutError
 
 def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_per_step=5,
                                     max_tuning_time=120, max_trials_without_improvement=150,
-                                    tuning_step_max_time=60):
+                                    tuning_step_max_time=60, mongo_address=None):
     warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
     minimum_runtime = max_tuning_time * len(models) * len(datasets)
@@ -36,13 +37,14 @@ def tune_all_models_on_all_datasets(task_type, datasets, models, tuning_trials_p
 
                 tune_hyperparams(task_type, dataset, model, train_data,
                                  tuning_trials_per_step, max_tuning_time,
-                                 max_trials_without_improvement, tuning_step_max_time)
+                                 max_trials_without_improvement, tuning_step_max_time,
+                                 mongo_address)
             except MemoryError:
                 print('Memory requirements for this model with this dataset are too high')
 
 
 def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, max_tuning_time,
-                     max_trials_wo_improvement, tuning_step_max_time):
+                     max_trials_wo_improvement, tuning_step_max_time, mongo_address):
     kfold, train_data = create_kfold(task_type, dataset, train_data)
     objective_fct = create_tuning_objective(dataset, model, train_data, kfold)
 
@@ -59,7 +61,10 @@ def tune_hyperparams(task_type, dataset, model, train_data, tuning_step_size, ma
         make_tuning_step_w_timeout = make_tuning_step
 
     # Tuning loop
-    trials = Trials()
+    if mongo_address is not None:
+        trials = MongoTrials(mongo_address, exp_key=f'{dataset.__name__}-{model.__name__}')
+    else:
+        trials = Trials()
     start_time = time.time()
     rstate = np.random.RandomState(RANDOM_STATE)
     n_trials_wo_improvement = 0
@@ -81,7 +86,8 @@ def update_n_trials_wo_improvement(trials):
         return 0
     best_trial = min(trials.trials,
                      key=lambda r: r['result']['loss'] if r['result']['status'] == 'ok' else math.inf)
-    best_trial_index = best_trial['tid']
+    best_trial_index = sorted(t['tid'] for t in trials.trials).index(best_trial['tid'])
+
     return len(trials.trials) - best_trial_index
 
 
@@ -94,7 +100,7 @@ def process_tuning_result(trials, tuning_time, model, dataset):
 
     best_trial = min(trials.trials,
                      key=lambda r: r['result']['loss'] if r['result']['status'] == 'ok' else math.inf)
-    best_trial_index = best_trial['tid']
+    best_trial_index = sorted(t['tid'] for t in trials.trials).index(best_trial['tid'])
     best_loss = best_trial['result']['loss']
     best_hp_raw = {k: v[0] if len(v) else None for k, v in best_trial['misc']['vals'].items()}
     best_hp = space_eval(model.hp_space, best_hp_raw)
