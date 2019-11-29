@@ -2,12 +2,12 @@ from utils import tune_all_models_on_all_datasets, train_all_models_on_all_datas
 from classifier_interpretability import datasets, models
 
 
-def tune_all_models_on_all_classifier_interpretability_datasets(tuning_trials_per_step=5, tuning_time=120,
+def tune_all_models_on_all_classifier_interpretability_datasets(tuning_trials_per_step=5, max_tuning_time=120,
                                                                 max_trials_without_improvement=150,
                                                                 tuning_step_max_time=60,
                                                                 mongo_address=None):
     tune_all_models_on_all_datasets('classification', datasets.all_datasets, models.all_models,
-                                    tuning_trials_per_step, tuning_time,
+                                    tuning_trials_per_step, max_tuning_time,
                                     max_trials_without_improvement, tuning_step_max_time,
                                     mongo_address)
 

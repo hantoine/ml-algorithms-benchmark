@@ -8,3 +8,7 @@ pytest
 kaggle
 timeout_decorator
 matplotlib
+pytorch
+torchvision
+cudatoolkit
+skorch
