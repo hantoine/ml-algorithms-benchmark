@@ -1,7 +1,7 @@
 from .decision_tree import DecisionTreeModel
-from .lenet import LeNet5
-from .customized_lenet import CustomizedLeNet
+from .custom_net import Cifar10CustomModel
 
 all_models = [
-    DecisionTreeModel
+    DecisionTreeModel,
+    Cifar10CustomModel
 ]
