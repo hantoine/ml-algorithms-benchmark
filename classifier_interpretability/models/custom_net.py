@@ -5,7 +5,7 @@ from hyperopt import hp
 from hyperopt.pyll import scope
 from sklearn.datasets import make_classification
 from skorch import NeuralNetClassifier
-from skorch.callbacks import BatchScoring, LRScheduler
+from skorch.callbacks import EpochScoring, LRScheduler
 from skorch.dataset import CVSplit
 from torch import nn
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
@@ -23,39 +23,31 @@ class Cifar10CustomModel(NonTreeBasedModel):
     def prepare_dataset(cls, train_data, test_data, categorical_features=None):
         (X_train, y_train), (X_test, y_test) = train_data, test_data
         
-        degree_range=45  # equivalent to (-45, 45)
-        translate_range=(0.1, 0.1)
-        scale_range=(0.8, 1.2)
-
-        transform_train = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(0.5),
-            transforms.RandomAffine(degrees=degree_range, translate=translate_range, scale=scale_range),
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.48216, 0.4465), (0.247, 0.24346, 0.2616))
-        ]) 
-
-        # Normalize the test set same as training set without augmentation
-        transform_test = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.48216, 0.4465), (0.247, 0.24346, 0.2616))
-        ])
-        return (cls.DatasetWithTransforms(X_train, y_train, transform_train),
-                cls.DatasetWithTransforms(X_test, y_test, transform_test))
+        return ((X_train, y_train), # normalization will be done separately for validation and training sets
+                cls.DatasetWithTransforms(X_test, y_test, cls.transform_test))
 
     @classmethod
     def build_estimator(cls, hyperparams, train_data, test=False):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         early_stopping_val_percent = 10
 
-        n_training_examples = len(train_data) * (1 - (early_stopping_val_percent / 100))
+        n_training_examples = len(train_data[0]) * (1 - (early_stopping_val_percent / 100))
+        n_iter_per_epoch = n_training_examples / hyperparams['batch_size']
+        n_iter_btw_restarts = int(hyperparams['epochs_btw_restarts'] * n_iter_per_epoch)
         callbacks = [
             ('fix_seed', cls.FixRandomSeed(RANDOM_STATE)),
-            # ('accuracy_score_valid', BatchScoring('accuracy', lower_is_better=False, on_train=True)),
+            ('accuracy_score_valid', EpochScoring('accuracy', lower_is_better=False, on_train=True)),
             ('learning_rate_scheduler', LRScheduler(policy=CosineAnnealingWarmRestarts,
-                                                    T_0=int(10 * n_training_examples / hyperparams['batch_size'])
+                                                    T_0=n_iter_btw_restarts,
+                                                    T_mult=hyperparams['epochs_btw_restarts_mult']
                                                    ))
         ]
+
+        def validation_split(X, y):
+            splitter = CVSplit(cv=int(100 / early_stopping_val_percent), random_state=RANDOM_STATE)
+            dataset_train, dataset_valid = splitter(X)
+            return (cls.TransformsDatasetWrapper(dataset_train, cls.transform_train),
+                    cls.TransformsDatasetWrapper(dataset_valid, cls.transform_test))
 
         return NeuralNetClassifier(
             cls.CifarCustomNet,
@@ -67,7 +59,7 @@ class Cifar10CustomModel(NonTreeBasedModel):
             iterator_valid__num_workers=4,
             callbacks=callbacks,
             device=device,
-            train_split=CVSplit(cv=int(100 / early_stopping_val_percent), random_state=RANDOM_STATE),
+            train_split=validation_split,
             lr=hyperparams['learning_rate'],
             batch_size=hyperparams['batch_size'],
             optimizer__momentum=hyperparams['momentum'],
@@ -79,13 +71,15 @@ class Cifar10CustomModel(NonTreeBasedModel):
         )
 
     hp_space = {
-        'batch_size': 32,
-        'learning_rate': 1e-2,
+        'batch_size': 64,
+        'learning_rate': 1.6e-2,
         'momentum': 0.9,
         'weight_decay': 0.0,
         'nesterov': True,
         'conv_dropout': 0.1,
-        'fc_dropout': 0.5
+        'fc_dropout': 0.15,
+        'epoch_btw_restarts': 10,
+        'epochs_btw_restarts_mult': 1.0
     }
 
     class CifarCustomNet(nn.Module):
@@ -100,12 +94,12 @@ class Cifar10CustomModel(NonTreeBasedModel):
                     [32, 64]
                 ],
                 3: [
-                    [3, 6],
-                    [6, 12],
-                    [12, 24]
+                    [3, 16],
+                    [16, 32],
+                    [32, 64]
                 ],
                 4: [
-                    [120, 240],
+                    [32 + 64 + 64, 240],
                     [240 * 5 * 5, 1024],
                     [1024, 512],
                     [512, 128],
@@ -205,7 +199,33 @@ class Cifar10CustomModel(NonTreeBasedModel):
             X = self.X[index]
             img = np.moveaxis(X.reshape(3, 32, 32), [0, 1, 2], [2, 0, 1])
             plt.imshow(img)
-    
+
+    class TransformsDatasetWrapper(Dataset):
+        def __init__(self, dataset, transforms):
+            self.dataset = dataset
+            self.transforms = transforms
+
+        def __len__(self):
+            return len(self.dataset)
+
+        def __getitem__(self, index):
+            X, y = self.dataset[index]
+            img = Image.fromarray(255 * (1 - np.moveaxis(X.reshape(3, 32, 32), [0, 1, 2], [2, 0, 1])))
+            return self.transforms(img), y
+
+
+    transform_train = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(0.5),
+        # transforms.RandomAffine(degrees=15, translate=(0.1, 0.1), scale=(0.9, 1.1)),
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.48216, 0.4465), (0.247, 0.24346, 0.2616))
+    ])
+    transform_test = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.48216, 0.4465), (0.247, 0.24346, 0.2616))
+    ])
+
     class FixRandomSeed(Callback):  
         def __init__(self, seed=42):
             self.seed = seed
