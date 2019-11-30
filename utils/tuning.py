@@ -92,7 +92,7 @@ def update_n_trials_wo_improvement(trials):
 
 
 def process_tuning_result(trials, tuning_time, model, dataset):
-    if len(trials.trials) == 0:
+    if len([None for t in trials.trials if t['result']['status'] == 'ok']) == 0:
         print('No trials finished within allowed time')
         return
 
