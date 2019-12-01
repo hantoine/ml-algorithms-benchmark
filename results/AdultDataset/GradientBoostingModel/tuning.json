@@ -1,14 +1,14 @@
 {
     "hp": {
-        "criterion": "mse",
-        "learning_rate": 0.020348615537810602,
-        "max_depth": 4,
-        "max_features": 0.770751389515306,
-        "min_samples_leaf": 12,
-        "n_estimators": 588,
+        "criterion": "friedman_mse",
+        "learning_rate": 0.22430116973800246,
+        "max_depth": 5,
+        "max_features": "sqrt",
+        "min_samples_leaf": 2,
+        "n_estimators": 129,
         "subsample": 1.0
     },
-    "score": 0.7086194814295725,
-    "n_trials": 2,
-    "tuning_time": 1146.3144826889038
+    "score": 0.7150737829264929,
+    "n_trials": 35,
+    "tuning_time": 3000.00266289711
 }

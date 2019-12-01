@@ -1,12 +1,12 @@
 {
     "hp": {
         "class_weight": "balanced_subsample",
-        "max_depth": 199,
-        "max_features": 0.25104705590062226,
+        "max_depth": null,
+        "max_features": "sqrt",
         "min_samples_leaf": 2,
-        "n_estimators": 252
+        "n_estimators": 241
     },
-    "score": 0.71147007413658,
-    "n_trials": 77,
-    "tuning_time": 1128.7966377735138
+    "score": 0.712744802651401,
+    "n_trials": 815,
+    "tuning_time": 3007.9501531124115
 }

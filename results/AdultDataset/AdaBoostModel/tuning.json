@@ -1,10 +1,10 @@
 {
     "hp": {
         "algorithm": "SAMME.R",
-        "learning_rate": 0.6217184834328587,
-        "n_estimators": 949
+        "learning_rate": 1.2225721466558328,
+        "n_estimators": 995
     },
-    "score": 0.7048019628461268,
-    "n_trials": 30,
-    "tuning_time": 1080.011730670929
+    "score": 0.7116872255906335,
+    "n_trials": 186,
+    "tuning_time": 3297.812520503998
 }
