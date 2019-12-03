@@ -14,6 +14,9 @@ class Cifar10Dataset(Dataset):
     categorical_features = []
     metric = 'accuracy'
     is_metric_maximized = True
+    needs_k_fold = False # Big enough that k-fold is not necessary for tuning
+    classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
+               'dog', 'frog', 'horse', 'ship', 'truck']
 
     @staticmethod
     def unpickle(file_path):
@@ -48,3 +51,8 @@ class Cifar10Dataset(Dataset):
             Y = np.concatenate((Y, y))
 
         return (X, Y), (X_test, y_test)
+
+    @classmethod
+    def get_min_k_fold_k_value(cls, train_data):
+        """ Prevent a long computation of minimum k """
+        return 6 #  17% of validation data

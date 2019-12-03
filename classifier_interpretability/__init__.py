@@ -48,7 +48,7 @@ def generate_interpretation_viz(image_index):
     module.eval()
     def save_final_conv_output(module, inputs, outputs):
         save_final_conv_output.output = outputs.data
-    module.head_layer1.register_forward_hook(save_final_conv_output)
+    module.head_layer2.register_forward_hook(save_final_conv_output)
 
     test_dataset = model.NormalizedDataset(*test_data)
     x, y = test_dataset[image_index]
