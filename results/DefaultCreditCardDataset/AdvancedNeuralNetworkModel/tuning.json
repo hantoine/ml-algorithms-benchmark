@@ -1,0 +1,16 @@
+{
+    "hp": {
+        "activation": "relu",
+        "batch_size": 128,
+        "class_weight": "balanced",
+        "lr": 0.0009722737600393604,
+        "momentum": 0.9727646478410374,
+        "n_layers": 5,
+        "n_neuron_per_layer": 96,
+        "p_dropout": 0.20505197942665687,
+        "weight_decay": 0.007471018593606026
+    },
+    "score": 0.5355010563056857,
+    "n_trials": 2,
+    "tuning_time": 3000.0026297569275
+}

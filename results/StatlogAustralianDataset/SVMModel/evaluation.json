@@ -1,13 +1,13 @@
 {
     "hp": {
-        "C": 0.0010934910476886456,
-        "class_weight": null,
+        "C": 0.000886986106577932,
+        "class_weight": "balanced",
         "kernel": "linear"
     },
-    "score": 0.815028901734104,
-    "tuning_n_trials": 221,
-    "val_score": 0.8820116054158608,
-    "train_time": 0.028115272521972656,
-    "evaluation_time": 0.0030989646911621094,
+    "score": 0.8265895953757225,
+    "tuning_n_trials": 3008,
+    "val_score": 0.8839458413926499,
+    "train_time": 0.03023219108581543,
+    "evaluation_time": 0.0033600330352783203,
     "metric_used": "accuracy"
 }

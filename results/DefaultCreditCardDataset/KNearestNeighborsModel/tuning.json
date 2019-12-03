@@ -1,11 +1,11 @@
 {
     "hp": {
         "metric": "euclidean",
-        "n_neighbors": 11,
+        "n_neighbors": 26,
         "p": 2,
         "weights": "distance"
     },
-    "score": 0.4369444802267165,
-    "n_trials": 27,
-    "tuning_time": 372.35984992980957
+    "score": 0.4382905072560245,
+    "n_trials": 170,
+    "tuning_time": 1663.745901107788
 }

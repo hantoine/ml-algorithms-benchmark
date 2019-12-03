@@ -2,15 +2,15 @@
     "hp": {
         "class_weight": "balanced",
         "max_depth": 4,
-        "max_features": 0.9721797314486245,
-        "min_samples_leaf": 1,
-        "min_samples_split": 7,
+        "max_features": 0.9808138812370246,
+        "min_samples_leaf": 46,
+        "min_samples_split": 4,
         "splitter": "best"
     },
     "score": 0.5212386955330227,
-    "tuning_n_trials": 313,
-    "val_score": 0.5316809541557957,
-    "train_time": 0.10008525848388672,
-    "evaluation_time": 0.007990837097167969,
+    "tuning_n_trials": 366,
+    "val_score": 0.5323781168589505,
+    "train_time": 0.11277055740356445,
+    "evaluation_time": 0.008450031280517578,
     "metric_used": "f1"
 }

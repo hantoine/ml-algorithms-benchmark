@@ -1,14 +1,14 @@
 {
     "hp": {
         "metric": "manhattan",
-        "n_neighbors": 27,
+        "n_neighbors": 44,
         "p": 1,
-        "weights": "uniform"
+        "weights": "distance"
     },
-    "score": 0.61667631731326,
-    "tuning_n_trials": 6,
-    "val_score": 0.6201780415430267,
-    "train_time": 2.9086971282958984,
-    "evaluation_time": 35.32483720779419,
+    "score": 0.6180875576036866,
+    "tuning_n_trials": 120,
+    "val_score": 0.6252552996689907,
+    "train_time": 2.0180654525756836,
+    "evaluation_time": 16.748932361602783,
     "metric_used": "f1"
 }

@@ -1,0 +1,21 @@
+{
+    "hp": {
+        "activation": "tanh",
+        "alpha": 8.96707737250076e-07,
+        "batch_size": 128,
+        "early_stopping": true,
+        "hidden_layer_sizes": [
+            65,
+            65,
+            65
+        ],
+        "learning_rate": "invscaling",
+        "learning_rate_init": 0.001480253166521547,
+        "momentum": 0.953710889053924,
+        "nesterovs_momentum": true,
+        "solver": "adam"
+    },
+    "score": 0.972972972972973,
+    "n_trials": 585,
+    "tuning_time": 1002.9565279483795
+}
