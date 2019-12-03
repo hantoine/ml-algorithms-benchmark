@@ -27,8 +27,9 @@ class Dataset:
         url = url.replace(' ', '%20')
         urllib.request.urlretrieve(url, filepath)
 
-def get_min_k_fold_k_value(train_data):
-    _, y = train_data
-    if type(y) == pd.Series:
-        y = y.values
-    return np.bincount(y).min()
+    @classmethod
+    def get_min_k_fold_k_value(cls, train_data):
+        _, y = train_data
+        if type(y) == pd.Series:
+            y = y.values
+        return np.bincount(y).min()

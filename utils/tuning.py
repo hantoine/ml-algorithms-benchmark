@@ -14,7 +14,7 @@ from sklearn.model_selection import GroupKFold, KFold, StratifiedKFold
 from sklearn.utils import shuffle
 
 from config import K_FOLD_K_VALUE, RANDOM_STATE, RESULTS_DIR
-from utils import compute_loss, compute_metric, get_min_k_fold_k_value
+from utils import compute_loss, compute_metric
 from .timeout import set_timeout, TimeoutError
 
 
@@ -138,6 +138,8 @@ def create_tuning_objective(dataset, model, train, kfold):
                 estimator.fit(X_train, y_train)
                 metric_value = compute_metric(y_val, estimator.predict(X_val), dataset.metric)
                 metric_values.append(metric_value)
+                if not getattr(dataset, 'needs_k_fold', True):
+                    break
 
             return compute_loss(dataset.metric, metric_values)
         except ValueError:
@@ -151,7 +153,7 @@ def create_tuning_objective(dataset, model, train, kfold):
 
 def create_kfold(task_type, dataset, train_data):
     if task_type == 'classification':
-        n_splits = min(K_FOLD_K_VALUE, get_min_k_fold_k_value(train_data))
+        n_splits = min(K_FOLD_K_VALUE, dataset.get_min_k_fold_k_value(train_data))
         kfold = StratifiedKFold(n_splits, shuffle=True, random_state=RANDOM_STATE)
     elif task_type == 'regression':
         if getattr(dataset, 'need_grouped_split', False):
