@@ -3,8 +3,9 @@ from classification import tune_all_models_on_all_classification_datasets, \
     evaluate_all_models_on_all_classification_datasets
 from regression import tune_all_models_on_all_regression_datasets, \
     evaluate_all_models_on_all_regression_datasets
-from classifier_interpretability import tune_all_models_on_all_classifier_interpretability_datasets, \
-    evaluate_all_models_on_all_classifier_interpretability_datasets
+from classifier_interpretability import tune_all_models_on_all_clf_interpret_datasets, \
+                                        evaluate_all_models_on_all_clf_interpret_datasets, \
+                                        generate_interpretation_viz
 from utils import print_results
 
 parser = argparse.ArgumentParser()
@@ -28,9 +29,9 @@ parser_tune_regression = subparsers.add_parser('regression-tuning')
 add_tuning_arguments(parser_tune_regression)
 parser_tune_regression.set_defaults(func=tune_all_models_on_all_regression_datasets)
 
-parser_tune_classifier_interpretability = subparsers.add_parser('classifier-interpretability-tuning')
-add_tuning_arguments(parser_tune_classifier_interpretability)
-parser_tune_classifier_interpretability.set_defaults(func=tune_all_models_on_all_classifier_interpretability_datasets)
+parser_tune_clf_interpret = subparsers.add_parser('classifier-interpretability-tuning')
+add_tuning_arguments(parser_tune_clf_interpret)
+parser_tune_clf_interpret.set_defaults(func=tune_all_models_on_all_clf_interpret_datasets)
 
 parser_train_classification = subparsers.add_parser('classification-evaluation')
 parser_train_classification.add_argument('-m', '--max_training_time', type=int, default=180)
@@ -40,10 +41,14 @@ parser_train_regression = subparsers.add_parser('regression-evaluation')
 parser_train_regression.add_argument('-m', '--max_training_time', type=int, default=180)
 parser_train_regression.set_defaults(func=evaluate_all_models_on_all_regression_datasets)
 
-parser_train_classifier_interpretability = subparsers.add_parser('classifier-interpretability-evaluation')
-parser_train_classifier_interpretability.add_argument('-m', '--max_training_time', type=int, default=180)
-parser_train_classifier_interpretability.set_defaults(
-    func=evaluate_all_models_on_all_classifier_interpretability_datasets)
+parser_train_clf_interpret = subparsers.add_parser('classifier-interpretability-evaluation')
+parser_train_clf_interpret.add_argument('-m', '--max_training_time', type=int, default=180)
+parser_train_clf_interpret.set_defaults(func=evaluate_all_models_on_all_clf_interpret_datasets)
+
+parser_clf_interpret_generate_vizualizations = \
+    subparsers.add_parser('classifier-interpretability-interpretation')
+parser_clf_interpret_generate_vizualizations.add_argument('-i', '--image_index', type=int, default=11)
+parser_clf_interpret_generate_vizualizations.set_defaults(func=generate_interpretation_viz)
 
 parser_summarize_results = subparsers.add_parser('summarize_results')
 parser_summarize_results.set_defaults(func=print_results) 
