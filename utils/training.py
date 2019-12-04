@@ -4,13 +4,15 @@ import re
 import time
 import warnings
 from os import makedirs
-from os.path import join as joinpath
+from os.path import join as joinpath, isfile
 
 import pandas as pd
 from sklearn.exceptions import ConvergenceWarning
 
 from config import RESULTS_DIR
 from utils import compute_loss, compute_metric
+# from classification import datasets as clf_ds
+# from regression import datasets as reg_ds
 from .timeout import set_timeout, TimeoutError
 
 
@@ -49,13 +51,25 @@ def train_all_models_on_all_datasets(datasets, models, max_training_time=180):
 
 
 def evaluate_model(model, dataset, train, test, hyperparams):
+    is_cifar_model = model.__name__ == 'Cifar10CustomModel'
+    cifar_model_weights_path = joinpath(RESULTS_DIR, 'Cifar10CustomModel-weights.pkl')
+
     start_time = time.time()
     train_data, test_data = \
         model.prepare_dataset(train, test, dataset.categorical_features)
-    estimator = model.build_estimator(hyperparams)
-    X, y, *_ = train_data
-    estimator.fit(X, y)
-    train_time = time.time() - start_time
+    estimator = model.build_estimator(hyperparams, train_data)
+
+    # Restore Cifar10CustomModel if weights have been saved
+    if is_cifar_model and isfile(cifar_model_weights_path):
+            estimator.initialize()
+            estimator.load_params(f_params=cifar_model_weights_path)
+            train_time = -1
+    else:
+        X, y, *_ = train_data
+        estimator.fit(X, y)
+        train_time = time.time() - start_time
+        if is_cifar_model:
+            estimator.save_params(f_params=cifar_model_weights_path)
 
     start_time = time.time()
     X_test, y_test = test_data
@@ -102,7 +116,7 @@ def save_evaluation_results(dataset, model, tuning_results, score, train_time, e
 def get_results_table():
     result_files = glob('results/*/*/evaluation.json')
 
-    pattern = re.compile(RESULTS_DIR + r'/([a-zA-Z]+)/([a-zA-Z]+)/evaluation.json')
+    pattern = re.compile(RESULTS_DIR + r'/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/evaluation.json')
     result_table = []
 
     for result_file in result_files: # For here
@@ -119,8 +133,31 @@ def get_results_table():
                                  'evaluation_time', 'tuning_n_trials', 'hp']]
     return result_table
 
+def get_model_ranking(results):
+    results['model_rank'] = results.groupby('dataset')['score'].rank(ascending=False)
+    (results[results.dataset == 'DefaultCreditCardDataset']
+     .sort_values('score', ascending=False)[['score', 'model_rank', 'model']])
+    return results.groupby('model')['model_rank'].mean().sort_values()
+
+def split_resultsby_task(results):
+    def dataset_to_task(dataset):
+       if hasattr(clf_ds, dataset):
+           return 'classification'
+       elif hasattr(reg_ds, dataset):
+           return 'regression'
+       else:
+           return 'classifier_interpretability'
+
+    result['task'] = result['dataset'].apply(lambda ds: 'classification' if hasattr(clf_ds, ds) else 'regression')
+    clf_results = result[result['task'] == 'classification'].copy()
+
 def print_results():
     results = get_results_table()
-    pd.set_option('display.max_rows', -1)
-    pd.set_option('display.max_colwidth', -1)
+    # pd.set_option('display.max_rows', -1)
+    # pd.set_option('display.max_colwidth', -1)
+
+    result['task'] = result['dataset'].apply(lambda ds: 'classification' if hasattr(clf_ds, ds) else 'regression')
+    clf_results = result[result['task'] == 'classification'].copy()
+    # clf_results['metric'] = clf_results['dataset'].apply(lambda ds: getattr(clf_ds, ds).metric)
+
     print(results)

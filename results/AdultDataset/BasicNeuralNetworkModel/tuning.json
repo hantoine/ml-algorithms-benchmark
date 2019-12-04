@@ -1,0 +1,19 @@
+{
+    "hp": {
+        "activation": "logistic",
+        "alpha": 2.565506343212555e-06,
+        "batch_size": 128,
+        "early_stopping": true,
+        "hidden_layer_sizes": [
+            60
+        ],
+        "learning_rate": "invscaling",
+        "learning_rate_init": 0.0022940426149096155,
+        "momentum": 0.903860045232296,
+        "nesterovs_momentum": true,
+        "solver": "adam"
+    },
+    "score": 0.680062032229789,
+    "n_trials": 30,
+    "tuning_time": 3459.005178451538
+}

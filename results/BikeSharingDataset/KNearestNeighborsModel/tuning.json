@@ -1,0 +1,11 @@
+{
+    "hp": {
+        "metric": "manhattan",
+        "n_neighbors": 8,
+        "p": 1,
+        "weights": "distance"
+    },
+    "score": 89.1786037780579,
+    "n_trials": 27,
+    "tuning_time": 1050.441370010376
+}

@@ -1,0 +1,14 @@
+{
+    "hp": {
+        "C": 2689.2316226283046,
+        "class_weight": "balanced",
+        "gamma": 0.0007639932677024768,
+        "kernel": "rbf"
+    },
+    "score": 0.7673611111111112,
+    "tuning_n_trials": 335,
+    "val_score": 0.7636152954808807,
+    "train_time": 0.08120465278625488,
+    "evaluation_time": 0.006251096725463867,
+    "metric_used": "accuracy"
+}

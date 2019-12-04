@@ -1,0 +1,10 @@
+{
+    "hp": {
+        "C": 0.0028472251269605954,
+        "class_weight": "balanced",
+        "kernel": "linear"
+    },
+    "score": 0.2954954954954955,
+    "n_trials": 70,
+    "tuning_time": 335.9676773548126
+}

@@ -1,0 +1,11 @@
+{
+    "hp": {
+        "alpha": 880.3332612572941
+    },
+    "score": -21.22489118814735,
+    "tuning_n_trials": 22,
+    "val_score": 47.144751714287295,
+    "train_time": 0.01671433448791504,
+    "evaluation_time": 0.00023937225341796875,
+    "metric_used": "rmse"
+}

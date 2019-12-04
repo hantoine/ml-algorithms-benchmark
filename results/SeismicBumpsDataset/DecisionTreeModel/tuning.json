@@ -1,0 +1,13 @@
+{
+    "hp": {
+        "class_weight": "balanced",
+        "max_depth": 13,
+        "max_features": 0.5355810797286207,
+        "min_samples_leaf": 50,
+        "min_samples_split": 9,
+        "splitter": "random"
+    },
+    "score": 0.2530487804878049,
+    "n_trials": 346,
+    "tuning_time": 751.6484763622284
+}

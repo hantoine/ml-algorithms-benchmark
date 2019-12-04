@@ -1,0 +1,14 @@
+{
+    "hp": {
+        "metric": "manhattan",
+        "n_neighbors": 45,
+        "p": 1,
+        "weights": "uniform"
+    },
+    "score": -209.90647389424666,
+    "tuning_n_trials": 23,
+    "val_score": 350.1351275684499,
+    "train_time": 0.017093658447265625,
+    "evaluation_time": 0.11829829216003418,
+    "metric_used": "rmse"
+}

@@ -10,14 +10,14 @@ from .k_nearest_neighbors import KNearestNeighborsModel
 from .gradient_boosting import GradientBoostingModel
 
 all_models = [
-    # RandomForestsModel,
-    # SVMModel,
-    # LinearRegressionModel,
-    # GaussianProcessModel,
-    # DecisionTreeModel,
-    # AdaBoostModel,
-    # KNearestNeighborsModel,
-    # BasicNeuralNetworkModel,
-    # GradientBoostingModel,
+    RandomForestsModel,
+    SVMModel,
+    LinearRegressionModel,
+    GaussianProcessModel,
+    DecisionTreeModel,
+    AdaBoostModel,
+    KNearestNeighborsModel,
+    BasicNeuralNetworkModel,
+    GradientBoostingModel,
     AdvancedNeuralNetworkModel
 ]

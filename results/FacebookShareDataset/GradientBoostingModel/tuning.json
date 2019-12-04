@@ -1,0 +1,16 @@
+{
+    "hp": {
+        "alpha": 0.9396302395968981,
+        "criterion": "mse",
+        "learning_rate": 0.12750919230935842,
+        "loss": "huber",
+        "max_depth": 2,
+        "max_features": 0.7983037516953468,
+        "min_samples_leaf": 43,
+        "n_estimators": 382,
+        "subsample": 0.8785075086582746
+    },
+    "score": 46.42331836146179,
+    "n_trials": 370,
+    "tuning_time": 1013.2176775932312
+}

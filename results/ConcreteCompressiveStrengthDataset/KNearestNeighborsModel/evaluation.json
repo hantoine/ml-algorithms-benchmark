@@ -1,0 +1,14 @@
+{
+    "hp": {
+        "metric": "minkowski",
+        "n_neighbors": 3,
+        "p": 3.0,
+        "weights": "distance"
+    },
+    "score": -7.656951650870009,
+    "tuning_n_trials": 68,
+    "val_score": 8.253165793030119,
+    "train_time": 0.004871845245361328,
+    "evaluation_time": 0.12301111221313477,
+    "metric_used": "rmse"
+}

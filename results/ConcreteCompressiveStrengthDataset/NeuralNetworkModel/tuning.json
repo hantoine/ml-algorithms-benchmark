@@ -1,0 +1,21 @@
+{
+    "hp": {
+        "activation": "relu",
+        "alpha": 0.00010574135856487391,
+        "batch_size": 128,
+        "early_stopping": true,
+        "hidden_layer_sizes": [
+            85,
+            85,
+            85
+        ],
+        "learning_rate": "adaptive",
+        "learning_rate_init": 0.00013876276559232083,
+        "momentum": 0.9568209012659817,
+        "nesterovs_momentum": false,
+        "solver": "sgd"
+    },
+    "score": 5.245975254268598,
+    "n_trials": 125,
+    "tuning_time": 1017.0636794567108
+}

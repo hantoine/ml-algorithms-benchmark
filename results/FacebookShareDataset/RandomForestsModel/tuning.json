@@ -1,0 +1,11 @@
+{
+    "hp": {
+        "max_depth": null,
+        "max_features": "log2",
+        "min_samples_leaf": 23,
+        "n_estimators": 10
+    },
+    "score": 46.71509968983771,
+    "n_trials": 282,
+    "tuning_time": 1031.3151574134827
+}

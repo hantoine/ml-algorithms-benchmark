@@ -1,0 +1,16 @@
+{
+    "hp": {
+        "activation": "leaky_relu",
+        "batch_size": 128,
+        "class_weight": "balanced",
+        "lr": 0.005270441591977422,
+        "momentum": 0.8982207506563157,
+        "n_layers": 4,
+        "n_neuron_per_layer": 24,
+        "p_dropout": 0.3209257522358024,
+        "weight_decay": 9.157749211726864e-06
+    },
+    "score": 0.9675675675675676,
+    "n_trials": 150,
+    "tuning_time": 1051.714304447174
+}
