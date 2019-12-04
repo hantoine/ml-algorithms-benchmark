@@ -11,8 +11,6 @@ from sklearn.exceptions import ConvergenceWarning
 
 from config import RESULTS_DIR
 from utils import compute_loss, compute_metric
-# from classification import datasets as clf_ds
-# from regression import datasets as reg_ds
 from .timeout import set_timeout, TimeoutError
 
 
@@ -112,52 +110,3 @@ def save_evaluation_results(dataset, model, tuning_results, score, train_time, e
         }
         with open(joinpath(results_dir, 'evaluation.json'), 'w', encoding='utf-8') as file:
             json.dump(results, file, ensure_ascii=False, indent=4)
-
-def get_results_table():
-    result_files = glob('results/*/*/evaluation.json')
-
-    pattern = re.compile(RESULTS_DIR + r'/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/evaluation.json')
-    result_table = []
-
-    for result_file in result_files: # For here
-        dataset, model = pattern.match(result_file).groups()
-        with open(result_file, 'r') as file:
-            results = json.load(file)
-        results['hp'] = ','.join([f"{k}={v}" if type(v) in [str, list, type(None)] else f"{k}={v:.2f}"
-                                  for k, v in results['hp'].items()])
-        results.update({'dataset': dataset, 'model': model})
-        result_table.append(results)
-
-    result_table = pd.DataFrame(result_table)
-    result_table = result_table[['dataset', 'model', 'score', 'val_score', 'train_time',
-                                 'evaluation_time', 'tuning_n_trials', 'hp']]
-    return result_table
-
-def get_model_ranking(results):
-    results['model_rank'] = results.groupby('dataset')['score'].rank(ascending=False)
-    (results[results.dataset == 'DefaultCreditCardDataset']
-     .sort_values('score', ascending=False)[['score', 'model_rank', 'model']])
-    return results.groupby('model')['model_rank'].mean().sort_values()
-
-def split_resultsby_task(results):
-    def dataset_to_task(dataset):
-       if hasattr(clf_ds, dataset):
-           return 'classification'
-       elif hasattr(reg_ds, dataset):
-           return 'regression'
-       else:
-           return 'classifier_interpretability'
-
-    result['task'] = result['dataset'].apply(lambda ds: 'classification' if hasattr(clf_ds, ds) else 'regression')
-    clf_results = result[result['task'] == 'classification'].copy()
-
-def print_results():
-    results = get_results_table()
-    # pd.set_option('display.max_rows', -1)
-    # pd.set_option('display.max_colwidth', -1)
-
-    result['task'] = result['dataset'].apply(lambda ds: 'classification' if hasattr(clf_ds, ds) else 'regression')
-    clf_results = result[result['task'] == 'classification'].copy()
-    # clf_results['metric'] = clf_results['dataset'].apply(lambda ds: getattr(clf_ds, ds).metric)
-
-    print(results)

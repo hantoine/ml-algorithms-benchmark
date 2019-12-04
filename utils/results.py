@@ -58,16 +58,25 @@ def print_results(latex=False):
     print('Classification models global ranking:')
     print(get_model_ranking(clf_results))
 
-    print('Classification models small dataset (<10k examples) ranking')
+    print('\nClassification models small dataset (<10k examples) ranking')
     big_datasets = ('DefaultCreditCardDataset', 'AdultDataset')
     clf_result_small_ds = clf_results[~clf_results.dataset.isin(big_datasets)].copy()
     print(get_model_ranking(clf_result_small_ds))
     
-    print('Classification models big dataset (>10k examples) ranking')
+    print('\nClassification models big dataset (>10k examples) ranking')
     big_datasets = ('DefaultCreditCardDataset', 'AdultDataset')
     clf_result_big_ds = clf_results[clf_results.dataset.isin(big_datasets)].copy()
     print(get_model_ranking(clf_result_big_ds))
 
-    # Regression to be done
+    print('Classification models global ranking:')
+    print(get_model_ranking(reg_results))
 
-    print(results)
+    print('\nRegression models small dataset (<5k examples) ranking')
+    big_datasets = ('MerckMolecularActivityDataset', 'BikeSharingDataset', 'SGEMMGPUKernelPerformancesDataset')
+    reg_result_small_ds = reg_results[~reg_results.dataset.isin(big_datasets)].copy()
+    print(get_model_ranking(reg_result_small_ds))
+
+    print('\nRegression models big dataset (>5k examples) ranking')
+    big_datasets = ('MerckMolecularActivityDataset', 'BikeSharingDataset', 'SGEMMGPUKernelPerformancesDataset')
+    reg_result_big_ds = reg_results[reg_results.dataset.isin(big_datasets)].copy()
+    print(get_model_ranking(reg_result_big_ds))
