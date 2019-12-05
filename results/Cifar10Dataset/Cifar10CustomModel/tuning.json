@@ -1,17 +1,17 @@
 {
     "hp": {
         "batch_size": 64,
-        "conv_dropout": 0.15,
-        "epochs_btw_restarts": 41,
-        "epochs_btw_restarts_mult": 2,
-        "fc_dropout": 0.15,
-        "learning_rate": 0.02,
-        "max_epochs": 30,
+        "conv_dropout": 0.1,
+        "epochs_btw_restarts": 60,
+        "epochs_btw_restarts_mult": 1,
+        "fc_dropout": 0.1,
+        "learning_rate": 0.01,
+        "max_epochs": 116,
         "momentum": 0.9,
         "nesterov": true,
-        "weight_decay": 0.0
+        "weight_decay": 0.0001
     },
-    "score": 0.8539568345323741,
+    "score": 0.9044568345323741,
     "n_trials": 0,
-    "tuning_time": 564.0825057029724
+    "tuning_time": 2241.0825057029724
 }
