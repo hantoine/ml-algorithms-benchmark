@@ -1,17 +1,19 @@
 from os.path import isfile
 from os.path import join as joinpath
 
+import graphviz
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
 from skimage.transform import resize
-import numpy as np
+from sklearn.tree import export_graphviz, plot_tree
+from torchvision import transforms
 
 from classifier_interpretability import datasets, models
 from config import RESULTS_DIR
 from utils import (train_all_models_on_all_datasets,
                    tune_all_models_on_all_datasets)
 from utils.training import get_tuning_results
-from torchvision import transforms
 
 
 def tune_all_models_on_all_clf_interpret_datasets(tuning_trials_per_step=5, max_tuning_time=120,
@@ -29,11 +31,10 @@ def evaluate_all_models_on_all_clf_interpret_datasets(max_training_time=180):
 
 
 def generate_interpretation_viz(image_index):
+    show_decision_tree_visualizations()
+
     estimator, test_dataset = prepare_model()
-
-    # CAM
     generate_class_activation_maps(estimator, test_dataset, image_index)
-
     generate_activation_maximization_viz(estimator, test_dataset, class_vizualized=0, n_epochs=80,
                                          lr=3e-2, momentum=0.9, type_initial_x='dataset',
                                          image_index=10)
@@ -64,6 +65,47 @@ def prepare_model():
     test_dataset = model.NormalizedDataset(*test_data)
 
     return estimator, test_dataset
+
+
+def show_decision_tree_visualizations():
+    model = models.DecisionTreeModel
+    dataset = datasets.Cifar10Dataset
+
+    train, test = dataset.get()
+    train_data, test_data = model.prepare_dataset(train, test, dataset.categorical_features)
+
+    tuning_results = get_tuning_results(dataset, model)
+    estimator = model.build_estimator(tuning_results['hp'], train_data)
+    estimator.fit(*train_data)
+
+    X = np.arange(3072)
+    feature_names = np.empty(3072, dtype=np.dtype('U7'))
+    for i, row in enumerate(np.moveaxis(X.reshape(3, 32, 32), [0, 1, 2], [2, 0, 1])):
+        for j, pixel in enumerate(row):
+            for index, color in zip(pixel, 'RGB'):
+                feature_names[index] = f'{color}-{i}-{j}'
+
+    show_decision_tree_visualization(estimator, dataset, feature_names, 3, rotate=True)
+
+
+def show_decision_tree_visualization(estimator, dataset, feature_names, max_depth, rotate=False):
+    dot_data = export_graphviz(estimator,
+                           max_depth=max_depth,
+                           label='none',
+                           class_names=dataset.classes,
+                           proportion=True,
+                           impurity=False,
+                           precision=0,
+                           rotate=rotate,
+                           rounded=True,
+                           feature_names=feature_names)
+    # Remove class proportions which take too much space
+    dot_data = dot_data.replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]\\n', '')
+    dot_data = dot_data.replace('[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]\\n', '')
+    dot_data = dot_data.replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]\\n', '')
+
+    graph = graphviz.Source(dot_data) 
+    graph.view(f'decision_tree_interpretation-{max_depth}-{rotate}')
 
 
 def generate_class_activation_maps(estimator, test_dataset, image_index):
