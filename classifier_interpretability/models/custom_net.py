@@ -34,8 +34,10 @@ class Cifar10CustomModel(NonTreeBasedModel):
         callbacks = [
             ('fix_seed', cls.FixRandomSeed(RANDOM_STATE)),
             ('lr_monitor', cls.LRMonitor()),
-            ('accuracy_score_valid', EpochScoring('accuracy', lower_is_better=False, on_train=True)),
-            ('early_stopping', EarlyStopping(monitor='valid_acc', lower_is_better=False, patience=5)),
+            ('accuracy_score_valid', EpochScoring('accuracy', lower_is_better=False,
+                                                  on_train=True)),
+            ('early_stopping', EarlyStopping(monitor='valid_acc', lower_is_better=False,
+                                             patience=100)),
             ('learning_rate_scheduler', LRScheduler(policy=cls.SkorchCosineAnnealingWarmRestarts,
                                                     T_0=n_iter_btw_restarts,
                                                     T_mult=hyperparams['epochs_btw_restarts_mult']
@@ -72,16 +74,16 @@ class Cifar10CustomModel(NonTreeBasedModel):
         )
 
     hp_space = {
-        'batch_size': 64,
-        'learning_rate': 2e-2,
+        'batch_size': 32,
+        'learning_rate': 1.5e-2,
         'momentum': 0.9,
-        'weight_decay': 0.0,
+        'weight_decay': 1e-4,
         'nesterov': True,
-        'conv_dropout': 0.15,
-        'fc_dropout': 0.15,
-        'epochs_btw_restarts': 41,
-        'epochs_btw_restarts_mult': 2,
-        'max_epochs': 30
+        'conv_dropout': 0.1,
+        'fc_dropout': 0.1,
+        'epochs_btw_restarts': 60,
+        'epochs_btw_restarts_mult': 1,
+        'max_epochs': 119
     }
 
     class CifarCustomNet(nn.Module):
@@ -106,48 +108,46 @@ class Cifar10CustomModel(NonTreeBasedModel):
                     [256, 10]
                 ]
             }
+            activation = nn.ELU
             
             # basis
-            self.branch1 = nn.Sequential(nn.Conv2d(*config['branch1'][0], 5),
-                                         nn.ReLU(),
+            self.branch1 = nn.Sequential(nn.Conv2d(*config['branch1'][0], 5), # 32 -> 28
+                                         activation(),
                                          nn.BatchNorm2d(config['branch1'][0][1]),
                                          nn.Dropout2d(conv_dropout),
-                                         nn.MaxPool2d(2, 2))
+                                         nn.MaxPool2d(2, 2)) # 28 -> 14
             # higher resolution
-            self.branch2_layer1 = nn.Sequential(nn.Conv2d(*config['branch2'][0], 3),
-                                                nn.ReLU(),
+            self.branch2_layer1 = nn.Sequential(nn.Conv2d(*config['branch2'][0], 3), # 32 -> 30
+                                                activation(),
                                                 nn.Dropout2d(conv_dropout))
 
-            self.branch2_layer2 = nn.Sequential(nn.Conv2d(*config['branch2'][1], 3),
-                                                nn.ReLU(),
+            self.branch2_layer2 = nn.Sequential(nn.Conv2d(*config['branch2'][1], 3), # 30 -> 28
+                                                activation(),
                                                 nn.BatchNorm2d(config['branch2'][1][1]),
                                                 nn.Dropout2d(conv_dropout),
-                                                nn.MaxPool2d(2, 2))
+                                                nn.MaxPool2d(2, 2)) # 28 -> 14
             # smaller resolution
-            self.branch3_layer1 = nn.Sequential(nn.Conv2d(*config['branch3'][0], 7),
-                                                nn.ReLU(),
-                                                nn.Dropout2d(conv_dropout),
-                                                nn.MaxPool2d(2, 1))
-            self.branch3_layer2 = nn.Sequential(nn.Conv2d(*config['branch3'][1], 7),
-                                                nn.ReLU(),
-                                                nn.Dropout2d(conv_dropout),
-                                                nn.MaxPool2d(2, 1))
-            self.branch3_layer3 = nn.Sequential(nn.Conv2d(*config['branch3'][2], 5),
-                                                nn.BatchNorm2d(config['branch3'][2][1]),
-                                                nn.ReLU(),
+            self.branch3_layer1 = nn.Sequential(nn.Conv2d(*config['branch3'][0], 7, padding=2), # 32 -> 30
+                                                activation(),
                                                 nn.Dropout2d(conv_dropout))
+            self.branch3_layer2 = nn.Sequential(nn.Conv2d(*config['branch3'][1], 5, padding=1), # 30 -> 28
+                                                activation(),
+                                                nn.Dropout2d(conv_dropout))
+            self.branch3_layer3 = nn.Sequential(nn.Conv2d(*config['branch3'][2], 3, padding=1), # 28 -> 28
+                                                nn.BatchNorm2d(config['branch3'][2][1]),
+                                                activation(),
+                                                nn.Dropout2d(conv_dropout),
+                                                nn.MaxPool2d(2, 2)) # 28 -> 14
             
             # head
-            self.head_layer1 = nn.Sequential(nn.Conv2d(*config['head'][0], 3, padding=1),
-                                             nn.ReLU(),
+            self.head_layer1 = nn.Sequential(nn.Conv2d(*config['head'][0], 3, padding=1),  # 14 -> 14
+                                             activation(),
                                              nn.BatchNorm2d(config['head'][0][1]),
-                                             nn.Dropout2d(conv_dropout),
-                                             )
-            self.head_layer2 = nn.Sequential(nn.Conv2d(*config['head'][1], 5),
-                                             nn.ReLU(),
+                                             nn.Dropout2d(conv_dropout))
+            self.head_layer2 = nn.Sequential(nn.Conv2d(*config['head'][1], 3), # 14 -> 12
+                                             activation(),
                                              nn.BatchNorm2d(config['head'][1][1]),
-                                             nn.Dropout2d(conv_dropout),
-                                             )
+                                             nn.Dropout2d(conv_dropout))
             self.fc = nn.Linear(*config['head'][2])
 
             return
@@ -164,9 +164,9 @@ class Cifar10CustomModel(NonTreeBasedModel):
 
             x = torch.cat((x, y, z), 1)
             x = self.head_layer1(x)
+            x = self.head_layer2(x)
             
             # Global Average Pooling
-            # import pdb; pdb.set_trace()
             x = F.avg_pool2d(x, x.shape[-1]).view(-1, x.shape[1])
 
             x = self.fc(x)
@@ -179,6 +179,7 @@ class Cifar10CustomModel(NonTreeBasedModel):
             self.dataset_subset = dataset_subset
 
             self.transforms = transforms.Compose([
+                transforms.RandomAffine(degrees=15, translate=(0.1, 0.1)),
                 transforms.RandomHorizontalFlip(0.5),
                 transforms.ToTensor(),
                 transforms.Normalize((0.4914, 0.48216, 0.4465), (0.247, 0.24346, 0.2616))
@@ -206,15 +207,13 @@ class Cifar10CustomModel(NonTreeBasedModel):
             return self.transforms(img), y
 
         def get_img(self, index):
-            """ Used by AugmentedDataset to get non-transformed PIL image """
-            img, y = self.get_raw(index)
-            img = Image.fromarray(255 * (1 - img))
-            return img, y
-
-        def get_raw(self, index):
-            " Useful to plot an image "
+            """
+                Useful to plot an image
+                Also used by AugmentedDataset to get non-transformed PIL image
+            """
             X, y = super(Cifar10CustomModel.NormalizedDataset, self).__getitem__(index)
             img = np.moveaxis(X.reshape(3, 32, 32), [0, 1, 2], [2, 0, 1])
+            img = Image.fromarray(img)
             return img, y
 
     class FixRandomSeed(Callback):

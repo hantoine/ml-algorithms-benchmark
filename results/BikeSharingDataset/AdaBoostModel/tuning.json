@@ -1,10 +1,10 @@
 {
     "hp": {
-        "learning_rate": 3.3364489849839183,
-        "loss": "linear",
-        "n_estimators": 937
+        "learning_rate": 2.061033365414738,
+        "loss": "square",
+        "n_estimators": 364
     },
-    "score": 99.96398237117648,
-    "n_trials": 27,
-    "tuning_time": 1080.0264267921448
+    "score": 94.33040074578948,
+    "n_trials": 151,
+    "tuning_time": 1056.435420036316
 }

@@ -3,9 +3,9 @@
         "max_depth": null,
         "max_features": null,
         "min_samples_leaf": 1,
-        "n_estimators": 283
+        "n_estimators": 284
     },
-    "score": 4.694983291303967,
-    "n_trials": 56,
-    "tuning_time": 1018.2060930728912
+    "score": 4.693891316917846,
+    "n_trials": 52,
+    "tuning_time": 1029.868777513504
 }
