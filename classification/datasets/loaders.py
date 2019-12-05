@@ -20,10 +20,10 @@ class RetinopathyDataset(Dataset):
 
     feature_names = ['quality',
                      'pre-screening_label'] + list(range(2, 16)) + [
-                        'dist_betw_centers',
-                        'od_diameter',
-                        'AM_FM_label',
-                        'class']
+                     'dist_betw_centers',
+                     'od_diameter',
+                     'AM_FM_label',
+                     'class']
     categorical_features = []
     metric = 'accuracy'
     is_metric_maximized = True
