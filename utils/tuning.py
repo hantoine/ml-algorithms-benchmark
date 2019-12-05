@@ -92,7 +92,8 @@ def update_n_trials_wo_improvement(trials):
 
 
 def process_tuning_result(trials, tuning_time, model, dataset):
-    if len([None for t in trials.trials if t['result']['status'] == 'ok']) == 0:
+    n_sucessful_trials = len([None for t in trials.trials if t['result']['status'] == 'ok'])
+    if n_sucessful_trials == 0:
         print('No trials finished within allowed time')
         return
 
@@ -113,6 +114,7 @@ def process_tuning_result(trials, tuning_time, model, dataset):
     print(f'Best {dataset.metric}: {best_score:.2f}')
     print(f'With hyperparams: \n{best_hp}')
     print(f'Obtained after {best_trial_index} trials')
+    print(f'Total number of sucessful trials: {n_sucessful_trials}')
     print(f'Total tuning time: {tuning_time:.1f}s')
 
 def make_tuning_step(objective_fct, hp_space, trials, rstate, step_size):
