@@ -26,6 +26,7 @@ class MerckMolecularActivityDataset(Dataset):
     metric = 'r2'
     is_metric_maximized = True
     categorical_features = []
+    needs_k_fold = False # Big enough that k-fold is not necessary for tuning
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
@@ -60,6 +61,11 @@ class MerckMolecularActivityDataset(Dataset):
         with zipfile.ZipFile(os.path.join(workdir, cls.filename), 'r') as zip_file:
             zip_file.extract('TrainingSet/ACT2_competition_training.csv', path=workdir)
             zip_file.extract('TrainingSet/ACT4_competition_training.csv', path=workdir)
+
+    @classmethod
+    def get_min_k_fold_k_value(cls, train_data):
+        """ Prevent a long computation of minimum k """
+        return 6 #  17% of validation data
 
 
 class WhiteWineQualityDataset(Dataset):
@@ -246,16 +252,6 @@ class FacebookLikesDataset(FacebookMetricsDataset):
         train, test = super(FacebookLikesDataset, cls).get(workdir)
         select_likes = partial(FacebookMetricsDataset.select_label_col, name='like')
         return select_likes(train), select_likes(test)
-
-
-class FacebookInteractionsDataset(FacebookMetricsDataset):
-    @classmethod
-    def get(cls, workdir=DEFAULT_DATA_DIR):
-        train, test = super(FacebookInteractionsDataset, cls).get(workdir)
-        select_interactions = partial(FacebookMetricsDataset.select_label_col,
-                                      name='Total Interactions')
-        return select_interactions(train), select_interactions(test)
-
 
 class FacebookShareDataset(FacebookMetricsDataset):
     @classmethod
