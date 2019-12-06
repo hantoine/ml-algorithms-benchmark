@@ -62,13 +62,13 @@ def print_results():
     big_datasets = ('DefaultCreditCardDataset', 'AdultDataset')
     clf_result_small_ds = clf_results[~clf_results.dataset.isin(big_datasets)].copy()
     print(get_model_ranking(clf_result_small_ds))
-    draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-classification-big-ds.png', clf_result_small_ds)
+    draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-classification-small-ds.png', clf_result_small_ds)
     
     print('\nClassification models big dataset (>10k examples) ranking')
     big_datasets = ('DefaultCreditCardDataset', 'AdultDataset')
     clf_result_big_ds = clf_results[clf_results.dataset.isin(big_datasets)].copy()
     print(get_model_ranking(clf_result_big_ds))
-    draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-classification-small-ds.png', clf_result_big_ds)
+    draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-classification-big-ds.png', clf_result_big_ds)
 
     print('\nRegression models global ranking:')
     print(get_model_ranking(reg_results))
@@ -85,3 +85,34 @@ def print_results():
     reg_result_big_ds = reg_results[reg_results.dataset.isin(big_datasets)].copy()
     print(get_model_ranking(reg_result_big_ds))
     draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-regression-big-ds.png', reg_result_big_ds)
+
+    print('='*60)
+    latex = False
+    print_all_datasets_results(clf_ds, clf_results, latex)
+    print_all_datasets_results(reg_ds, reg_results, latex)
+
+def print_all_datasets_results(datasets, results, latex=False):
+    dataset_names = results.dataset.unique()
+    for dataset_name in dataset_names:
+        if latex:
+            print("\\begin{figure}\\caption{Results on " + dataset_name[:-7] + " dataset}")
+        else:
+            print(f'Results on {dataset_name[:-7]} dataset')
+        dataset = getattr(datasets, dataset_name)
+        table = (results[results.dataset == dataset_name]
+        .set_index('model')
+        [['score', 'train_time']]
+        .sort_values('score', ascending=not dataset.is_metric_maximized)
+        .rename(columns={'score': dataset.metric})
+        )
+        table.index = table.index.rename('')
+        table[dataset.metric] = abs(table[dataset.metric])
+        if dataset.metric in ('accuracy', 'f1'):
+            table[dataset.metric] = (table[dataset.metric] * 100)
+        table = table.round(1)
+
+        if latex:
+            print(table.to_latex(column_format='|lrr|'))
+            print('\\end{figure}')
+        else:
+            print(table)
