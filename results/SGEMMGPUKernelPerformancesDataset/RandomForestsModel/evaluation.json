@@ -3,12 +3,12 @@
         "max_depth": null,
         "max_features": null,
         "min_samples_leaf": 1,
-        "n_estimators": 283
+        "n_estimators": 284
     },
-    "score": -3.9339291915842267,
-    "tuning_n_trials": 56,
-    "val_score": 4.694983291303967,
-    "train_time": 6.7876057624816895,
-    "evaluation_time": 0.5228617191314697,
+    "score": -3.933581776390497,
+    "tuning_n_trials": 52,
+    "val_score": 4.693891316917846,
+    "train_time": 7.8330230712890625,
+    "evaluation_time": 0.518852710723877,
     "metric_used": "rmse"
 }

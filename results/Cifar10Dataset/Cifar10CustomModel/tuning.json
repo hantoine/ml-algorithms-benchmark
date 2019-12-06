@@ -1,11 +1,11 @@
 {
     "hp": {
-        "batch_size": 64,
+        "batch_size": 32,
         "conv_dropout": 0.1,
         "epochs_btw_restarts": 60,
         "epochs_btw_restarts_mult": 1,
         "fc_dropout": 0.1,
-        "learning_rate": 0.01,
+        "learning_rate": 0.015,
         "max_epochs": 116,
         "momentum": 0.9,
         "nesterov": true,

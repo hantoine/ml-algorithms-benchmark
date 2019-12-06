@@ -1,0 +1,18 @@
+{
+    "hp": {
+        "activation": "selu",
+        "batch_size": 128,
+        "lr": 0.0004780206895745928,
+        "momentum": 0.9063083441241194,
+        "n_layers": 2,
+        "n_neuron_per_layer": 39,
+        "p_dropout": 0.060333626276796726,
+        "weight_decay": 1.8184635483675578e-06
+    },
+    "score": -69.18819161804274,
+    "tuning_n_trials": 69,
+    "val_score": 69.25572416227465,
+    "train_time": 32.913411378860474,
+    "evaluation_time": 0.42895984649658203,
+    "metric_used": "rmse"
+}

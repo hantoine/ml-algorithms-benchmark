@@ -2,15 +2,15 @@
     "hp": {
         "alpha": 0.9,
         "criterion": "mae",
-        "learning_rate": 0.0006257462708822194,
+        "learning_rate": 0.01145214218091796,
         "loss": "ls",
         "max_depth": 3,
         "max_features": null,
         "min_samples_leaf": 1,
-        "n_estimators": 256,
+        "n_estimators": 22,
         "subsample": 1.0
     },
-    "score": 23.98713580600205,
-    "n_trials": 9,
-    "tuning_time": 1038.1527926921844
+    "score": 23.983568926781594,
+    "n_trials": 92,
+    "tuning_time": 1014.4462170600891
 }

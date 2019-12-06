@@ -1,14 +1,13 @@
 {
     "hp": {
-        "C": 131.46935680953845,
-        "epsilon": 99.96841788718228,
-        "gamma": "scale",
-        "kernel": "rbf"
+        "C": 782.2512791167036,
+        "epsilon": 91.38785007891997,
+        "kernel": "linear"
     },
-    "score": -203.9207888141262,
-    "tuning_n_trials": 1096,
-    "val_score": 350.4021618208016,
-    "train_time": 0.02665543556213379,
-    "evaluation_time": 0.0014605522155761719,
+    "score": -206.18700669625196,
+    "tuning_n_trials": 148,
+    "val_score": 350.3822952475796,
+    "train_time": 0.2660195827484131,
+    "evaluation_time": 0.0011701583862304688,
     "metric_used": "rmse"
 }

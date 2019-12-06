@@ -1,20 +1,20 @@
 {
     "hp": {
         "batch_size": 64,
-        "conv_dropout": 0.15,
-        "epochs_btw_restarts": 41,
-        "epochs_btw_restarts_mult": 2,
-        "fc_dropout": 0.15,
-        "learning_rate": 0.02,
-        "max_epochs": 30,
+        "conv_dropout": 0.1,
+        "epochs_btw_restarts": 60,
+        "epochs_btw_restarts_mult": 1,
+        "fc_dropout": 0.1,
+        "learning_rate": 0.01,
+        "max_epochs": 116,
         "momentum": 0.9,
         "nesterov": true,
-        "weight_decay": 0.0
+        "weight_decay": 0.0001
     },
-    "score": 0.8513,
+    "score": 0.7552,
     "tuning_n_trials": 0,
-    "val_score": 0.8539568345323741,
-    "train_time": 543.8965513706207,
-    "evaluation_time": 1.2266688346862793,
+    "val_score": 0.9044568345323741,
+    "train_time": 216.5094130039215,
+    "evaluation_time": 1.5118789672851562,
     "metric_used": "accuracy"
 }
