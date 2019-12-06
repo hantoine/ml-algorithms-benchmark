@@ -1,0 +1,23 @@
+{
+    "hp": {
+        "activation": "logistic",
+        "alpha": 3.7674594090896214e-07,
+        "batch_size": 128,
+        "early_stopping": true,
+        "hidden_layer_sizes": [
+            75,
+            75
+        ],
+        "learning_rate": "adaptive",
+        "learning_rate_init": 0.0007335472081435232,
+        "momentum": 0.9684039314633067,
+        "nesterovs_momentum": false,
+        "solver": "adam"
+    },
+    "score": -4.574880651003409,
+    "tuning_n_trials": 373,
+    "val_score": 4.277681634421377,
+    "train_time": 1.1947216987609863,
+    "evaluation_time": 0.0007162094116210938,
+    "metric_used": "rmse"
+}

@@ -2,18 +2,18 @@
     "hp": {
         "alpha": 0.9,
         "criterion": "mse",
-        "learning_rate": 0.01564605986970699,
+        "learning_rate": 0.01016386760881234,
         "loss": "ls",
-        "max_depth": 4,
-        "max_features": 0.2572664242525482,
-        "min_samples_leaf": 24,
-        "n_estimators": 137,
-        "subsample": 0.5075818553175415
+        "max_depth": 3,
+        "max_features": 0.6831032911737356,
+        "min_samples_leaf": 32,
+        "n_estimators": 246,
+        "subsample": 0.7167379270422211
     },
-    "score": -21.86933591341886,
-    "tuning_n_trials": 106,
-    "val_score": 13.367474187212764,
-    "train_time": 0.12284469604492188,
-    "evaluation_time": 0.0013582706451416016,
+    "score": -21.842044021289905,
+    "tuning_n_trials": 157,
+    "val_score": 13.318144871832422,
+    "train_time": 0.3192291259765625,
+    "evaluation_time": 0.0018072128295898438,
     "metric_used": "rmse"
 }

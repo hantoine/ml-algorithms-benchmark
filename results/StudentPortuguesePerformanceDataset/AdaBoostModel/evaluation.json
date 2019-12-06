@@ -1,13 +1,13 @@
 {
     "hp": {
-        "learning_rate": 0.0065922894453965975,
-        "loss": "exponential",
-        "n_estimators": 296
+        "learning_rate": 0.0063135625147248435,
+        "loss": "linear",
+        "n_estimators": 119
     },
-    "score": -1.2144842705441465,
-    "tuning_n_trials": 102,
-    "val_score": 1.3250597179815689,
-    "train_time": 0.7003684043884277,
-    "evaluation_time": 0.02867579460144043,
+    "score": -1.2004482011687994,
+    "tuning_n_trials": 168,
+    "val_score": 1.3248882084519111,
+    "train_time": 0.2736389636993408,
+    "evaluation_time": 0.011919260025024414,
     "metric_used": "rmse"
 }

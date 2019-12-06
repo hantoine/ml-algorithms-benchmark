@@ -1,9 +1,0 @@
-{
-    "hp": {
-        "alpha": 15.91547220077812,
-        "n_restarts_optimizer": 2.0
-    },
-    "score": 416.9411731490551,
-    "n_trials": 52,
-    "tuning_time": 56.38949680328369
-}
