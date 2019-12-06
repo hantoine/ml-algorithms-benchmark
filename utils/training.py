@@ -36,6 +36,9 @@ def train_all_models_on_all_datasets(datasets, models, max_training_time=180):
                 except TimeoutError:
                     print(f'Model training and testing exceeded allowed time ({max_training_time}s)')
                     continue
+                except ValueError as e:
+                    print(f'Error during model training: {e}')
+                    continue
 
                 save_evaluation_results(dataset, model, tuning_results, score, train_time,
                                         evaluation_time)
