@@ -10,7 +10,7 @@ from sklearn.tree import export_graphviz, plot_tree
 from torchvision import transforms
 
 from classifier_interpretability import datasets, models
-from config import RESULTS_DIR
+from config import RESULTS_DIR, RANDOM_STATE
 from utils import (train_all_models_on_all_datasets,
                    tune_all_models_on_all_datasets)
 from utils.training import get_tuning_results
@@ -35,15 +35,36 @@ def generate_interpretation_viz(image_index):
 
     estimator, test_dataset = prepare_model()
     generate_class_activation_maps(estimator, test_dataset, image_index)
-    generate_activation_maximization_viz(estimator, test_dataset, class_vizualized=0, n_epochs=80,
-                                         lr=3e-2, momentum=0.9, type_initial_x='dataset',
-                                         image_index=10)
-    generate_activation_maximization_viz(estimator, test_dataset, class_vizualized=1, n_epochs=80,
-                                        lr=3e-2, momentum=0.9, type_initial_x='dataset',
-                                        image_index=10)
-    generate_activation_maximization_viz(estimator, test_dataset, class_vizualized=0, n_epochs=80,
-                                        lr=3e-2, momentum=0.9, type_initial_x='random',
-                                        image_index=10)
+    generate_activation_mazimization_viz(estimator, test_dataset)
+
+def generate_activation_mazimization_viz(estimator, test_dataset):
+    plt.figure()
+    plt.subplots_adjust(wspace=0.35, hspace=0)
+    plt.subplot(2, 3, 1)
+    loss_values1 = plot_activation_maximization(estimator, test_dataset, class_vizualized=0, n_epochs=80,
+                                                lr=3e-2, momentum=0.9, type_initial_x='dataset',
+                                                image_index=10)
+    plt.subplot(2, 3, 2)
+    loss_values2 = plot_activation_maximization(estimator, test_dataset, class_vizualized=0, n_epochs=160,
+                                                lr=1e-2, momentum=0.9, type_initial_x='zero',
+                                                image_index=10)
+    plt.subplot(2, 3, 3)
+    loss_values3 = plot_activation_maximization(estimator, test_dataset, class_vizualized=0, n_epochs=100,
+                                                lr=1e-3, momentum=0.9, type_initial_x='random',
+                                                image_index=10)
+    plt.subplot(4, 3, 7)
+    plt.plot(loss_values1)
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss value')
+    plt.subplot(4, 3, 8)
+    plt.plot(loss_values2)
+    plt.xlabel('Epoch')
+    plt.yscale('log')
+    plt.subplot(4, 3, 9)
+    plt.plot(loss_values3)
+    plt.xlabel('Epoch')
+    plt.yscale('log')
+    plt.show()
 
 
 def prepare_model():
@@ -85,7 +106,7 @@ def show_decision_tree_visualizations():
             for index, color in zip(pixel, 'RGB'):
                 feature_names[index] = f'{color}-{i}-{j}'
 
-    show_decision_tree_visualization(estimator, dataset, feature_names, 3, rotate=True)
+    show_decision_tree_visualization(estimator, dataset, feature_names, 3, rotate=False)
 
 
 def show_decision_tree_visualization(estimator, dataset, feature_names, max_depth, rotate=False):
@@ -115,15 +136,27 @@ def generate_class_activation_maps(estimator, test_dataset, image_index):
         save_final_conv_output.output = outputs.data
     module.head_layer2.register_forward_hook(save_final_conv_output)
 
-    while True:
-        command = input('Enter index of image in test set to perform class activation mapping on (q to leave): ')
-        if command == 'q':
-            break
-        image_index = int(command)
-        show_class_activation_map(module, test_dataset, save_final_conv_output, image_index)
+    if image_index == -1:
+        while True:
+            command = input('Enter index of image in test set to perform class activation mapping on (q to leave): ')
+            if command == 'q':
+                break
+            command = command.split(' ')
+            image_index = int(command[0])
+            show_class_activation_map(module, test_dataset, save_final_conv_output, image_index, transparency=float(command[1]) if len(command) > 1 else None)
+        return
+
+    plt.figure()
+    plt.subplot(1, 3, 1)
+    show_class_activation_map(module, test_dataset, save_final_conv_output, 10, transparency=0.3) # plane
+    plt.subplot(1, 3, 2)
+    show_class_activation_map(module, test_dataset, save_final_conv_output, 897, transparency=0.3) # horse, 48 good too
+    plt.subplot(1, 3, 3)
+    show_class_activation_map(module, test_dataset, save_final_conv_output, 91, transparency=0.3) # cat
+    plt.show()
 
 
-def show_class_activation_map(module, test_dataset, hook, image_index):
+def show_class_activation_map(module, test_dataset, hook, image_index, transparency):
     model = models.Cifar10CustomModel
     dataset = datasets.Cifar10Dataset
     x, y = test_dataset[image_index]
@@ -146,20 +179,35 @@ def show_class_activation_map(module, test_dataset, hook, image_index):
     else:
         print(f'The model failed to identify a {dataset.classes[y]}, it predicted {dataset.classes[y_pred]}')
 
-    plt.figure()
-    plt.subplot(1, 3, 1)
-    plt.imshow(test_dataset.get_img(image_index)[0])
-    plt.subplot(1, 3, 2)
-    plt.imshow(test_dataset.get_img(image_index)[0])
-    plt.imshow(resize(cmap, (32, 32)), alpha=0.35, cmap='jet')
-    plt.subplot(1, 3, 3)
-    plt.imshow(resize(cmap, (32, 32)), cmap='jet')
-    plt.title(f'Class activation mapping for image')# {image_index}')
-    plt.show()
+    if transparency == None:
+        plt.figure()
+        plt.subplot(1, 3, 1)
+        plt.imshow(test_dataset.get_img(image_index)[0])
+        plt.xticks([])
+        plt.yticks([])
+        plt.subplot(1, 3, 2)
+        plt.imshow(test_dataset.get_img(image_index)[0])
+        plt.imshow(resize(cmap, (32, 32)), alpha=0.35, cmap='jet')
+        plt.xticks([])
+        plt.yticks([])
+        plt.subplot(1, 3, 3)
+        plt.imshow(resize(cmap, (32, 32)), cmap='jet')
+        plt.xticks([])
+        plt.yticks([])
+        plt.show()
+    else:
+        plt.imshow(test_dataset.get_img(image_index)[0])
+        plt.imshow(resize(cmap, (32, 32)), alpha=transparency, cmap='jet')
+        plt.xticks([])
+        plt.yticks([])
 
-def generate_activation_maximization_viz(estimator, test_dataset, class_vizualized=0, n_epochs=40,
-                                         lr=3e-2, momentum=0.9, type_initial_x='dataset',
-                                         image_index=10):
+def plot_activation_maximization(estimator, test_dataset, class_vizualized=0, n_epochs=40,
+                                 lr=3e-2, momentum=0.9, type_initial_x='dataset',
+                                 image_index=10):
+    torch.manual_seed(RANDOM_STATE)
+    torch.cuda.manual_seed(RANDOM_STATE)
+    torch.backends.cudnn.deterministic=True
+
     module = estimator.module_
     module.eval()
 
@@ -169,7 +217,7 @@ def generate_activation_maximization_viz(estimator, test_dataset, class_vizualiz
         x, y = test_dataset[image_index]
     elif type_initial_x == 'random':
         x = torch.zeros((3, 32, 32))
-        x.normal_(mean=0, std=0.3)
+        x.normal_(mean=0, std=0.2)
     x = x.unsqueeze(dim=0).to(models.Cifar10CustomModel.device)
     x.requires_grad_(True)
 
@@ -199,27 +247,7 @@ def generate_activation_maximization_viz(estimator, test_dataset, class_vizualiz
 
     max_activation = denormalize(max_activation).cpu().numpy()
     max_activation = np.moveaxis(max_activation, [0, 1, 2], [2, 0, 1])
-    if type_initial_x == 'dataset':
-        plt.figure()
-        plt.subplot(2, 1, 1)
-        plt.plot(loss_values)
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss value')
-        plt.title('Activation maximization learning curve')
-        plt.subplot(2, 2, 3)
-        plt.imshow(test_dataset.get_img(image_index)[0])
-        plt.subplot(2, 2, 4)
-        plt.imshow(max_activation)
-        plt.tight_layout()
-        plt.show()
-    else:
-        plt.figure()
-        plt.subplot(2, 1, 1)
-        plt.plot(loss_values)
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss value')
-        plt.title('Activation maximization learning curve')
-        plt.subplot(2, 1, 2)
-        plt.imshow(max_activation)
-        plt.tight_layout()
-        plt.show()
+    plt.imshow(max_activation)
+    plt.xticks([])
+    plt.yticks([])
+    return loss_values
