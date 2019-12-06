@@ -1,0 +1,16 @@
+{
+    "hp": {
+        "alpha": 0.9,
+        "criterion": "friedman_mse",
+        "learning_rate": 0.017078307484854192,
+        "loss": "ls",
+        "max_depth": 5,
+        "max_features": "log2",
+        "min_samples_leaf": 2,
+        "n_estimators": 877,
+        "subsample": 0.9276414111968899
+    },
+    "score": 0.6172826057310844,
+    "n_trials": 72,
+    "tuning_time": 1013.6300020217896
+}

@@ -1,0 +1,14 @@
+{
+    "hp": {
+        "metric": "chebyshev",
+        "n_neighbors": 17,
+        "p": 0,
+        "weights": "distance"
+    },
+    "score": -4.6299808448485065,
+    "tuning_n_trials": 148,
+    "val_score": 4.280096996773137,
+    "train_time": 0.014845132827758789,
+    "evaluation_time": 0.11726760864257812,
+    "metric_used": "rmse"
+}

@@ -1,0 +1,15 @@
+{
+    "hp": {
+        "C": 0.0012497291639983386,
+        "class_weight": "balanced",
+        "l1_ratio": 0.031964013806134256,
+        "multi_class": "multinomial",
+        "penalty": "elasticnet"
+    },
+    "score": 0.6368715083798883,
+    "tuning_n_trials": 1641,
+    "val_score": 0.6048237476808905,
+    "train_time": 0.0160067081451416,
+    "evaluation_time": 0.0008690357208251953,
+    "metric_used": "f1"
+}

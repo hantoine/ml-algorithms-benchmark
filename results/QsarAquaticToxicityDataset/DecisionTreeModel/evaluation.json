@@ -1,0 +1,16 @@
+{
+    "hp": {
+        "criterion": "friedman_mse",
+        "max_depth": null,
+        "max_features": 0.556719141704612,
+        "min_samples_leaf": 4,
+        "min_samples_split": 8,
+        "splitter": "best"
+    },
+    "score": -1.6163134740236988,
+    "tuning_n_trials": 657,
+    "val_score": 1.2507122590565534,
+    "train_time": 0.005304098129272461,
+    "evaluation_time": 0.0003192424774169922,
+    "metric_used": "rmse"
+}

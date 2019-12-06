@@ -1,0 +1,14 @@
+{
+    "hp": {
+        "C": 3.149766303217491,
+        "epsilon": 0.061429820903916924,
+        "gamma": "scale",
+        "kernel": "rbf"
+    },
+    "score": -1.1262483392611038,
+    "tuning_n_trials": 489,
+    "val_score": 1.1099139576655208,
+    "train_time": 0.0217130184173584,
+    "evaluation_time": 0.002490997314453125,
+    "metric_used": "rmse"
+}

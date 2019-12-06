@@ -1,0 +1,11 @@
+{
+    "hp": {
+        "C": 2.5149453835946955,
+        "class_weight": null,
+        "gamma": "scale",
+        "kernel": "rbf"
+    },
+    "score": 0.7904443860081355,
+    "n_trials": 226,
+    "tuning_time": 1042.7412502765656
+}

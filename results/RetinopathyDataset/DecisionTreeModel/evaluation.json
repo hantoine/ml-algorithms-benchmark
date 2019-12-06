@@ -1,0 +1,16 @@
+{
+    "hp": {
+        "class_weight": null,
+        "max_depth": null,
+        "max_features": null,
+        "min_samples_leaf": 12,
+        "min_samples_split": 6,
+        "splitter": "random"
+    },
+    "score": 0.6666666666666666,
+    "tuning_n_trials": 94,
+    "val_score": 0.6628041714947857,
+    "train_time": 0.007321596145629883,
+    "evaluation_time": 0.0007441043853759766,
+    "metric_used": "accuracy"
+}

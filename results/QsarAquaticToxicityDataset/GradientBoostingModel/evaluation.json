@@ -1,0 +1,19 @@
+{
+    "hp": {
+        "alpha": 0.9,
+        "criterion": "mae",
+        "learning_rate": 0.16306964923361789,
+        "loss": "lad",
+        "max_depth": 4,
+        "max_features": 0.59932744427121,
+        "min_samples_leaf": 1,
+        "n_estimators": 556,
+        "subsample": 1.0
+    },
+    "score": -1.2187962512705546,
+    "tuning_n_trials": 126,
+    "val_score": 1.0800797476086048,
+    "train_time": 3.734388828277588,
+    "evaluation_time": 0.0026264190673828125,
+    "metric_used": "rmse"
+}

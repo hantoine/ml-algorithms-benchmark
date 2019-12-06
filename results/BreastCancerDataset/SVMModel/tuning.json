@@ -1,0 +1,12 @@
+{
+    "hp": {
+        "C": 0.0017699782967998381,
+        "class_weight": "balanced",
+        "coef0": 0.0,
+        "gamma": 1.87355435120982,
+        "kernel": "sigmoid"
+    },
+    "score": 0.9625668449197861,
+    "n_trials": 202,
+    "tuning_time": 67.29039168357849
+}

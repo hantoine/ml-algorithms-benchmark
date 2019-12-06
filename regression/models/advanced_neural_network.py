@@ -65,7 +65,9 @@ class AdvancedNeuralNetworkModel(NonTreeBasedModel):
             optimizer__momentum=hyperparams['momentum'],
             optimizer__weight_decay=hyperparams['weight_decay'],
             optimizer__nesterov=True,
-            verbose=0
+            verbose=3,
+            iterator_train__num_workers=4,
+            iterator_valid__num_workers=4
         )
 
     hp_space = {

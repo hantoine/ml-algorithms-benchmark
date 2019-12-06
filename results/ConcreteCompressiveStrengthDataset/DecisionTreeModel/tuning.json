@@ -1,0 +1,13 @@
+{
+    "hp": {
+        "criterion": "mse",
+        "max_depth": 118,
+        "max_features": null,
+        "min_samples_leaf": 1,
+        "min_samples_split": 4,
+        "splitter": "random"
+    },
+    "score": 6.821386861515599,
+    "n_trials": 20,
+    "tuning_time": 35.14239287376404
+}

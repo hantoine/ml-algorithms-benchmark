@@ -1,0 +1,11 @@
+{
+    "hp": {
+        "metric": "euclidean",
+        "n_neighbors": 30,
+        "p": 2,
+        "weights": "uniform"
+    },
+    "score": 47.17828497510523,
+    "n_trials": 245,
+    "tuning_time": 706.0670614242554
+}

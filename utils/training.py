@@ -4,7 +4,7 @@ import re
 import time
 import warnings
 from os import makedirs
-from os.path import join as joinpath
+from os.path import join as joinpath, isfile
 
 import pandas as pd
 from sklearn.exceptions import ConvergenceWarning
@@ -49,13 +49,25 @@ def train_all_models_on_all_datasets(datasets, models, max_training_time=180):
 
 
 def evaluate_model(model, dataset, train, test, hyperparams):
+    is_cifar_model = model.__name__ == 'Cifar10CustomModel'
+    cifar_model_weights_path = joinpath(RESULTS_DIR, 'Cifar10CustomModel-weights.pkl')
+
     start_time = time.time()
     train_data, test_data = \
         model.prepare_dataset(train, test, dataset.categorical_features)
-    estimator = model.build_estimator(hyperparams)
-    X, y, *_ = train_data
-    estimator.fit(X, y)
-    train_time = time.time() - start_time
+    estimator = model.build_estimator(hyperparams, train_data)
+
+    # Restore Cifar10CustomModel if weights have been saved
+    if is_cifar_model and isfile(cifar_model_weights_path):
+            estimator.initialize()
+            estimator.load_params(f_params=cifar_model_weights_path)
+            train_time = -1
+    else:
+        X, y, *_ = train_data
+        estimator.fit(X, y)
+        train_time = time.time() - start_time
+        if is_cifar_model:
+            estimator.save_params(f_params=cifar_model_weights_path)
 
     start_time = time.time()
     X_test, y_test = test_data
@@ -98,29 +110,3 @@ def save_evaluation_results(dataset, model, tuning_results, score, train_time, e
         }
         with open(joinpath(results_dir, 'evaluation.json'), 'w', encoding='utf-8') as file:
             json.dump(results, file, ensure_ascii=False, indent=4)
-
-def get_results_table():
-    result_files = glob('results/*/*/evaluation.json')
-
-    pattern = re.compile(RESULTS_DIR + r'/([a-zA-Z]+)/([a-zA-Z]+)/evaluation.json')
-    result_table = []
-
-    for result_file in result_files: # For here
-        dataset, model = pattern.match(result_file).groups()
-        with open(result_file, 'r') as file:
-            results = json.load(file)
-        results['hp'] = ','.join([f"{k}={v}" if type(v) in [str, list, type(None)] else f"{k}={v:.2f}"
-                                  for k, v in results['hp'].items()])
-        results.update({'dataset': dataset, 'model': model})
-        result_table.append(results)
-
-    result_table = pd.DataFrame(result_table)
-    result_table = result_table[['dataset', 'model', 'score', 'val_score', 'train_time',
-                                 'evaluation_time', 'tuning_n_trials', 'hp']]
-    return result_table
-
-def print_results():
-    results = get_results_table()
-    pd.set_option('display.max_rows', -1)
-    pd.set_option('display.max_colwidth', -1)
-    print(results)

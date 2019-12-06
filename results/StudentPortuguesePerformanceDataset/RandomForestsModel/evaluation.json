@@ -1,0 +1,14 @@
+{
+    "hp": {
+        "max_depth": null,
+        "max_features": 0.7569176071113397,
+        "min_samples_leaf": 2,
+        "n_estimators": 154
+    },
+    "score": -1.1584037674657826,
+    "tuning_n_trials": 294,
+    "val_score": 1.2769126987820956,
+    "train_time": 0.5081396102905273,
+    "evaluation_time": 0.12362980842590332,
+    "metric_used": "rmse"
+}

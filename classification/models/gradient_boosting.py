@@ -23,11 +23,11 @@ class GradientBoostingModel(TreeBasedModel):
         ]),
         'min_samples_leaf': hp.choice('min_samples_leaf_enabled', [
             1,  # most common choice.
-            scope.int(hp.qloguniform('min_samples_leaf' + '.gt1', np.log(1.5), np.log(50.5), 1))
+            scope.int(hp.qloguniform('min_samples_leaf', np.log(1.5), np.log(50.5), 1))
         ]),
         'subsample': hp.pchoice('subsample_enabled', [
             (0.2, 1.0),  # default choice.
-            (0.8, hp.uniform('subsample' + '.sgb', 0.5, 1.0))  # stochastic grad boosting.
+            (0.8, hp.uniform('subsample', 0.5, 1.0))  # stochastic grad boosting.
         ]),
         'max_features': hp.pchoice('max_features_str', [
             (0.1, 'sqrt'),  # most common choice.
