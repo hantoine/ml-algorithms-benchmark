@@ -1,11 +1,12 @@
 from .loaders import *
 
 all_datasets = [
-    WhiteWineQualityDataset, RedWineQualityDataset, CommunitiesAndCrimeDataset,
+    WhiteWineQualityDataset,RedWineQualityDataset, CommunitiesAndCrimeDataset,
     QsarAquaticToxicityDataset, ParkinsonMultipleSoundRecordingDataset,
-    FacebookLikesDataset, FacebookInteractionsDataset, FacebookShareDataset,
-    FacebookCommentDataset, BikeSharingDataset, SGEMMGPUKernelPerformancesDataset,
+    FacebookLikesDataset, FacebookShareDataset, FacebookCommentDataset,
     ConcreteCompressiveStrengthDataset, StudentMathPerformanceDataset,
     StudentPortuguesePerformanceDataset, StudentMathPerformanceNoPrevGradesDataset,
-    StudentPortuguesePerformanceNoPrevGradesDataset, MerckMolecularActivityDataset
+    StudentPortuguesePerformanceNoPrevGradesDataset,
+    # This ones were tuned for longer (3000s)
+    MerckMolecularActivityDataset, BikeSharingDataset, SGEMMGPUKernelPerformancesDataset,
 ]

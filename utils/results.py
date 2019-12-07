@@ -86,10 +86,40 @@ def print_results():
     print(get_model_ranking(reg_result_big_ds))
     draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-regression-big-ds.png', reg_result_big_ds)
 
-    print('='*60)
-    latex = False
-    print_all_datasets_results(clf_ds, clf_results, latex)
-    print_all_datasets_results(reg_ds, reg_results, latex)
+    print_rankings('Classification', clf_results)
+    print_rankings('Regression', reg_results)
+
+
+def print_rankings(task, results):
+    print(f'{task} ranking table')
+    results['model_rank'] = results.groupby('dataset')['score'].rank(ascending=False)
+    results = results[['dataset', 'model', 'model_rank']]
+    results.loc[:, 'dataset'] = results['dataset'].str[:-7]
+    results.loc[:, 'model'] = results['model'].str[:-5]
+    table = pd.pivot_table(results, values='model_rank', index='model', columns=['dataset'])
+    table = table.fillna(table.max())
+    table = table.astype(int)
+
+    if task == 'Regression':
+        big_ds = ['SGEMMGPUKernelPerformances', 'MerckMolecularActivity', 'BikeSharing']
+    else:
+        big_ds = ['DefaultCreditCard', 'Adult']
+    small_ds = list(set(table.columns) - set(big_ds))
+
+    table['Average'] = table.T.mean()
+    table['Average Big Dataset'] = table[big_ds].T.mean()
+    table['Average Small Dataset'] = table[small_ds].T.mean()
+
+    if task == 'Regression':
+        table.index = ['AB', 'ANN', 'BNN', 'DT', 'GP', 'GB', 'KNN', 'LR', 'RF', 'SVM']
+    else:
+        table.index = ['AB', 'ANN', 'BNN', 'DT', 'GB', 'KNN', 'LR', 'RF', 'SVM']
+    table = table.round(1)
+    for col in table.columns:
+        table.loc[:, col] = table[col].astype(str)
+    table = table.T
+    print(table)
+
 
 def print_all_datasets_results(datasets, results, latex=False):
     dataset_names = results.dataset.unique()
