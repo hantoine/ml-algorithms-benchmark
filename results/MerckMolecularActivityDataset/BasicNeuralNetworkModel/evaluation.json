@@ -1,23 +1,23 @@
 {
     "hp": {
         "activation": "logistic",
-        "alpha": 0.000601177425394755,
+        "alpha": 3.0618605822605756e-05,
         "batch_size": 128,
         "early_stopping": true,
         "hidden_layer_sizes": [
-            20,
-            20
+            60,
+            60
         ],
         "learning_rate": "constant",
-        "learning_rate_init": 0.0037081473573792453,
-        "momentum": 0.9417656493014553,
+        "learning_rate_init": 0.00041050030167638456,
+        "momentum": 0.9886711772699343,
         "nesterovs_momentum": false,
         "solver": "adam"
     },
-    "score": 0.6570669669183729,
-    "tuning_n_trials": 4,
-    "val_score": 0.6325415517029985,
-    "train_time": 20.468218564987183,
-    "evaluation_time": 0.060118675231933594,
+    "score": 0.6411606361901712,
+    "tuning_n_trials": 46,
+    "val_score": 0.6507756690850741,
+    "train_time": 51.71800708770752,
+    "evaluation_time": 0.06046128273010254,
     "metric_used": "r2"
 }

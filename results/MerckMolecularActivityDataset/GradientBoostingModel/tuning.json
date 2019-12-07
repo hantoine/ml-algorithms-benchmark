@@ -2,15 +2,15 @@
     "hp": {
         "alpha": 0.9,
         "criterion": "mse",
-        "learning_rate": 0.049120609800512735,
+        "learning_rate": 0.31785211762075694,
         "loss": "lad",
-        "max_depth": 3,
-        "max_features": "log2",
-        "min_samples_leaf": 41,
-        "n_estimators": 737,
-        "subsample": 0.8638628715886625
+        "max_depth": 4,
+        "max_features": 0.770751389515306,
+        "min_samples_leaf": 12,
+        "n_estimators": 588,
+        "subsample": 1.0
     },
-    "score": 0.6270214424151062,
-    "n_trials": 1,
-    "tuning_time": 1085.442326784134
+    "score": 0.6779859121132256,
+    "n_trials": 2,
+    "tuning_time": 3000.0036878585815
 }

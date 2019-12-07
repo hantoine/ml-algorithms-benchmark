@@ -2,14 +2,14 @@
     "hp": {
         "activation": "selu",
         "batch_size": 128,
-        "lr": 0.00018290521238948702,
-        "momentum": 0.9464803773782116,
-        "n_layers": 4,
-        "n_neuron_per_layer": 33,
-        "p_dropout": 0.22735052611068607,
-        "weight_decay": 0.0003017566236280168
+        "lr": 0.00011555983921206614,
+        "momentum": 0.9325073442800573,
+        "n_layers": 5,
+        "n_neuron_per_layer": 21,
+        "p_dropout": 0.22241625615057586,
+        "weight_decay": 2.5131043628445557e-07
     },
-    "score": 0.5677416726279284,
-    "n_trials": 0,
-    "tuning_time": 1080.0060172080994
+    "score": 0.5812462436013772,
+    "n_trials": 3,
+    "tuning_time": 3000.0032682418823
 }
