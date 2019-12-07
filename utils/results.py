@@ -97,7 +97,7 @@ def print_rankings(task, results):
     results.loc[:, 'dataset'] = results['dataset'].str[:-7]
     results.loc[:, 'model'] = results['model'].str[:-5]
     table = pd.pivot_table(results, values='model_rank', index='model', columns=['dataset'])
-    table = table.fillna(table.max())
+    table = table.fillna(-1)
     table = table.astype(int)
 
     if task == 'Regression':
@@ -118,6 +118,7 @@ def print_rankings(task, results):
     for col in table.columns:
         table.loc[:, col] = table[col].astype(str)
     table = table.T
+    table = table.replace('-1', 'F')
     print(table)
 
 
