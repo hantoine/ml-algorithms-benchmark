@@ -97,8 +97,6 @@ def print_rankings(task, results):
     results.loc[:, 'dataset'] = results['dataset'].str[:-7]
     results.loc[:, 'model'] = results['model'].str[:-5]
     table = pd.pivot_table(results, values='model_rank', index='model', columns=['dataset'])
-    table = table.fillna(-1)
-    table = table.astype(int)
 
     if task == 'Regression':
         big_ds = ['SGEMMGPUKernelPerformances', 'MerckMolecularActivity', 'BikeSharing']
@@ -115,11 +113,12 @@ def print_rankings(task, results):
     else:
         table.index = ['AB', 'ANN', 'BNN', 'DT', 'GB', 'KNN', 'LR', 'RF', 'SVM']
     table = table.round(1)
-    for col in table.columns:
-        table.loc[:, col] = table[col].astype(str)
+    for col in table.columns[:-3]:
+        table.loc[:, col] = table[col].astype(str).str[:-2]
     table = table.T
-    table = table.replace('-1', 'F')
+    table = table.replace('n', 'F')
     print(table)
+    print(table.to_latex())
 
 
 def print_all_datasets_results(datasets, results, latex=False):
