@@ -13,7 +13,6 @@ from zipfile import ZipFile
 import time
 from scipy.io import arff
 import shutil
-import kaggle
 import zipfile
 
 from utils import Dataset, encode_feature_as_cyclical
@@ -53,14 +52,25 @@ class MerckMolecularActivityDataset(Dataset):
 
     @classmethod
     def prepare(cls, workdir):
-        kaggle.api.competition_download_file(competition='MerckActivity',
-                                             file_name=cls.filename,
-                                             path=workdir,
-                                             quiet=True)
+        try:
+            import kaggle
+            kaggle.api.competition_download_file(competition='MerckActivity',
+                                                 file_name=cls.filename,
+                                                 path=workdir,
+                                                 quiet=True)
+        except OSError as e:
+            kaggle_exception_msg = ("Could not find kaggle.json. Make sure it's located in "
+                                    "/home/hantoine/.kaggle. Or use the environment method.")
+            if e.args[0] != kaggle_exception_msg:
+                raise
+            raise Exception("You need to login to Kaggle to be able to download the Merck Molecular "
+                            "Activity Dataset. Follow instructions on this page: "
+                            "https://github.com/Kaggle/kaggle-api#api-credentials") from None
 
         with zipfile.ZipFile(os.path.join(workdir, cls.filename), 'r') as zip_file:
             zip_file.extract('TrainingSet/ACT2_competition_training.csv', path=workdir)
             zip_file.extract('TrainingSet/ACT4_competition_training.csv', path=workdir)
+
 
     @classmethod
     def get_min_k_fold_k_value(cls, train_data):
