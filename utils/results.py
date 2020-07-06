@@ -40,13 +40,22 @@ def split_results_by_task(results):
        else:
            return 'classifier_interpretability'
 
+    def dataset_to_metric(ds):
+        ds_class = (getattr(reg_ds, ds, None) or getattr(clf_ds, ds, None))
+        if ds_class is None: # dataset for classifier interpretability
+            return None
+        return ds_class.metric
+
     results['task'] = results['dataset'].apply(dataset_to_task)
+    results['metric'] = results['dataset'].apply(dataset_to_metric)
+
+    # Remove "Dataset" and "Model" suffixes
+    results.loc[:, 'dataset'] = results['dataset'].str[:-7]
+    results.loc[:, 'model'] = results['model'].str[:-5]
+
     clf_results = results[results['task'] == 'classification'].copy()
     reg_results = results[results['task'] == 'regression'].copy()
     clf_interpretability_results = results[results['task'] == 'classifier_interpretability'].copy()
-
-    clf_results['metric'] = clf_results['dataset'].apply(lambda ds: getattr(clf_ds, ds).metric)
-    reg_results['metric'] = reg_results['dataset'].apply(lambda ds: getattr(reg_ds, ds).metric)
 
     return clf_results, reg_results, clf_interpretability_results
 
@@ -59,13 +68,13 @@ def print_results():
     draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-classification.png', clf_results)
 
     print('\nClassification models small dataset (<10k examples) ranking')
-    big_datasets = ('DefaultCreditCardDataset', 'AdultDataset')
+    big_datasets = ('DefaultCreditCard', 'Adult')
     clf_result_small_ds = clf_results[~clf_results.dataset.isin(big_datasets)].copy()
     print(get_model_ranking(clf_result_small_ds))
     draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-classification-small-ds.png', clf_result_small_ds)
     
     print('\nClassification models big dataset (>10k examples) ranking')
-    big_datasets = ('DefaultCreditCardDataset', 'AdultDataset')
+    big_datasets = ('DefaultCreditCard', 'Adult')
     clf_result_big_ds = clf_results[clf_results.dataset.isin(big_datasets)].copy()
     print(get_model_ranking(clf_result_big_ds))
     draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-classification-big-ds.png', clf_result_big_ds)
@@ -75,13 +84,13 @@ def print_results():
     draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-regression.png', reg_results)
 
     print('\nRegression models small dataset (<5k examples) ranking')
-    big_datasets = ('MerckMolecularActivityDataset', 'BikeSharingDataset', 'SGEMMGPUKernelPerformancesDataset')
+    big_datasets = ('MerckMolecularActivity', 'BikeSharing', 'SGEMMGPUKernelPerformances')
     reg_result_small_ds = reg_results[~reg_results.dataset.isin(big_datasets)].copy()
     print(get_model_ranking(reg_result_small_ds))
     draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-regression-small-ds.png', reg_result_small_ds)
 
     print('\nRegression models big dataset (>5k examples) ranking')
-    big_datasets = ('MerckMolecularActivityDataset', 'BikeSharingDataset', 'SGEMMGPUKernelPerformancesDataset')
+    big_datasets = ('MerckMolecularActivity', 'BikeSharing', 'SGEMMGPUKernelPerformances')
     reg_result_big_ds = reg_results[reg_results.dataset.isin(big_datasets)].copy()
     print(get_model_ranking(reg_result_big_ds))
     draw_cd_diagram(f'{RESULTS_DIR}/cd-diagram-regression-big-ds.png', reg_result_big_ds)
@@ -94,8 +103,6 @@ def print_rankings(task, results):
     print(f'{task} ranking table')
     results['model_rank'] = results.groupby('dataset')['score'].rank(ascending=False)
     results = results[['dataset', 'model', 'model_rank']]
-    results.loc[:, 'dataset'] = results['dataset'].str[:-7]
-    results.loc[:, 'model'] = results['model'].str[:-5]
     table = pd.pivot_table(results, values='model_rank', index='model', columns=['dataset'])
 
     if task == 'Regression':
