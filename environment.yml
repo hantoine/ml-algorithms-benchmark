@@ -90,6 +90,7 @@ dependencies:
   - olefile=0.46=py37_0
   - openssl=1.1.1d=h7b6447c_3
   - packaging=19.2=py_0
+  - pandas=1.0.5=py37h0573a6f_0
   - pandoc=2.2.3.2=0
   - pandocfilters=1.4.2=py37_1
   - pango=1.42.4=h049681c_0
