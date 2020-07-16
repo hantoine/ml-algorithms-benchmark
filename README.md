@@ -26,7 +26,7 @@ Automatic hyper-parameter tuning has been performed for each algorithm and datas
 #### Critical Diagrams
 ##### All Classification Tasks
 ![Critical Difference Diagram for Classification tasks](results/cd-diagram-classification.png?raw=true)
-##### Classification Tasks with Small Datasets
+##### Classification Tasks with Very Small Datasets
 ![Critical Difference Diagram for Regression tasks](results/cd-diagram-classification-small-ds.png?raw=true)
 
 No critical difference diagram was created for classification tasks with big datasets since too few big classification datasets were included in the study.
@@ -57,9 +57,9 @@ No critical difference diagram was created for classification tasks with big dat
 #### Critical Diagrams
 ##### All Regression Tasks
 ![Critical Difference Diagram for Regression tasks](results/cd-diagram-regression.png?raw=true)
-##### Regression Tasks with Big Datasets
+##### Regression Tasks with Relatively Big Datasets
 ![Critical Difference Diagram for Classification tasks with bigger datasets](results/cd-diagram-regression-big-ds.png?raw=true)
-##### Regression Tasks with Small Datasets
+##### Regression Tasks with Very Small Datasets
 ![Critical Difference Diagram for Classification tasks with bigger datasets](results/cd-diagram-regression-small-ds.png?raw=true)
 
 ## Installation
