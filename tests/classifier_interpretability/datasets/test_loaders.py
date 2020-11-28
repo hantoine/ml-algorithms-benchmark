@@ -3,7 +3,7 @@ from shutil import rmtree
 from os.path import isdir
 from utils import check_dataset
 
-workdir = 'test-workdir'
+workdir = "test-workdir"
 if isdir(workdir):
     rmtree(workdir)
 

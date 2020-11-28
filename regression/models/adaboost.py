@@ -12,7 +12,9 @@ class AdaBoostModel(TreeBasedModel):
         return AdaBoostRegressor(random_state=RANDOM_STATE, **args)
 
     hp_space = {
-        'loss': hp.choice('loss', ['linear', 'square', 'exponential']),
-        'n_estimators': scope.int(hp.qloguniform('n_estimators', np.log(10.5), np.log(1000.5), 1)),
-        'learning_rate': hp.lognormal('learning_rate', np.log(0.01), np.log(10.0))
+        "loss": hp.choice("loss", ["linear", "square", "exponential"]),
+        "n_estimators": scope.int(
+            hp.qloguniform("n_estimators", np.log(10.5), np.log(1000.5), 1)
+        ),
+        "learning_rate": hp.lognormal("learning_rate", np.log(0.01), np.log(10.0)),
     }

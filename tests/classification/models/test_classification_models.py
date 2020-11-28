@@ -3,7 +3,7 @@ from classification import models
 from hyperopt.pyll.stochastic import sample as sample_hp
 from classification import datasets as ds
 
-workdir = 'test-workdir'
+workdir = "test-workdir"
 
 
 def check_prepare_dataset(cls):

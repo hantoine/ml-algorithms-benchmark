@@ -15,25 +15,24 @@ from config import DEFAULT_DATA_DIR
 
 
 class RetinopathyDataset(Dataset):
-    filename = 'messidor_features.arff'
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00329/messidor_features.arff'
+    filename = "messidor_features.arff"
+    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00329/messidor_features.arff"
 
-    feature_names = ['quality',
-                     'pre-screening_label'] + list(range(2, 16)) + [
-                     'dist_betw_centers',
-                     'od_diameter',
-                     'AM_FM_label',
-                     'class']
+    feature_names = (
+        ["quality", "pre-screening_label"]
+        + list(range(2, 16))
+        + ["dist_betw_centers", "od_diameter", "AM_FM_label", "class"]
+    )
     categorical_features = []
-    metric = 'accuracy'
+    metric = "accuracy"
     is_metric_maximized = True
 
     @classmethod
     def preprocess(cls, df):
         df.columns = cls.feature_names
-        df['class'] = pd.to_numeric(df['class'])
-        df.drop(columns=['quality'])
-        return df.drop(columns=['class']), df.loc[:, 'class']
+        df["class"] = pd.to_numeric(df["class"])
+        df.drop(columns=["quality"])
+        return df.drop(columns=["class"]), df.loc[:, "class"]
 
     @classmethod
     def get(cls, workdir=DEFAULT_DATA_DIR):
@@ -43,16 +42,17 @@ class RetinopathyDataset(Dataset):
         data, _ = arff.loadarff(dataset_path)
         df = pd.DataFrame(data)
         X, y = cls.preprocess(df)
-        X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+        )
         return (X_train, y_train), (X_test, y_test)
 
 
 class DefaultCreditCardDataset(Dataset):
-    filename = 'default of credit card clients.xls'
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00350/default of credit card clients.xls'
+    filename = "default of credit card clients.xls"
+    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00350/default of credit card clients.xls"
     categorical_features = []
-    metric = 'f1'
+    metric = "f1"
     is_metric_maximized = True
 
     @classmethod
@@ -61,19 +61,20 @@ class DefaultCreditCardDataset(Dataset):
         if not isfile(dataset_path):
             cls.download(workdir)
         df = pd.read_excel(dataset_path, header=[0, 1])
-        y = df['Y'][df['Y'].columns[0]]
-        X = df[[f'X{i}' for i in range(1, 24)]]
+        y = df["Y"][df["Y"].columns[0]]
+        X = df[[f"X{i}" for i in range(1, 24)]]
         X.columns = X.columns.droplevel()
-        X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+        )
         return (X_train, y_train), (X_test, y_test)
 
 
 class BreastCancerDataset(Dataset):
-    filename = 'breast-cancer-wisconsin.data'
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/breast-cancer-wisconsin.data'
+    filename = "breast-cancer-wisconsin.data"
+    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/breast-cancer-wisconsin.data"
     categorical_features = []
-    metric = 'f1'
+    metric = "f1"
     is_metric_maximized = True
 
     @classmethod
@@ -83,18 +84,19 @@ class BreastCancerDataset(Dataset):
             cls.download(workdir)
         df = pd.read_csv(dataset_path, header=None)
         X = df[df.columns[1:-1]]
-        X = X.apply(partial(pd.to_numeric, errors='coerce'))  # replace '?' by NaN
+        X = X.apply(partial(pd.to_numeric, errors="coerce"))  # replace '?' by NaN
         y = (df[df.columns[-1]] == 4).astype(int)
-        X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+        )
         return (X_train, y_train), (X_test, y_test)
 
 
 class StatlogAustralianDataset(Dataset):
-    filename = 'australian.dat'
-    url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/statlog/australian/australian.dat'
+    filename = "australian.dat"
+    url = "http://archive.ics.uci.edu/ml/machine-learning-databases/statlog/australian/australian.dat"
     categorical_features = [0, 3, 4, 5, 7, 8, 10, 11]
-    metric = 'accuracy'
+    metric = "accuracy"
     is_metric_maximized = True
 
     @classmethod
@@ -102,18 +104,19 @@ class StatlogAustralianDataset(Dataset):
         dataset_path = os.path.join(workdir, cls.filename)
         if not isfile(dataset_path):
             cls.download(workdir)
-        df = pd.read_csv(dataset_path, sep=' ', header=None)
+        df = pd.read_csv(dataset_path, sep=" ", header=None)
         y = df[df.columns[-1]]
         X = df[df.columns[:-1]]
-        X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+        )
         return (X_train, y_train), (X_test, y_test)
 
 
 class StatlogGermanDataset(Dataset):
-    filename = 'german.data-numeric'
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric'
-    metric = 'f1'
+    filename = "german.data-numeric"
+    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric"
+    metric = "f1"
     is_metric_maximized = True
     categorical_features = []  # already encoded
 
@@ -125,17 +128,20 @@ class StatlogGermanDataset(Dataset):
         df = pd.read_csv(dataset_path, delim_whitespace=True, header=None)
         y = (df[df.columns[-1]] == 2).astype(int)
         X = df[df.columns[:-1]]
-        X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+        )
         return (X_train, y_train), (X_test, y_test)
 
 
 class SteelPlatesFaultsDataset(Dataset):
-    urls = ['https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults.NNA',
-            'https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults27x7_var']
-    filenames = ['Faults.NNA', 'Faults27x7_var']
+    urls = [
+        "https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults.NNA",
+        "https://archive.ics.uci.edu/ml/machine-learning-databases/00198/Faults27x7_var",
+    ]
+    filenames = ["Faults.NNA", "Faults27x7_var"]
     categorical_features = []
-    metric = 'f1'
+    metric = "f1"
     is_metric_maximized = True
 
     @classmethod
@@ -143,37 +149,63 @@ class SteelPlatesFaultsDataset(Dataset):
         dataset_path = os.path.join(workdir, cls.filenames[0])
         if not isfile(dataset_path):
             cls.download(workdir)
-        df = pd.read_csv(dataset_path, sep='\t', header=None)
+        df = pd.read_csv(dataset_path, sep="\t", header=None)
 
         dataset_path = os.path.join(workdir, cls.filenames[1])
         if not isfile(dataset_path):
             cls.download(workdir)
-        with open(dataset_path, 'r') as f:
-            cls.feature_names = f.read().strip().split('\n')
+        with open(dataset_path, "r") as f:
+            cls.feature_names = f.read().strip().split("\n")
 
         X = df[df.columns[:27]]
         y = df[df.columns[27:]]
 
-        # Convert labels from onehot to ordinal 
+        # Convert labels from onehot to ordinal
         y.columns = range(7)
         y = y.idxmax(axis=1)
 
-        X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+        )
         return (X_train, y_train), (X_test, y_test)
 
 
 class AdultDataset(Dataset):
-    filenames = ['adult.data', 'adult.test']
-    urls = ['https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data',
-            'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test']
-    feature_names = ['age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status',
-                     'occupation', 'relationship', 'race', 'sex', 'capital-gain', 'capital-loss',
-                     'hours-per-week', 'native-country']
-    categorical_features = ['workclass', 'education', 'marital-status', 'occupation',
-                            'relationship', 'race', 'sex', 'native-country']
-    desc_url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names'
-    metric = 'f1'
+    filenames = ["adult.data", "adult.test"]
+    urls = [
+        "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data",
+        "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test",
+    ]
+    feature_names = [
+        "age",
+        "workclass",
+        "fnlwgt",
+        "education",
+        "education-num",
+        "marital-status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "capital-gain",
+        "capital-loss",
+        "hours-per-week",
+        "native-country",
+    ]
+    categorical_features = [
+        "workclass",
+        "education",
+        "marital-status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native-country",
+    ]
+    desc_url = (
+        "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names"
+    )
+    metric = "f1"
     is_metric_maximized = True
 
     @classmethod
@@ -194,10 +226,20 @@ class AdultDataset(Dataset):
         dataset_path = os.path.join(workdir, cls.filenames[0])
         if not isfile(dataset_path):
             cls.download(workdir)
-        df_train = pd.read_csv(os.path.join(workdir, cls.filenames[0]),
-                               header=None, skiprows=1, sep=', ', engine='python')
-        df_test = pd.read_csv(os.path.join(workdir, cls.filenames[1]),
-                              header=None, skiprows=1, sep=', ', engine='python')
+        df_train = pd.read_csv(
+            os.path.join(workdir, cls.filenames[0]),
+            header=None,
+            skiprows=1,
+            sep=", ",
+            engine="python",
+        )
+        df_test = pd.read_csv(
+            os.path.join(workdir, cls.filenames[1]),
+            header=None,
+            skiprows=1,
+            sep=", ",
+            engine="python",
+        )
         return df_train, df_test
 
     @classmethod
@@ -208,9 +250,9 @@ class AdultDataset(Dataset):
 
 
 class YeastDataset(Dataset):
-    filename = 'yeast.data'
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/yeast/yeast.data'
-    metric = 'f1'
+    filename = "yeast.data"
+    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/yeast/yeast.data"
+    metric = "f1"
     is_metric_maximized = True
     categorical_features = []
 
@@ -226,36 +268,37 @@ class YeastDataset(Dataset):
         y = df[df.columns[-1]]
         y = LabelEncoder().fit_transform(y)
 
-        X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+        )
         return (X_train, y_train), (X_test, y_test)
 
 
 class ThoraricSurgeryDataset(Dataset):
-    filename = 'ThoraricSurgery.arff'
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00277/ThoraricSurgery.arff'
-    metric = 'f1'
+    filename = "ThoraricSurgery.arff"
+    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00277/ThoraricSurgery.arff"
+    metric = "f1"
     is_metric_maximized = True
-    categorical_features = ['DGN', 'PRE6']
+    categorical_features = ["DGN", "PRE6"]
 
     @classmethod
     def preprocess(cls, df):
         X, y = df.iloc[:, :-1], df.iloc[:, -1]
-        y = (y == b'T').astype(int)
+        y = (y == b"T").astype(int)
 
         # Encode ordinal feature
-        X['PRE14'] = X['PRE14'].str[-2:].astype(int)
+        X["PRE14"] = X["PRE14"].str[-2:].astype(int)
 
         # Merge categories for which there is not enough examples
         # (1, 5, 6 and 8 with 1, 15, 4 and 2 examples respectively)
-        X['DGN'].replace(b'DGN1', b'others', inplace=True)
-        X['DGN'].replace(b'DGN5', b'others', inplace=True)
-        X['DGN'].replace(b'DGN6', b'others', inplace=True)
-        X['DGN'].replace(b'DGN8', b'others', inplace=True)
+        X["DGN"].replace(b"DGN1", b"others", inplace=True)
+        X["DGN"].replace(b"DGN5", b"others", inplace=True)
+        X["DGN"].replace(b"DGN6", b"others", inplace=True)
+        X["DGN"].replace(b"DGN8", b"others", inplace=True)
 
         # Encode binary categories as int
-        X.replace(b'T', 1, inplace=True)
-        X.replace(b'F', 0, inplace=True)
+        X.replace(b"T", 1, inplace=True)
+        X.replace(b"F", 0, inplace=True)
 
         return X, y
 
@@ -268,16 +311,17 @@ class ThoraricSurgeryDataset(Dataset):
         df = pd.DataFrame(data)
         X, y = cls.preprocess(df)
 
-        X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+        )
         return (X_train, y_train), (X_test, y_test)
 
 
 class SeismicBumpsDataset(Dataset):
-    filename = 'seismic-bumps.arff'
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/00266/seismic-bumps.arff'
-    categorical_features = ['seismic', 'seismoacoustic', 'shift', 'ghazard']
-    metric = 'f1'
+    filename = "seismic-bumps.arff"
+    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00266/seismic-bumps.arff"
+    categorical_features = ["seismic", "seismoacoustic", "shift", "ghazard"]
+    metric = "f1"
     is_metric_maximized = True
 
     @classmethod
@@ -287,15 +331,16 @@ class SeismicBumpsDataset(Dataset):
             cls.download(workdir)
         data, _ = arff.loadarff(dataset_path)
         df = pd.DataFrame(data)
-        df['class'] = pd.to_numeric(df['class'])
+        df["class"] = pd.to_numeric(df["class"])
 
         str_df = df.select_dtypes([np.object])
-        str_df = str_df.stack().str.decode('utf-8').unstack()
+        str_df = str_df.stack().str.decode("utf-8").unstack()
         for col in str_df:
             df[col] = str_df[col]
 
-        X = df.drop(columns=['class'])
-        y = df.loc[:, 'class']
-        X_train, X_test, y_train, y_test = \
-            train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)
+        X = df.drop(columns=["class"])
+        y = df.loc[:, "class"]
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+        )
         return (X_train, y_train), (X_test, y_test)

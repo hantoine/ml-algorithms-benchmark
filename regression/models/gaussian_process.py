@@ -13,12 +13,10 @@ class GaussianProcessModel(NonTreeBasedModel):
             sklearn.linear_model.LinearRegression does not support any regularization.
         """
         return GaussianProcessRegressor(
-            normalize_y=True,
-            random_state=RANDOM_STATE,
-            **args
+            normalize_y=True, random_state=RANDOM_STATE, **args
         )
 
     hp_space = {
-        'alpha': hp.loguniform('alpha', np.log(1e-3), np.log(1e3)),
-        'n_restarts_optimizer': hp.quniform('n_restarts_optimizer', 0, 10, 1),
+        "alpha": hp.loguniform("alpha", np.log(1e-3), np.log(1e3)),
+        "n_restarts_optimizer": hp.quniform("n_restarts_optimizer", 0, 10, 1),
     }

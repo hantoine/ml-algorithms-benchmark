@@ -122,3 +122,6 @@ test-workdir
 
 # VSCode folder
 .vscode
+
+# Conda auto env
+.conda-auto-env

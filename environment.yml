@@ -1,4 +1,4 @@
-name: ml-project
+name: ml-algorithms-benchmark
 channels:
   - pytorch
   - conda-forge

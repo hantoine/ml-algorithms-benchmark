@@ -5,7 +5,7 @@ from os.path import isdir
 import pandas as pd
 from utils import check_dataset
 
-workdir = 'test-workdir'
+workdir = "test-workdir"
 if isdir(workdir):
     rmtree(workdir)
 

@@ -6,7 +6,7 @@ import os
 from os.path import isdir
 from shutil import rmtree
 
-workdir = 'test-workdir'
+workdir = "test-workdir"
 
 
 def test_random_forests_hp_space():
@@ -64,7 +64,9 @@ def test_gaussian_process_training():
         try:
             print(dataset.__name__)
             train, test = dataset.get()
-            train, test = model.prepare_dataset(train, test, dataset.categorical_features)
+            train, test = model.prepare_dataset(
+                train, test, dataset.categorical_features
+            )
             estimator = model.build_estimator(hyperparams)
             X, y, *_ = train
             estimator.fit(X, y)

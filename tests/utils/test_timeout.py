@@ -1,6 +1,7 @@
 import time
 from utils.timeout import set_timeout, TimeoutError
 
+
 def function():
     i = 1
     while True:

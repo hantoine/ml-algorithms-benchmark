@@ -19,4 +19,4 @@ class LinearRegressionModel(NonTreeBasedModel):
             **args
         )
 
-    hp_space = {'alpha': hp.loguniform('alpha', np.log(1e-3), np.log(1e3))}
+    hp_space = {"alpha": hp.loguniform("alpha", np.log(1e-3), np.log(1e3))}

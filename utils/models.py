@@ -21,9 +21,9 @@ class TreeBasedModel:
         X_test, y_test = test_data
         is_binary_classification = len(np.unique(y_train)) == 2
         if is_binary_classification:
-            ce = CategoryEncoder(categorical_features, method='sorted_ordinal')
+            ce = CategoryEncoder(categorical_features, method="sorted_ordinal")
         else:
-            ce = CategoryEncoder(categorical_features, method='onehot')
+            ce = CategoryEncoder(categorical_features, method="onehot")
         X_train_enc = ce.fit_transform(X_train, y_train)
         X_test_enc = ce.transform(X_test)
 
@@ -58,7 +58,7 @@ class NonTreeBasedModel:
 
         X_train, y_train, *other = train_data
         X_test, y_test = test_data
-        ce = CategoryEncoder(categorical_features, method='onehot')
+        ce = CategoryEncoder(categorical_features, method="onehot")
         X_train_enc = ce.fit_transform(X_train, y_train)
         X_test_enc = ce.transform(X_test)
 

@@ -18,35 +18,49 @@ from utils import NonTreeBasedModel
 
 
 class Cifar10CustomModel(NonTreeBasedModel):
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
     @classmethod
     def prepare_dataset(cls, train_data, test_data, categorical_features=None):
-        return train_data, test_data #Cifar10 is already clean
+        return train_data, test_data  # Cifar10 is already clean
 
     @classmethod
-    def build_estimator(cls, hyperparams, train_data, verbose=True, test=False): #  change default verbose to false later
+    def build_estimator(
+        cls, hyperparams, train_data, verbose=True, test=False
+    ):  #  change default verbose to false later
         early_stopping_val_percent = 10
 
-        n_training_examples = len(train_data[0]) * (1 - (early_stopping_val_percent / 100))
-        n_iter_per_epoch = n_training_examples / hyperparams['batch_size']
-        n_iter_btw_restarts = int(hyperparams['epochs_btw_restarts'] * n_iter_per_epoch)
+        n_training_examples = len(train_data[0]) * (
+            1 - (early_stopping_val_percent / 100)
+        )
+        n_iter_per_epoch = n_training_examples / hyperparams["batch_size"]
+        n_iter_btw_restarts = int(hyperparams["epochs_btw_restarts"] * n_iter_per_epoch)
         callbacks = [
-            ('fix_seed', cls.FixRandomSeed(RANDOM_STATE)),
-            ('lr_monitor', cls.LRMonitor()),
-            ('accuracy_score_valid', EpochScoring('accuracy', lower_is_better=False,
-                                                  on_train=True)),
-            ('early_stopping', EarlyStopping(monitor='valid_acc', lower_is_better=False,
-                                             patience=100)),
-            ('learning_rate_scheduler', LRScheduler(policy=cls.SkorchCosineAnnealingWarmRestarts,
-                                                    T_0=n_iter_btw_restarts,
-                                                    T_mult=hyperparams['epochs_btw_restarts_mult']
-                                                   ))
+            ("fix_seed", cls.FixRandomSeed(RANDOM_STATE)),
+            ("lr_monitor", cls.LRMonitor()),
+            (
+                "accuracy_score_valid",
+                EpochScoring("accuracy", lower_is_better=False, on_train=True),
+            ),
+            (
+                "early_stopping",
+                EarlyStopping(monitor="valid_acc", lower_is_better=False, patience=100),
+            ),
+            (
+                "learning_rate_scheduler",
+                LRScheduler(
+                    policy=cls.SkorchCosineAnnealingWarmRestarts,
+                    T_0=n_iter_btw_restarts,
+                    T_mult=hyperparams["epochs_btw_restarts_mult"],
+                ),
+            ),
         ]
 
         def validation_split(X, y):
             """ Custom split is used to apply augmentation to the training set only """
-            splitter = CVSplit(cv=int(100 / early_stopping_val_percent), random_state=RANDOM_STATE)
+            splitter = CVSplit(
+                cv=int(100 / early_stopping_val_percent), random_state=RANDOM_STATE
+            )
             dataset_train, dataset_valid = splitter(X)
             dataset_train = cls.AugmentedDataset(dataset_train)
             return dataset_train, dataset_valid
@@ -55,7 +69,7 @@ class Cifar10CustomModel(NonTreeBasedModel):
             cls.CifarCustomNet,
             criterion=nn.CrossEntropyLoss,
             optimizer=torch.optim.SGD,
-            max_epochs=hyperparams['max_epochs'] if not test else 1,
+            max_epochs=hyperparams["max_epochs"] if not test else 1,
             iterator_train__shuffle=True,
             iterator_train__num_workers=4,
             iterator_valid__num_workers=4,
@@ -63,92 +77,95 @@ class Cifar10CustomModel(NonTreeBasedModel):
             callbacks=callbacks,
             device=cls.device,
             train_split=validation_split,
-            lr=hyperparams['learning_rate'],
-            batch_size=hyperparams['batch_size'],
-            optimizer__momentum=hyperparams['momentum'],
-            optimizer__weight_decay=hyperparams['weight_decay'],
-            optimizer__nesterov=hyperparams['nesterov'],
-            module__conv_dropout=hyperparams['conv_dropout'],
-            module__fc_dropout=hyperparams['fc_dropout'],
-            verbose=3 if verbose else 0
+            lr=hyperparams["learning_rate"],
+            batch_size=hyperparams["batch_size"],
+            optimizer__momentum=hyperparams["momentum"],
+            optimizer__weight_decay=hyperparams["weight_decay"],
+            optimizer__nesterov=hyperparams["nesterov"],
+            module__conv_dropout=hyperparams["conv_dropout"],
+            module__fc_dropout=hyperparams["fc_dropout"],
+            verbose=3 if verbose else 0,
         )
 
     hp_space = {
-        'batch_size': 32,
-        'learning_rate': 1.5e-2,
-        'momentum': 0.9,
-        'weight_decay': 1e-4,
-        'nesterov': True,
-        'conv_dropout': 0.1,
-        'fc_dropout': 0.1,
-        'epochs_btw_restarts': 60,
-        'epochs_btw_restarts_mult': 1,
-        'max_epochs': 119
+        "batch_size": 32,
+        "learning_rate": 1.5e-2,
+        "momentum": 0.9,
+        "weight_decay": 1e-4,
+        "nesterov": True,
+        "conv_dropout": 0.1,
+        "fc_dropout": 0.1,
+        "epochs_btw_restarts": 60,
+        "epochs_btw_restarts_mult": 1,
+        "max_epochs": 119,
     }
 
     class CifarCustomNet(nn.Module):
         def __init__(self, conv_dropout, fc_dropout):
             super(Cifar10CustomModel.CifarCustomNet, self).__init__()
             config = {
-                'branch1': [
-                    [3, 32]
-                ],
-                'branch2': [
-                    [3, 64],
-                    [64, 128]
-                ],
-                'branch3': [
-                    [3, 32],
-                    [32, 64],
-                    [64, 64]
-                ],
-                'head': [
-                    [32 + 128 + 64, 256],
-                    [256, 256],
-                    [256, 10]
-                ]
+                "branch1": [[3, 32]],
+                "branch2": [[3, 64], [64, 128]],
+                "branch3": [[3, 32], [32, 64], [64, 64]],
+                "head": [[32 + 128 + 64, 256], [256, 256], [256, 10]],
             }
             activation = nn.ELU
-            
-            # basis
-            self.branch1 = nn.Sequential(nn.Conv2d(*config['branch1'][0], 5), # 32 -> 28
-                                         activation(),
-                                         nn.BatchNorm2d(config['branch1'][0][1]),
-                                         nn.Dropout2d(conv_dropout),
-                                         nn.MaxPool2d(2, 2)) # 28 -> 14
-            # higher resolution
-            self.branch2_layer1 = nn.Sequential(nn.Conv2d(*config['branch2'][0], 3), # 32 -> 30
-                                                activation(),
-                                                nn.Dropout2d(conv_dropout))
 
-            self.branch2_layer2 = nn.Sequential(nn.Conv2d(*config['branch2'][1], 3), # 30 -> 28
-                                                activation(),
-                                                nn.BatchNorm2d(config['branch2'][1][1]),
-                                                nn.Dropout2d(conv_dropout),
-                                                nn.MaxPool2d(2, 2)) # 28 -> 14
+            # basis
+            self.branch1 = nn.Sequential(
+                nn.Conv2d(*config["branch1"][0], 5),  # 32 -> 28
+                activation(),
+                nn.BatchNorm2d(config["branch1"][0][1]),
+                nn.Dropout2d(conv_dropout),
+                nn.MaxPool2d(2, 2),
+            )  # 28 -> 14
+            # higher resolution
+            self.branch2_layer1 = nn.Sequential(
+                nn.Conv2d(*config["branch2"][0], 3),  # 32 -> 30
+                activation(),
+                nn.Dropout2d(conv_dropout),
+            )
+
+            self.branch2_layer2 = nn.Sequential(
+                nn.Conv2d(*config["branch2"][1], 3),  # 30 -> 28
+                activation(),
+                nn.BatchNorm2d(config["branch2"][1][1]),
+                nn.Dropout2d(conv_dropout),
+                nn.MaxPool2d(2, 2),
+            )  # 28 -> 14
             # smaller resolution
-            self.branch3_layer1 = nn.Sequential(nn.Conv2d(*config['branch3'][0], 7, padding=2), # 32 -> 30
-                                                activation(),
-                                                nn.Dropout2d(conv_dropout))
-            self.branch3_layer2 = nn.Sequential(nn.Conv2d(*config['branch3'][1], 5, padding=1), # 30 -> 28
-                                                activation(),
-                                                nn.Dropout2d(conv_dropout))
-            self.branch3_layer3 = nn.Sequential(nn.Conv2d(*config['branch3'][2], 3, padding=1), # 28 -> 28
-                                                nn.BatchNorm2d(config['branch3'][2][1]),
-                                                activation(),
-                                                nn.Dropout2d(conv_dropout),
-                                                nn.MaxPool2d(2, 2)) # 28 -> 14
-            
+            self.branch3_layer1 = nn.Sequential(
+                nn.Conv2d(*config["branch3"][0], 7, padding=2),  # 32 -> 30
+                activation(),
+                nn.Dropout2d(conv_dropout),
+            )
+            self.branch3_layer2 = nn.Sequential(
+                nn.Conv2d(*config["branch3"][1], 5, padding=1),  # 30 -> 28
+                activation(),
+                nn.Dropout2d(conv_dropout),
+            )
+            self.branch3_layer3 = nn.Sequential(
+                nn.Conv2d(*config["branch3"][2], 3, padding=1),  # 28 -> 28
+                nn.BatchNorm2d(config["branch3"][2][1]),
+                activation(),
+                nn.Dropout2d(conv_dropout),
+                nn.MaxPool2d(2, 2),
+            )  # 28 -> 14
+
             # head
-            self.head_layer1 = nn.Sequential(nn.Conv2d(*config['head'][0], 3, padding=1),  # 14 -> 14
-                                             activation(),
-                                             nn.BatchNorm2d(config['head'][0][1]),
-                                             nn.Dropout2d(conv_dropout))
-            self.head_layer2 = nn.Sequential(nn.Conv2d(*config['head'][1], 3), # 14 -> 12
-                                             activation(),
-                                             nn.BatchNorm2d(config['head'][1][1]),
-                                             nn.Dropout2d(conv_dropout))
-            self.fc = nn.Linear(*config['head'][2])
+            self.head_layer1 = nn.Sequential(
+                nn.Conv2d(*config["head"][0], 3, padding=1),  # 14 -> 14
+                activation(),
+                nn.BatchNorm2d(config["head"][0][1]),
+                nn.Dropout2d(conv_dropout),
+            )
+            self.head_layer2 = nn.Sequential(
+                nn.Conv2d(*config["head"][1], 3),  # 14 -> 12
+                activation(),
+                nn.BatchNorm2d(config["head"][1][1]),
+                nn.Dropout2d(conv_dropout),
+            )
+            self.fc = nn.Linear(*config["head"][2])
 
             return
 
@@ -165,7 +182,7 @@ class Cifar10CustomModel(NonTreeBasedModel):
             x = torch.cat((x, y, z), 1)
             x = self.head_layer1(x)
             x = self.head_layer2(x)
-            
+
             # Global Average Pooling
             x = F.avg_pool2d(x, x.shape[-1]).view(-1, x.shape[1])
 
@@ -175,15 +192,20 @@ class Cifar10CustomModel(NonTreeBasedModel):
 
     class AugmentedDataset(Dataset):
         """ Used in validation_split function to apply augmentations on training set """
+
         def __init__(self, dataset_subset):
             self.dataset_subset = dataset_subset
 
-            self.transforms = transforms.Compose([
-                transforms.RandomAffine(degrees=15, translate=(0.1, 0.1)),
-                transforms.RandomHorizontalFlip(0.5),
-                transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.48216, 0.4465), (0.247, 0.24346, 0.2616))
-            ])
+            self.transforms = transforms.Compose(
+                [
+                    transforms.RandomAffine(degrees=15, translate=(0.1, 0.1)),
+                    transforms.RandomHorizontalFlip(0.5),
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        (0.4914, 0.48216, 0.4465), (0.247, 0.24346, 0.2616)
+                    ),
+                ]
+            )
 
         def __len__(self):
             return len(self.dataset_subset)
@@ -195,12 +217,17 @@ class Cifar10CustomModel(NonTreeBasedModel):
 
     class NormalizedDataset(SkorchDataset):
         """ Used to reshape examples and lazily normalize the dataset """
+
         def __init__(self, X, y=None):
             super(Cifar10CustomModel.NormalizedDataset, self).__init__(X, y)
-            self.transforms = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.48216, 0.4465), (0.247, 0.24346, 0.2616))
-            ])
+            self.transforms = transforms.Compose(
+                [
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        (0.4914, 0.48216, 0.4465), (0.247, 0.24346, 0.2616)
+                    ),
+                ]
+            )
 
         def __getitem__(self, index):
             img, y = self.get_img(index)
@@ -218,26 +245,29 @@ class Cifar10CustomModel(NonTreeBasedModel):
 
     class FixRandomSeed(Callback):
         """ Skorch callback used to fix seeds at the beginning of the training """
+
         def __init__(self, seed=42):
             self.seed = seed
 
         def initialize(self):
             torch.manual_seed(self.seed)
             torch.cuda.manual_seed(self.seed)
-            
+
             try:
                 random.seed(self.seed)
             except NameError:
                 import random
+
                 random.seed(self.seed)
 
             np.random.seed(self.seed)
-            torch.backends.cudnn.deterministic=True
+            torch.backends.cudnn.deterministic = True
 
     class LRMonitor(Callback):
         """ Skorch callback used to save the learning rate every epoch """
+
         def on_epoch_end(self, net, **kwargs):
-            net.history.record('lr', net.optimizer_.param_groups[0]['lr'])
+            net.history.record("lr", net.optimizer_.param_groups[0]["lr"])
 
     class SkorchCosineAnnealingWarmRestarts(CosineAnnealingWarmRestarts):
         """
@@ -245,5 +275,8 @@ class Cifar10CustomModel(NonTreeBasedModel):
             called by Skorch every batch. This class is necessary to ensure the learning rate is
             updated every batch as opposed to every epoch (Skorch default behavior)
         """
+
         def batch_step(self, batch_idx):
-            super(Cifar10CustomModel.SkorchCosineAnnealingWarmRestarts, self).step(batch_idx)
+            super(Cifar10CustomModel.SkorchCosineAnnealingWarmRestarts, self).step(
+                batch_idx
+            )

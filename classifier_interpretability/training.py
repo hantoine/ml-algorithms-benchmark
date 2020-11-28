@@ -29,10 +29,10 @@ def training(trainloader, net, config):
             # print statistics
             running_loss += loss.item()
 
-        print(f'Epoch {epoch} loss: {running_loss / i}')
+        print(f"Epoch {epoch} loss: {running_loss / i}")
         running_loss = 0.0
 
-    print('Finished Training')
+    print("Finished Training")
 
 
 def validation():
@@ -48,15 +48,17 @@ def validation():
             total += batch_size
             correct += (predicted == labels).sum().item()
 
-    print('Accuracy of the network on the 10000 test images: %d %%' % (
-        100 * correct / total))
+    print(
+        "Accuracy of the network on the 10000 test images: %d %%"
+        % (100 * correct / total)
+    )
 
 
 def save_model(net, filepath):
     torch.save(net.state_dict(), filepath)
 
 
-class Config():
+class Config:
     def __init__(self, nb_epochs, learning_rate, momentum):
         nb_epochs = nb_epochs
         lr = learning_rate

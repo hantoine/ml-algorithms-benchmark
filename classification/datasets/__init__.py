@@ -10,15 +10,15 @@ from .loaders import BreastCancerDataset
 from .loaders import ThoraricSurgeryDataset
 
 all_datasets = [
-                StatlogAustralianDataset,
-                StatlogGermanDataset,
-                SteelPlatesFaultsDataset,
-                ThoraricSurgeryDataset,
-                YeastDataset,
-                SeismicBumpsDataset,
-                RetinopathyDataset,
-                BreastCancerDataset,
-                # These ones were done with 3000s instead of 1000s and 1000 per step
-                AdultDataset,
-                DefaultCreditCardDataset,
-               ]
+    StatlogAustralianDataset,
+    StatlogGermanDataset,
+    SteelPlatesFaultsDataset,
+    ThoraricSurgeryDataset,
+    YeastDataset,
+    SeismicBumpsDataset,
+    RetinopathyDataset,
+    BreastCancerDataset,
+    # These ones were done with 3000s instead of 1000s and 1000 per step
+    AdultDataset,
+    DefaultCreditCardDataset,
+]

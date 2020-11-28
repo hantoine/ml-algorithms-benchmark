@@ -19,5 +19,5 @@ all_models = [
     KNearestNeighborsModel,
     BasicNeuralNetworkModel,
     GradientBoostingModel,
-    AdvancedNeuralNetworkModel
+    AdvancedNeuralNetworkModel,
 ]

@@ -1,10 +1,12 @@
 import torch
 import torch.nn as nn
 
+
 class LeNet5(nn.Module):
     """ baseline
     using average pooling and tanh as activation function
     """
+
     def __init__(self):
         super(LeNet5, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
