@@ -162,4 +162,5 @@ dependencies:
     - patool==1.12
     - timeout-decorator==0.4.1
     - unrar==0.4
+    - interpret==0.2.2
 

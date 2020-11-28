@@ -8,6 +8,7 @@ from .k_nearest_neighbours import KNearestNeighborsModel
 from .basic_neural_network import BasicNeuralNetworkModel
 from .gradient_boosting import GradientBoostingModel
 from .advanced_neural_network import AdvancedNeuralNetworkModel
+from .ebm import ExplainableBoostingMachineModel
 
 all_models = [
     RandomForestsModel,
@@ -20,4 +21,5 @@ all_models = [
     BasicNeuralNetworkModel,
     GradientBoostingModel,
     AdvancedNeuralNetworkModel,
+    ExplainableBoostingMachineModel,
 ]

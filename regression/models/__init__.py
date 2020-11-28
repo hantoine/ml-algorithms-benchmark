@@ -8,6 +8,8 @@ from .decision_tree import DecisionTreeModel
 from .adaboost import AdaBoostModel
 from .k_nearest_neighbors import KNearestNeighborsModel
 from .gradient_boosting import GradientBoostingModel
+from .ebm import ExplainableBoostingMachineModel
+
 
 all_models = [
     RandomForestsModel,
@@ -20,4 +22,5 @@ all_models = [
     BasicNeuralNetworkModel,
     GradientBoostingModel,
     AdvancedNeuralNetworkModel,
+    ExplainableBoostingMachineModel,
 ]
