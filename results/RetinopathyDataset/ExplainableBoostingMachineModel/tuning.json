@@ -1,0 +1,10 @@
+{
+    "hp": {
+        "learning_rate": 0.06664651902864627,
+        "max_bins": 234,
+        "max_leaves": 2
+    },
+    "score": 0.6697566628041715,
+    "n_trials": 21,
+    "tuning_time": 121.92077589035034
+}

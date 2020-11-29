@@ -1,0 +1,11 @@
+{
+    "hp": {
+        "interactions": 0,
+        "learning_rate": 0.13660553377319792,
+        "max_bins": 120,
+        "max_leaves": 3
+    },
+    "score": 0.7118883528718506,
+    "n_trials": 27,
+    "tuning_time": 128.62453627586365
+}
