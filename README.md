@@ -1,10 +1,9 @@
 # Machine Learning Algorithms Benchmark
-This repository contains the source code used to compare the performance of different classification and regression machine learning algorithms on tasks from the  [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php). Datasets used are all structured and relatively small.
+This repository contains the source code used to compare the performance of different classification and regression machine learning algorithms on tasks from the  [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php). The datasets used are all structured and relatively small.
 
-The performances of 10 classification algorithms were compared on 10 different classification tasks, and the performances of 10 regression algorithms were compared on 16 different regression tasks.
+We used automatic hyperparameter tuning to ensure that the same effort is invested in the tuning of each algorithm on each dataset. We used [Tree-structured Parzen estimators](https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf) to perform automatic hyperparameter tuning. Basic feature engineering was performed for each dataset.
 
-For each dataset, pre-processing and basic feature engineering were performed.
-Automatic hyper-parameter tuning has been performed for each algorithm and dataset using [Tree-structured Parzen estimators](https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf). The use of automatic hyper-parameter tuning makes it possible to ensure that the same effort is invested for the tuning of each algorithm.
+You can find more information in [the project report](report.pdf?raw=true).
 
 ## Results
 
@@ -64,9 +63,6 @@ No critical difference diagram was created for classification tasks with big dat
 
 ## Installation
   1. Clone this repository
-  2. Execute `conda env creae -f environment.yml -n ml-algorithms-comparison` in the repos to install the dependencies.
+  2. Execute `conda env creae -f environment.yml -n ml-algorithms-comparison` to install dependencies.
   3. Execute `conda activate ml-algorithms-comparison` to activate the newly created environment
-  4. Execute `python main.py --help` in the repos to see usage information.
-
-## Report
-For more information, read [the full report](report.pdf?raw=true).
+  4. Execute `python main.py --help` to see usage information.
