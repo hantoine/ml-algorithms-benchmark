@@ -1,5 +1,5 @@
 # Machine Learning Algorithms Benchmark
-This repository contains the source code used to compare the performance of different classification and regression machine learning algorithms on tasks from the  [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php). The datasets used are all structured and relatively small.
+This repository contains the source code used to compare the performance of different classification and regression machine learning algorithms on tasks from the  [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php). The datasets used are all relatively small structured datasets.
 
 We used automatic hyperparameter tuning to ensure that the same effort is invested in the tuning of each algorithm on each dataset. We used [Tree-structured Parzen estimators](https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf) to perform automatic hyperparameter tuning. Basic feature engineering was performed for each dataset.
 
