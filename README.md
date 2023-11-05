@@ -63,6 +63,6 @@ No critical difference diagram was created for classification tasks with big dat
 
 ## Installation
   1. Clone this repository
-  2. Execute `conda env creae -f environment.yml -n ml-algorithms-comparison` to install dependencies.
+  2. Execute `conda env create -f environment.yml -n ml-algorithms-comparison` to install dependencies.
   3. Execute `conda activate ml-algorithms-comparison` to activate the newly created environment
   4. Execute `python main.py --help` to see usage information.
